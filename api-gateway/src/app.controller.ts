@@ -7,7 +7,17 @@ export class AppController {
 
   @Post()
   async createUserMessage(@Body() messageBody: any) {
-    await this.appService.createUserMessage('user-message', [messageBody]);
+    await this.appService.createUserMessage([messageBody]);
     return { status: 'Message sent to User from API Gateway!' };
+  }
+
+  @Post('/loans')
+  async getAmountOfLoansMessage(@Body() messageBody: any) {
+    console.log('Executing getAmountOfLoansMessage controller');
+
+    const processingResult =
+      await this.appService.createLoanMessage(messageBody);
+
+    return { data: processingResult };
   }
 }

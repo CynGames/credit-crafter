@@ -9,7 +9,7 @@ import { Kafka } from 'kafkajs';
 export class ProducerService implements OnModuleInit, OnApplicationShutdown {
   private readonly kafka = new Kafka({
     brokers: ['localhost:9092'],
-    clientId: 'credit-crafter-api-gateway',
+    clientId: 'credit-crafter-loan',
   });
 
   private readonly producer = this.kafka.producer();
@@ -28,6 +28,6 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
       messages: messages.map((message) => ({ value: JSON.stringify(message) })),
     });
 
-    console.log(`[API-GATEWAY] Message sent to ${topic}`);
+    console.log(`[LOAN SERVICE PRODUCER] Message sent to ${topic}`);
   }
 }
