@@ -17,24 +17,42 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
 
   private readonly consumer = this.kafka.consumer({
     groupId: 'user-service-group',
+    sessionTimeout: 6000,
   });
 
   async onModuleInit() {
+    const topics = ['user-message', 'health-check'];
+
     await this.consumer.connect();
-    await this.consumer.subscribe({
-      topic: 'user-message',
-      fromBeginning: true,
-    });
+    await this.consumer.subscribe({ topics });
 
     await this.consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         console.log({
+          topic,
           partition,
           offset: message.offset,
-          value: message.value.toString(),
+          value: JSON.parse(message.value.toString()),
         });
 
-        await this.appService.handleMessage(message.value.toString());
+        switch (topic) {
+          case 'health-check':
+            console.log(
+              '[USER SERVICE] Received message from health-check:' +
+                message.value.toString(),
+            );
+
+            await this.appService.handleHealthCheckResponse(
+              message.value.toString(),
+            );
+            break;
+
+          default:
+            console.warn('Received message from unknown topic: ' + topic);
+            break;
+        }
+
+        // await this.appService.handleMessage(message.value.toString());
       },
     });
   }

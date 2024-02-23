@@ -9,7 +9,6 @@ import { AppService } from '../app.service';
 @Injectable()
 export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
   constructor(private readonly appService: AppService) {}
-  private subscribedTopics: Set<string> = new Set();
 
   private readonly kafka = new Kafka({
     brokers: ['localhost:9092'],
@@ -18,27 +17,14 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
 
   private readonly consumer = this.kafka.consumer({
     groupId: 'loan-service-group',
+    sessionTimeout: 6000,
   });
 
   async onModuleInit() {
-    // const topics = ['loan-message', 'loan-request'];
+    const topics = ['loan-message', 'loan-request', 'health-check'];
 
     await this.consumer.connect();
-
-    await this.consumer.subscribe({
-      topics: ['loan-message', 'loan-request'],
-    });
-
-    // await this.subscribeToTopics(topics);
-
-    console.log(
-      `[LOAN SERVICE CONSUMER] Subscribed to topics: ${this.getSubscribedTopics()}`,
-    );
-
-    // await this.consumer.subscribe({
-    //   topics: topics,
-    //   fromBeginning: true,
-    // });
+    await this.consumer.subscribe({ topics });
 
     await this.consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
@@ -46,7 +32,7 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
           topic,
           partition,
           offset: message.offset,
-          value: message.value.toString(),
+          value: JSON.parse(message.value.toString()),
         });
 
         switch (topic) {
@@ -63,23 +49,22 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
             );
             await this.appService.handleLoanResponse(message.value.toString());
             break;
+          case 'health-check':
+            console.log(
+              '[LOAN SERVICE] Received message from health-check:' +
+                message.value.toString(),
+            );
+
+            await this.appService.handleHealthCheckResponse(
+              message.value.toString(),
+            );
+            break;
           default:
             console.warn('Received message from unknown topic: ' + topic);
             break;
         }
       },
     });
-  }
-
-  async subscribeToTopics(topics: string[]) {
-    for (const topic of topics) {
-      await this.consumer.subscribe({ topic });
-      this.subscribedTopics.add(topic);
-    }
-  }
-
-  getSubscribedTopics(): string[] {
-    return Array.from(this.subscribedTopics);
   }
 
   async onApplicationShutdown() {

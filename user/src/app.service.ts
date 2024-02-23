@@ -12,4 +12,26 @@ export class AppService {
 
     console.log(`[USER SERVICE] Message Received: ${message}`);
   }
+
+  async handleHealthCheckResponse(message: string) {
+    console.log(`[USER SERVICE] Health Check Request Received`);
+
+    const state = {
+      service: 'User Service',
+      status: 'OK',
+    };
+
+    const responseMessage = {
+      value: {
+        correlationId: JSON.parse(message).correlationId,
+        value: state,
+      },
+    };
+
+    console.log(JSON.stringify(responseMessage));
+
+    await this.producerService.sendMessage('health-check-response', [
+      responseMessage,
+    ]);
+  }
 }

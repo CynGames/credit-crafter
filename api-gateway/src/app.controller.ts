@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -19,5 +19,22 @@ export class AppController {
       await this.appService.createLoanMessage(messageBody);
 
     return { data: processingResult };
+  }
+
+  @Get('/health')
+  async getHealthStatus() {
+    console.log('Executing getHealthStatus controller');
+
+    const otherServicesStatus =
+      await this.appService.createHealthRequestMessage();
+
+    const currentServiceStatus = {
+      service: 'API Gateway',
+      status: 'OK',
+    };
+
+    return {
+      data: [currentServiceStatus, ...otherServicesStatus],
+    };
   }
 }
