@@ -5,6 +5,10 @@ import {
 } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
 import { AppService } from '../app.service';
+import {
+  isHealthMessageRequest,
+  payloadTypeExtractor,
+} from '../dto/type.guards';
 
 @Injectable()
 export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
@@ -21,38 +25,31 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
   });
 
   async onModuleInit() {
-    const topics = ['user-message', 'health-check'];
+    const topics = ['health-request'];
 
     await this.consumer.connect();
     await this.consumer.subscribe({ topics });
 
     await this.consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
-        console.log({
-          topic,
-          partition,
-          offset: message.offset,
-          value: JSON.parse(message.value.toString()),
-        });
-
         switch (topic) {
-          case 'health-check':
+          case 'health-request':
             console.log(
               '[USER SERVICE] Received message from health-check:' +
                 message.value.toString(),
             );
 
-            await this.appService.handleHealthCheckResponse(
-              message.value.toString(),
-            );
-            break;
+            const parsedMessage = JSON.parse(message.value.toString());
+            const typedMessage = payloadTypeExtractor(parsedMessage);
 
+            if (isHealthMessageRequest(typedMessage)) {
+              await this.appService.handleHealthCheckResponse(typedMessage);
+            }
+            break;
           default:
             console.warn('Received message from unknown topic: ' + topic);
             break;
         }
-
-        // await this.appService.handleMessage(message.value.toString());
       },
     });
   }

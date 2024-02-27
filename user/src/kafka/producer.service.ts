@@ -4,6 +4,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
+import { GenericMessage } from '../dto/generic.dto';
 
 @Injectable()
 export class ProducerService implements OnModuleInit, OnApplicationShutdown {
@@ -14,20 +15,31 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
 
   private readonly producer = this.kafka.producer();
 
+  async sendMessage<T = any>(genericMessage: GenericMessage<T>) {
+    const topic = genericMessage.headers.topic;
+    const messages: { value: string }[] = [
+      { value: JSON.stringify(genericMessage) },
+    ];
+
+    console.log('GenericMessage...');
+    console.log(genericMessage);
+
+    console.log('Message being sent...');
+    console.log(messages);
+
+    await this.producer.send({
+      topic,
+      messages,
+    });
+
+    console.log(`[USER SERVICE] Message sent to ${topic}`);
+  }
+
   async onModuleInit() {
     await this.producer.connect();
   }
 
   async onApplicationShutdown() {
     await this.producer.disconnect();
-  }
-
-  async sendMessage(topic: string, messages: any[]) {
-    await this.producer.send({
-      topic,
-      messages: messages.map((message) => ({ value: JSON.stringify(message) })),
-    });
-
-    console.log(`[USER SERVICE] Message sent to ${topic}`);
   }
 }
