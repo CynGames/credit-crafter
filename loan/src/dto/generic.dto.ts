@@ -17,7 +17,7 @@ export type HealthMessageResponse = GenericMessage<ServerStatus> & {
   headers: { type: 'CreateHealthResponse' };
 };
 
-export type HealthMessageRequest = GenericMessage<void> & {
+export type HealthMessageRequest = GenericMessage<ServerStatus> & {
   headers: { type: 'CreateHealthRequest' };
 };
 

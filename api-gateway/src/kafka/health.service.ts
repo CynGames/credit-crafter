@@ -4,12 +4,22 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { Consumer, Kafka } from 'kafkajs';
+import {
+  ServerStatus,
+  ServerStatusPayload,
+  SpecificMessage,
+} from '../dto/generic.dto';
+import {
+  isEmptyMessage,
+  isHealthMessageResponse,
+  payloadTypeExtractor,
+} from '../dto/type.guards';
 
 @Injectable()
 export class HealthService implements OnModuleInit, OnApplicationShutdown {
   private readonly responseHandlers = new Map<
     string,
-    (responses: any[]) => void
+    (responses: any) => void
   >();
 
   private readonly kafka = new Kafka({
@@ -31,7 +41,7 @@ export class HealthService implements OnModuleInit, OnApplicationShutdown {
 
     await this.consumer.connect();
     await this.consumer.subscribe({
-      topic: 'health-check-response',
+      topic: 'health-response',
     });
 
     await this.initResponseListener();
@@ -41,31 +51,36 @@ export class HealthService implements OnModuleInit, OnApplicationShutdown {
     await this.consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         console.log('[API GATEWAY] Received Health Response');
-        const payload = JSON.parse(message.value.toString());
 
-        const data = payload.value;
-        const correlationId = data.correlationId;
-        const handler = this.responseHandlers.get(correlationId);
+        const parsedMessage = JSON.parse(message.value.toString());
+        const typedMessage = payloadTypeExtractor(parsedMessage);
 
-        console.log({
-          data: data.value,
-        });
+        if (isHealthMessageResponse(typedMessage)) {
+          console.log('Health Response Received');
+          const { headers, payload } = typedMessage;
+          const handler = this.responseHandlers.get(headers.correlationId);
 
-        if (handler) {
-          console.log('[API GATEWAY] Handler found. Resolving promise...');
-          handler(data.value);
+          if (handler) {
+            console.log('[API GATEWAY] Handler found. Resolving promise...');
+            handler(payload);
+          }
         }
       },
     });
   }
 
-  public async waitForResponse(correlationId: string): Promise<any> {
+  public async waitForResponse(
+    correlationId: string,
+  ): Promise<ServerStatusPayload> {
     console.log('[API GATEWAY] Waiting for response...');
-    const responses: any[] = [];
+    const responses: ServerStatus[] = [];
+
+    const currentServerStatus = this.getCurrentServerStatus();
+    responses.push(currentServerStatus);
 
     return new Promise((resolve) => {
       const timeoutId = setTimeout(() => {
-        resolve(responses);
+        resolve({ data: responses });
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       }, 3000);
@@ -74,13 +89,20 @@ export class HealthService implements OnModuleInit, OnApplicationShutdown {
         console.log('[API GATEWAY] Processing Health Response...');
         responses.push(response);
 
-        if (responses.length === 2) {
+        if (responses.length === 3) {
           clearTimeout(timeoutId);
-          resolve(responses);
+          resolve({ data: responses });
           this.responseHandlers.delete(correlationId);
           console.log('[API GATEWAY] Promised Resolved!');
         }
       });
     });
+  }
+
+  private getCurrentServerStatus(): ServerStatus {
+    return {
+      service: 'API Gateway',
+      status: 'OK',
+    };
   }
 }

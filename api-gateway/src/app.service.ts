@@ -1,49 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { ProducerService } from './kafka/producer.service';
-import { ConsumerService } from './kafka/consumer.service';
 import { HealthService } from './kafka/health.service';
+import { HealthMessageRequest, ServerStatusPayload } from './dto/generic.dto';
+import { generateUniqueId } from './utils/utils';
+import { isHealthMessageRequest } from './dto/type.guards';
 
 @Injectable()
 export class AppService {
   constructor(
     private readonly producerService: ProducerService,
-    private readonly consumerService: ConsumerService,
     private readonly healthService: HealthService,
   ) {}
 
-  async createUserMessage(messageBody: any) {
-    await this.producerService.sendMessage('user-message', [messageBody]);
-  }
+  async createHealthRequestMessage(): Promise<ServerStatusPayload> {
+    const correlationId = generateUniqueId();
 
-  async createLoanMessage(messageBody: any) {
-    console.log('Executing createLoanMessage service method');
-
-    const correlationId = this.generateUniqueId();
-
-    const message = {
-      ...messageBody,
-      correlationId,
+    const message: HealthMessageRequest = {
+      headers: {
+        topic: 'health-request',
+        type: 'CreateHealthRequest',
+        correlationId: correlationId,
+      },
+      payload: null,
     };
 
-    await this.producerService.sendMessage('loan-request', [message]);
+    if (isHealthMessageRequest(message)) {
+      await this.producerService.sendMessage(message);
+      return await this.healthService.waitForResponse(correlationId);
+    }
 
-    return await this.consumerService.waitForResponse(correlationId);
-  }
-
-  async createHealthRequestMessage() {
-    console.log('Executing createHealthRequestMessage service method');
-
-    const correlationId = this.generateUniqueId();
-    const message = {
-      correlationId,
-    };
-
-    await this.producerService.sendMessage('health-check', [message]);
-
-    return await this.healthService.waitForResponse(correlationId);
-  }
-
-  private generateUniqueId() {
-    return 'unique-id-' + Math.random().toString(16).substr(4, 10);
+    throw new Error('[API Gateway] Health Request Malformed');
   }
 }

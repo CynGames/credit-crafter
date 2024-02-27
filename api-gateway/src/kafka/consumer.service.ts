@@ -80,6 +80,7 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
         if (handler) {
           console.log('[API GATEWAY] Handler found. Resolving promise...');
           handler(data.value);
+
           console.log('[API GATEWAY] Promised Resolved!');
           this.responseHandlers.delete(correlationId);
         }
