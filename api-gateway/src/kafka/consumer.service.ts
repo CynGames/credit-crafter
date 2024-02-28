@@ -4,6 +4,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { Consumer, Kafka } from 'kafkajs';
+import { RESPONSE_TO_API_GATEWAY } from '../dto/types-dto-constants';
 
 @Injectable()
 export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
@@ -19,7 +20,7 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
   async onModuleInit() {
     this.consumer = this.loadConsumer();
     await this.consumer.connect();
-    await this.subscribeToTopic('response-to-api-gateway');
+    await this.subscribeToTopic(RESPONSE_TO_API_GATEWAY);
     await this.startListening();
   }
 
@@ -42,21 +43,7 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
     console.log(`[API GATEWAY] Subscribed to ${topic}`);
   }
 
-  public async waitForResponse(correlationId: string): Promise<any> {
-    console.log('[API GATEWAY] Waiting for response...');
-
-    return new Promise((resolve, reject) => {
-      this.responseHandlers.set(correlationId, resolve);
-
-      console.log('[API GATEWAY] Promise set.');
-
-      setTimeout(() => {
-        this.responseHandlers.delete(correlationId);
-        reject(new Error('Timeout'));
-      }, 30000);
-    });
-  }
-
+  // Esto habria que quitarlo o darle un proposito especifico (como en healthService)
   private async startListening() {
     await this.consumer.run({
       eachMessage: async ({ topic, partition, message }) => {

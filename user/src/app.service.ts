@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ProducerService } from './kafka/producer.service';
 import {
+  HEALTH_RESPONSE,
   HealthMessageRequest,
   HealthMessageResponse,
+  IsHealthMessageResponse,
   ServerStatus,
-} from './dto/generic.dto';
-import { isHealthMessageResponse } from './dto/type.guards';
+} from './dto/types-dto-constants';
 
 @Injectable()
 export class AppService {
@@ -21,14 +22,14 @@ export class AppService {
     const responseMessage: HealthMessageResponse = {
       headers: {
         ...typedMessage.headers,
-        topic: 'health-response',
+        topic: HEALTH_RESPONSE,
         type: 'CreateHealthResponse',
         correlationId: typedMessage.headers.correlationId,
       },
       payload: state,
     };
 
-    if (isHealthMessageResponse(responseMessage)) {
+    if (IsHealthMessageResponse(responseMessage)) {
       await this.producerService.sendMessage(responseMessage);
     } else {
       throw new Error('[USER SERVICE] Malformed Health Response');

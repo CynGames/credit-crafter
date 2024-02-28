@@ -5,15 +5,12 @@ import {
 } from '@nestjs/common';
 import { Consumer, Kafka } from 'kafkajs';
 import {
+  HEALTH_RESPONSE,
+  IsHealthMessageResponse,
+  PayloadTypeExtractor,
   ServerStatus,
   ServerStatusPayload,
-  SpecificMessage,
-} from '../dto/generic.dto';
-import {
-  isEmptyMessage,
-  isHealthMessageResponse,
-  payloadTypeExtractor,
-} from '../dto/type.guards';
+} from '../dto/types-dto-constants';
 
 @Injectable()
 export class HealthService implements OnModuleInit, OnApplicationShutdown {
@@ -41,7 +38,7 @@ export class HealthService implements OnModuleInit, OnApplicationShutdown {
 
     await this.consumer.connect();
     await this.consumer.subscribe({
-      topic: 'health-response',
+      topic: HEALTH_RESPONSE,
     });
 
     await this.initResponseListener();
@@ -53,9 +50,9 @@ export class HealthService implements OnModuleInit, OnApplicationShutdown {
         console.log('[API GATEWAY] Received Health Response');
 
         const parsedMessage = JSON.parse(message.value.toString());
-        const typedMessage = payloadTypeExtractor(parsedMessage);
+        const typedMessage = PayloadTypeExtractor(parsedMessage);
 
-        if (isHealthMessageResponse(typedMessage)) {
+        if (IsHealthMessageResponse(typedMessage)) {
           console.log('Health Response Received');
           const { headers, payload } = typedMessage;
           const handler = this.responseHandlers.get(headers.correlationId);
