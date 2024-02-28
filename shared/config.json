@@ -1,0 +1,82 @@
+{
+  "api-gateway": {
+    "dto-types": [
+      "GenericMessage",
+      "ServerStatusPayload",
+      "ServerStatus"
+    ],
+    "message-topics": [
+      "RESPONSE_TO_API_GATEWAY",
+      "HEALTH_REQUEST",
+      "HEALTH_RESPONSE"
+    ],
+    "message-types": [
+      "MessageType",
+      "EmptyMessage",
+      "SpecificMessage",
+      "HealthMessageRequest",
+      "HealthMessageResponse"
+    ],
+    "type-guard-functions": [
+      "IsEmptyMessage",
+      "IsHealthMessageResponse",
+      "IsHealthMessageRequest"
+    ],
+    "utility-functions": [
+      "PayloadTypeExtractor",
+      "GenerateUniqueId"
+    ]
+  },
+  "user": {
+    "dto-types": [
+      "GenericMessage",
+      "ServerStatus"
+    ],
+    "message-topics": [
+      "HEALTH_REQUEST",
+      "HEALTH_RESPONSE"
+    ],
+    "message-types": [
+      "MessageType",
+      "EmptyMessage",
+      "SpecificMessage",
+      "HealthMessageRequest",
+      "HealthMessageResponse"
+    ],
+    "type-guard-functions": [
+      "IsEmptyMessage",
+      "IsHealthMessageResponse",
+      "IsHealthMessageRequest"
+    ],
+    "utility-functions": [
+      "PayloadTypeExtractor",
+      "GenerateUniqueId"
+    ]
+  },
+  "loan": {
+    "dto-types": [
+      "GenericMessage",
+      "ServerStatus"
+    ],
+    "message-topics": [
+      "HEALTH_REQUEST",
+      "HEALTH_RESPONSE"
+    ],
+    "message-types": [
+      "MessageType",
+      "EmptyMessage",
+      "SpecificMessage",
+      "HealthMessageRequest",
+      "HealthMessageResponse"
+    ],
+    "type-guard-functions": [
+      "IsEmptyMessage",
+      "IsHealthMessageResponse",
+      "IsHealthMessageRequest"
+    ],
+    "utility-functions": [
+      "PayloadTypeExtractor",
+      "GenerateUniqueId"
+    ]
+  }
+}

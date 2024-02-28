@@ -6,9 +6,10 @@ import {
 import { Kafka } from 'kafkajs';
 import { AppService } from '../app.service';
 import {
-  isHealthMessageRequest,
-  payloadTypeExtractor,
-} from '../dto/type.guards';
+  HEALTH_REQUEST,
+  IsHealthMessageRequest,
+  PayloadTypeExtractor,
+} from '../dto/types-dto-constants';
 
 @Injectable()
 export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
@@ -25,7 +26,7 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
   });
 
   async onModuleInit() {
-    const topics = ['health-request'];
+    const topics = [HEALTH_REQUEST];
 
     await this.consumer.connect();
     await this.consumer.subscribe({ topics });
@@ -33,16 +34,16 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
     await this.consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         switch (topic) {
-          case 'health-request':
+          case HEALTH_REQUEST:
             console.log(
               '[USER SERVICE] Received message from health-check:' +
                 message.value.toString(),
             );
 
             const parsedMessage = JSON.parse(message.value.toString());
-            const typedMessage = payloadTypeExtractor(parsedMessage);
+            const typedMessage = PayloadTypeExtractor(parsedMessage);
 
-            if (isHealthMessageRequest(typedMessage)) {
+            if (IsHealthMessageRequest(typedMessage)) {
               await this.appService.handleHealthCheckResponse(typedMessage);
             }
             break;

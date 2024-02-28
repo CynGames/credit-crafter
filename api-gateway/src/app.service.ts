@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ProducerService } from './kafka/producer.service';
 import { HealthService } from './kafka/health.service';
-import { HealthMessageRequest, ServerStatusPayload } from './dto/generic.dto';
-import { generateUniqueId } from './utils/utils';
-import { isHealthMessageRequest } from './dto/type.guards';
+import {
+  GenerateUniqueId,
+  HEALTH_REQUEST,
+  HealthMessageRequest,
+  IsHealthMessageRequest,
+  ServerStatusPayload,
+} from './dto/types-dto-constants';
 
 @Injectable()
 export class AppService {
@@ -13,18 +17,18 @@ export class AppService {
   ) {}
 
   async createHealthRequestMessage(): Promise<ServerStatusPayload> {
-    const correlationId = generateUniqueId();
+    const correlationId = GenerateUniqueId();
 
     const message: HealthMessageRequest = {
       headers: {
-        topic: 'health-request',
+        topic: HEALTH_REQUEST,
         type: 'CreateHealthRequest',
         correlationId: correlationId,
       },
       payload: null,
     };
 
-    if (isHealthMessageRequest(message)) {
+    if (IsHealthMessageRequest(message)) {
       await this.producerService.sendMessage(message);
       return await this.healthService.waitForResponse(correlationId);
     }
