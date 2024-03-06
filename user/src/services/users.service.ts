@@ -14,7 +14,7 @@ export class UsersService {
         }
     }
 
-    async findOne(id: string){
+    async findOnebyId(id: string){
        try{
         const user = await this.repo.getById(id);
         return user;
@@ -23,6 +23,15 @@ export class UsersService {
        }
     }
 
+    async findOneByEmail(email:string){
+        try{
+            const user = await this.repo.getByEmail(email);
+            return user;
+        }
+        catch(error){
+            throw new Error(error.message);
+        }
+    }
 
 
 }
