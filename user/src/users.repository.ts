@@ -1,9 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { pool } from "./db/db-connection";
 import { UserDTO } from "./dtos/user-dto";
-import { createUserDTO } from "./dtos/create-user-dto";
-import { SaveUserDTO } from "./dtos/save-user-dto";
-import { response } from "express";
+import { CreateUserDTO } from "./dtos/create-user-dto";
+
 
 @Injectable()
 export class UsersRepository{
@@ -20,7 +19,7 @@ export class UsersRepository{
         , f.credit_score\
         , f.income\
         , f.expenses\
-        from user u\
+        from users u\
         inner join financial_data f \
         on u.financial_data_id = f.financial_data_id'
     
@@ -44,13 +43,12 @@ export class UsersRepository{
     }
 }
 
-async create(user: SaveUserDTO): Promise<String>{
-    const queryText = 'insert user(first_name, lastName, hashed_pass,\
+async create(user: CreateUserDTO): Promise<String>{
+    const queryText = 'insert users(first_name, lastName, hashed_pass,\
         email, address1, phone_number) values ($1, $2, $3, $4, $5, $6) returning user_id'
         const values = [
             user.firstName,
             user.lastName,
-            user.hashedPass,
             user.email,
             user.address,
             user.phoneNumber
@@ -64,7 +62,7 @@ async create(user: SaveUserDTO): Promise<String>{
 }
 async getById(user_id: string): Promise<UserDTO>{
     const queryText = 'u.select u.first_name, u.last_name, u.email, u.address1, u.phone_number, u.created_at, u.updated_at, f.credit_score, f.income, f.expenses\
-    from user u \
+    from users u \
     inner join financial_data f on u.financial_data_id = f.financial_data_id where user_id = $1'
     try{
        const result = await pool.query(queryText, [user_id]);
@@ -80,5 +78,8 @@ async getById(user_id: string): Promise<UserDTO>{
     }catch(error){
         throw new Error(`Error getting user: ${error.message}`);
     }
+}
+async getByEmailPass(email: string, hashed_pass: string){
+
 }
 }
