@@ -7,6 +7,9 @@ export type GenericMessage<T> = {
   };
   payload: T;
 };
+export type UserDto = {
+  name: string
+}
 export type ServerStatusPayload = {
   data: ServerStatus[];
 };

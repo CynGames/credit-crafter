@@ -2,6 +2,7 @@
   "api-gateway": {
     "dto-types": [
       "GenericMessage",
+      "UserDto",
       "ServerStatusPayload",
       "ServerStatus"
     ],
@@ -30,7 +31,8 @@
   "user": {
     "dto-types": [
       "GenericMessage",
-      "ServerStatus"
+      "ServerStatus",
+      "UserDto"
     ],
     "message-topics": [
       "HEALTH_REQUEST",

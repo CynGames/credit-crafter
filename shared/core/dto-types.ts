@@ -18,3 +18,7 @@ export type ServerStatus = {
   service: string;
   status: string;
 };
+
+export type UserDto = {
+  name: string
+}
