@@ -44,7 +44,7 @@ export class UsersRepository{
 }
 
 async create(user: CreateUserDTO): Promise<String>{
-    const queryText = 'insert users(first_name, lastName, hashed_pass,\
+    const queryText = 'insert into users(first_name, lastName, hashed_pass,\
         email, address1, phone_number) values ($1, $2, $3, $4, $5, $6) returning user_id'
         const values = [
             user.firstName,

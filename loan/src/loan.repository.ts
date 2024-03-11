@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { pool } from "./db/db-conection";
 import { LoanDTO } from "./dto/loan-dto";
 
@@ -53,7 +53,16 @@ export class LoanRepository{
         const queryText = 'select * from loan where loan_id = $1'
         try{
             const result = await pool.query(queryText, [loanId]);
-            
+            if(result.rows === null){
+                throw new NotFoundException('no user with that id');
+            }
+            const row = result.row[0];
+
+            const loan = new LoanDTO(row.loan_id, row.user_id, row.approved_by, row.amount, row.installment, row.next_installment_date,
+                row.end_date, row.loan_type, row.created_at, row.updated_at);
+            return loan;
+        }catch(error){ 
+            throw new Error(`Error getting loan: ${error.message}`)
         }
     }
 }
