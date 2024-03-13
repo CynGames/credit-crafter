@@ -30,7 +30,14 @@ export class AppService {
 
     if (IsHealthMessageRequest(message)) {
       await this.producerService.sendMessage(message);
-      return await this.healthService.waitForResponse(correlationId);
+
+      const responsesArray =
+        this.healthService.registerResponseHandler(correlationId);
+
+      return await this.healthService.waitForResponse(
+        correlationId,
+        responsesArray,
+      );
     }
 
     throw new Error('[API Gateway] Health Request Malformed');
