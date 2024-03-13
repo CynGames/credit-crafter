@@ -14,8 +14,8 @@ create table users (
     email varchar(256) unique not null,
     address1 varchar(256) not null,
     phone_number varchar(256) not null,
-    created_at timestamp not null,
-    updated_at timestamp not null,
+    created_at timestamp default current_timestamp not null,
+    updated_at timestamp default current_timestamp not null,
     financial_data_id uuid,
     constraint fk_financial_data_id foreign key (financial_data_id) references financial_data(financial_data_id) on delete cascade
 );

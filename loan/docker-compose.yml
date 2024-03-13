@@ -1,0 +1,20 @@
+services:
+
+  db:
+    container_name: loan_db
+    image: postgres:latest
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/db_data
+      - ./src/db/schemas/loan.sql:/docker-entrypoint-initdb.d/loan.sql
+    
+    ports:
+      - 3232:3232
+volumes:
+  db_data:
