@@ -15,6 +15,14 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
 
   private readonly producer = this.kafka.producer();
 
+  async onModuleInit() {
+    await this.producer.connect();
+  }
+
+  async onApplicationShutdown() {
+    await this.producer.disconnect();
+  }
+
   async sendMessage<T = any>(genericMessage: GenericMessage<T>) {
     const topic = genericMessage.headers.topic;
     const messages: { value: string }[] = [
@@ -33,13 +41,5 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
     });
 
     console.log(`[LOAN SERVICE PRODUCER] Message sent to ${topic}`);
-  }
-
-  async onModuleInit() {
-    await this.producer.connect();
-  }
-
-  async onApplicationShutdown() {
-    await this.producer.disconnect();
   }
 }

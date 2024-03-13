@@ -1,6 +1,3 @@
-# It should be auto-generated after running a command
-/src/dto/types-dto-constant.ts
-
 # compiled output
 /dist
 /node_modules

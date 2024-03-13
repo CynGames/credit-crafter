@@ -7,17 +7,13 @@ export type GenericMessage<T> = {
   };
   payload: T;
 };
-export type UserDto = {
-  name: string
-}
-export type ServerStatusPayload = {
-  data: ServerStatus[];
-};
 export type ServerStatus = {
   service: string;
   status: string;
 };
-export const RESPONSE_TO_API_GATEWAY = 'response-to-api-gateway'
+export type UserDto = {
+  name: string
+}
 export const HEALTH_REQUEST = 'health-request'
 export const HEALTH_RESPONSE = 'health-response'
 export type MessageType =
