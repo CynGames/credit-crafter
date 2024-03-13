@@ -29,6 +29,9 @@ export class LoanRepository{
         }
    
     }
+    // async getLoanByUser(user_id: string): Promise<LoanDTO[]>{
+    //     const queryText = 'select * from loan'
+    // }
     async create(newLoan: CreateLoanDTO): Promise<string>{
         const queryText = 'insert into loan(user_id, approved_by, \
             amount, installment, next_installment_date, end_date, \
