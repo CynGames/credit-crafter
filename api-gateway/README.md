@@ -1,73 +1,32 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# API GATEWAY
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Authentication
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+User authentication (logging in with an email and a password) is not supported by the Firebase Admin SDK since that behaviour would be handled by the Firebase Authentication SDK in the frontend.
 
-## Description
+As a workaround, one can simulate the logging in and return a valid object with the token by sending a request to this URL:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
+```
+URL: https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=[API_KEY]
+Method: POST
+Body: {
+  "email": "user@example.com",
+  "password": "userPassword",
+  "returnSecureToken": true
+}
 ```
 
-## Running the app
+This will return a body similar to this:
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+{
+    "kind": "identitytoolkit#VerifyPasswordResponse",
+    "localId": "Q0ngJcdQ81OhiJYVCaQFcPQzAg42",
+    "email": "user@example.com",
+    "displayName": "",
+    "idToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjYwOWY4ZTMzN2ZjNzg1NTE0ZTExMGM2ZDg0N2Y0M2M3NDM1M2U0YWYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY3JlZGl0LWNyYWZ0ZXIiLCJhdWQiOiJjcmVkaXQtY3JhZnRlciIsImF1dGhfdGltZSI6MTcxMDM1MTA3OCwidXNlcl9pZCI6IlEwbmdKY2RRODFPaGlKWVZDYVFGY1BRekFnNDIiLCJzdWIiOiJRMG5nSmNkUTgxT2hpSllWQ2FRRmNQUXpBZzQyIiwiaWF0IjoxNzEwMzUxMDc4LCJleHAiOjE3MTAzNTQ2NzgsImVtYWlsIjoiZW1haWwzQGV4YW1wbGUuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImVtYWlsM0BleGFtcGxlLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.daveRdh4NX4EtZN74_Swze0MUYvr7ivNIGbGm2BKm4JeTHZEQJRm86ikuH-h8Edb18MTnhjfyVIJ7BjriQ98hFxK6bx6WQZk029PdmOklMhsHlukoZFU7Lfd-Phn49hLEq7Gvpd8F9OB4vw-dIwmnnjAFKnlr6Qwtpa3orOUDKRDTQX8fgdSBKY1QmQvh040nzDPpGsRnbDOkZWFyifevF4MMTiC_whUNAKDHVGZnlGsKSd4FDTl2scrqoZZUHQrZqRKrn4Fn2qXLaJHCG_a-dwLq2VRpBDVVslWIz_DIzDGANDee_gvC5ro6HubZdPY6rQ1uGg2HZgMBaXPhhuOMQ",
+    "registered": true,
+    "refreshToken": "AMf-vBw6Zqm4AGIf15Kx84LG48JBQ7vQdy_ufMZ0snxZ9G1dEqfm1o1kF3kikEQesAlNICEICiuSZfqAgGCFjNZPY9oN39hKbeUpL9GeYL-tw0KMSzT7j416yj3Cby7K195oM_GAzm6LERX_hYJcFmR-Z2jnYSMUHFbWf--eMHPcBS4Wiu6vmfncU4zkNu7Fv9psQ4DrftJwF9rWfYs1JUnYBAfqnOfv5g",
+    "expiresIn": "3600"
+}
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
