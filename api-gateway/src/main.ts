@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import * as admin from 'firebase-admin';
 import 'dotenv/config';
 import { ServiceAccount } from 'firebase-admin';
-import * as serviceAccount from './auth/serviceAccount.json';
+import * as serviceAccount from '../serviceAccount.json';
 
 const firebase_params: ServiceAccount = {
   projectId: serviceAccount.project_id,

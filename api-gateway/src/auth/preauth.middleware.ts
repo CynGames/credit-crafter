@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { ServiceAccount } from 'firebase-admin';
-import * as serviceAccount from './serviceAccount.json';
+import * as serviceAccount from '../../serviceAccount.json';
 
 const firebase_params: ServiceAccount = {
   projectId: serviceAccount.project_id,
