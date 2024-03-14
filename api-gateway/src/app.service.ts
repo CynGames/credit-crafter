@@ -7,7 +7,10 @@ import {
   HealthMessageRequest,
   IsHealthMessageRequest,
   ServerStatusPayload,
+  SpecificMessage,
+  UserRecord,
 } from './dto/types-dto-constants';
+import { AuthService } from './auth/auth.service';
 
 @Injectable()
 export class AppService {
@@ -24,6 +27,7 @@ export class AppService {
         topic: HEALTH_REQUEST,
         type: 'CreateHealthRequest',
         correlationId: correlationId,
+        userRecord: null,
       },
       payload: null,
     };

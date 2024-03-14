@@ -4,7 +4,10 @@
       "GenericMessage",
       "UserDto",
       "ServerStatusPayload",
-      "ServerStatus"
+      "ServerStatus",
+      "UserRecord",
+      "UserMetadata",
+      "UserInfo"
     ],
     "message-topics": [
       "RESPONSE_TO_API_GATEWAY",
@@ -16,7 +19,11 @@
       "EmptyMessage",
       "SpecificMessage",
       "HealthMessageRequest",
-      "HealthMessageResponse"
+      "HealthMessageResponse",
+      "AuthMessageRequest",
+      "AuthMessageResponse",
+      "CreateAuthRequest",
+      "CreateAuthResponse"
     ],
     "type-guard-functions": [
       "IsEmptyMessage",
@@ -32,7 +39,10 @@
     "dto-types": [
       "GenericMessage",
       "ServerStatus",
-      "UserDto"
+      "UserDto",
+      "UserRecord",
+      "UserMetadata",
+      "UserInfo"
     ],
     "message-topics": [
       "HEALTH_REQUEST",
@@ -43,7 +53,11 @@
       "EmptyMessage",
       "SpecificMessage",
       "HealthMessageRequest",
-      "HealthMessageResponse"
+      "HealthMessageResponse",
+      "AuthMessageRequest",
+      "AuthMessageResponse",
+      "CreateAuthRequest",
+      "CreateAuthResponse"
     ],
     "type-guard-functions": [
       "IsEmptyMessage",
@@ -58,7 +72,10 @@
   "loan": {
     "dto-types": [
       "GenericMessage",
-      "ServerStatus"
+      "ServerStatus",
+      "UserRecord",
+      "UserMetadata",
+      "UserInfo"
     ],
     "message-topics": [
       "HEALTH_REQUEST",
@@ -69,7 +86,11 @@
       "EmptyMessage",
       "SpecificMessage",
       "HealthMessageRequest",
-      "HealthMessageResponse"
+      "HealthMessageResponse",
+      "AuthMessageRequest",
+      "AuthMessageResponse",
+      "CreateAuthRequest",
+      "CreateAuthResponse"
     ],
     "type-guard-functions": [
       "IsEmptyMessage",
