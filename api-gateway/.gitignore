@@ -4,6 +4,10 @@
 # Personal
 PersonalNotes.md
 
+# Secrets
+.env
+serviceAccount.json
+
 # compiled output
 /dist
 /node_modules
