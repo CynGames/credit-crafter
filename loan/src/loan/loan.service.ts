@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { LoanRepository } from "./loan.repository";
-import { CreateLoanDTO } from "./dto/creaate-loan-dto";
-import { CreatePaymentDTO } from "./dto/create-payment-dto";
-import { PaymentDTO } from "./dto/payment-dto";
+import { CreateLoanDTO } from "./dtos/creaate-loan-dto";
+import { CreatePaymentDTO } from "./dtos/create-payment-dto";
+import { PaymentDTO } from "./dtos/payment-dto";
 
 
 @Injectable()

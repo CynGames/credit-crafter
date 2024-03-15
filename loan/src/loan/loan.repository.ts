@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { pool } from "./db/db-conection";
-import { LoanDTO } from "./dto/loan-dto";
-import { PaymentDTO } from "./dto/payment-dto";
-import { CreatePaymentDTO } from "./dto/create-payment-dto";
-import { CreateLoanDTO } from "./dto/creaate-loan-dto";
+import { pool } from "../db/db-conection";
+import { LoanDTO } from "./dtos/loan-dto";
+import { PaymentDTO } from "./dtos/payment-dto";
+import { CreatePaymentDTO } from "./dtos/create-payment-dto";
+import { CreateLoanDTO } from "./dtos/creaate-loan-dto";
 
 @Injectable()
 export class LoanRepository{

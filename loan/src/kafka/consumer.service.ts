@@ -9,7 +9,7 @@ import {
   HEALTH_REQUEST,
   IsHealthMessageRequest,
   PayloadTypeExtractor,
-} from '../dto/types-dto-constants';
+} from '../loan/dtos/types-dto-constants';
 
 @Injectable()
 export class ConsumerService implements OnModuleInit, OnApplicationShutdown {

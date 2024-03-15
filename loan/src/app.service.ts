@@ -6,7 +6,7 @@ import {
   HealthMessageResponse,
   IsHealthMessageResponse,
   ServerStatus,
-} from './dto/types-dto-constants';
+} from './loan/dtos/types-dto-constants';
 
 @Injectable()
 export class AppService {
