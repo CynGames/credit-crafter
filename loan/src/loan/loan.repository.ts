@@ -98,4 +98,20 @@ export class LoanRepository{
             throw new Error(`error getting payments: ${error.message}`)
         }
     }
+    async getLoansByUser(user_id: string): Promise<LoanDTO[]>{
+        const queryText = 'select * from loan where user_id = $1'
+
+        try{
+            const result = await pool.query(queryText, [user_id]);
+            if(result.rows === null){
+                throw new NotFoundException('no loans for that id');
+            }
+            const loans = result.rows.map((row)=>new LoanDTO(row.loan_id, user_id, row.approved_by, row.amount,
+                row.installments, row.next_installment_date, row.end_date, 
+                row.loan_type, row.created_at, row.updated_at));
+            return loans
+        }catch(error){
+            throw new Error(`Error getting loans: ${error.message}`);
+        }
+    }
 }

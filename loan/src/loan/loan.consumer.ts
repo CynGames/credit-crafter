@@ -42,7 +42,8 @@ import { log } from 'console';
                     await this.loanService.create(parsedMessage);
                 break;
                 case LOAN_FETCH_REQUEST:
-                    
+                    await this.loanService.getLoansByUser(message.value.toString());
+                    break;
                }
                 
             }

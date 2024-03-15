@@ -3,6 +3,7 @@ import { LoanRepository } from "./loan.repository";
 import { CreateLoanDTO } from "./dtos/creaate-loan-dto";
 import { CreatePaymentDTO } from "./dtos/create-payment-dto";
 import { PaymentDTO } from "./dtos/payment-dto";
+import { LoanDTO } from "./dtos/loan-dto";
 
 
 @Injectable()
@@ -39,6 +40,14 @@ export class LoanService{
             return payments;
         }catch(error){
             throw new Error(`${error.message}`)
+        }
+    }
+    async getLoansByUser(user_id:string){
+        try{
+            const loans: LoanDTO[] = await this.repo.getLoansByUser(user_id);
+            return loans;
+        }catch(error){
+            throw new Error(`${error.message}`);
         }
     }
 }

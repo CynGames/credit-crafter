@@ -64,6 +64,12 @@ export type GenericMessage<T> = {
   export type IdLoanPayload = {
     data: {id: string}
   }
+  export type UserIdLoanPayload = {
+    data: {id: string}
+  }
+  export type LoanIdPaymentsPayload = {
+    data: {id: string}
+  }
 
   export const RESPONSE_TO_API_GATEWAY = 'response-to-api-gateway'
   export const HEALTH_REQUEST = 'health-request'
