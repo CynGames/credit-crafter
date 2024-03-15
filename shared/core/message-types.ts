@@ -4,15 +4,35 @@ export type MessageType =
   | 'EmptyMessage'
   | 'CreateHealthRequest'
   | 'CreateHealthResponse'
-  | 'CreateAuthRequest'
-  | 'CreateAuthResponse';
+  | 'CreateUserRequest'
+  | 'CreateUserResponse'
+  | 'FetchEmailUser'
+  | 'FetchIdUser';
 
 export type SpecificMessage =
   | EmptyMessage
   | HealthMessageRequest
   | HealthMessageResponse
-  | AuthMessageRequest
-  | AuthMessageResponse;
+  | CreateUserRequest
+  | CreateUserResponse
+  | FetchEmailUser
+  | FetchIdUser;
+
+export type FetchEmailUser = GenericMessage<void> & {
+  headers: { type: 'FetchEmailUser' };
+}
+
+export type FetchIdUser = GenericMessage<void> & {
+  headers: { type: 'FetchIdUser' };
+}
+
+export type CreateUserRequest = GenericMessage<void> & {
+  headers: { type: 'CreateUserRequest' };
+}
+
+export type CreateUserResponse = GenericMessage<void> & {
+  headers: { type: 'CreateUserResponse' };
+}
 
 export type HealthMessageResponse = GenericMessage<ServerStatus> & {
   headers: { type: 'CreateHealthResponse' };
@@ -20,14 +40,6 @@ export type HealthMessageResponse = GenericMessage<ServerStatus> & {
 
 export type HealthMessageRequest = GenericMessage<void> & {
   headers: { type: 'CreateHealthRequest' };
-};
-
-export type AuthMessageResponse = GenericMessage<void> & {
-  headers: { type: 'CreateAuthResponse' };
-};
-
-export type AuthMessageRequest = GenericMessage<void> & {
-  headers: { type: 'CreateAuthRequest' };
 };
 
 export type EmptyMessage = GenericMessage<void> & {

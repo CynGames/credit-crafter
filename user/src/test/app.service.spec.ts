@@ -1,9 +1,9 @@
-import { AppService } from '../app.service';
+import { HealthService } from '../health/health.service';
 import { ProducerService } from '../kafka/producer.service';
 import {
   HEALTH_RESPONSE,
   HealthMessageRequest,
-} from '../dto/types-dto-constants';
+} from '../shared-definitions/types-dto-constants';
 
 jest.mock('../kafka/producer.service', () => ({
   ProducerService: jest.fn().mockImplementation(() => ({
@@ -12,14 +12,14 @@ jest.mock('../kafka/producer.service', () => ({
 }));
 
 describe('AppService', () => {
-  let appService: AppService;
+  let appService: HealthService;
   let mockProducerService: jest.Mocked<ProducerService>;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockProducerService = new ProducerService() as jest.Mocked<ProducerService>;
-    appService = new AppService(mockProducerService);
+    appService = new HealthService(mockProducerService);
   });
 
   it('should handle health check response correctly', async () => {

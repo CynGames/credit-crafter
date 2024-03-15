@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ProducerService } from './kafka/producer.service';
+import { ProducerService } from '../kafka/producer.service';
 import {
   HEALTH_RESPONSE,
   HealthMessageRequest,
   HealthMessageResponse,
   IsHealthMessageResponse,
   ServerStatus,
-} from './dto/types-dto-constants';
+} from '../shared-definitions/types-dto-constants';
 
 @Injectable()
-export class AppService {
+export class HealthService {
   constructor(private readonly producerService: ProducerService) {}
 
   async handleHealthCheckResponse(

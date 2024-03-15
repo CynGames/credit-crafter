@@ -1,31 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { IAuthService } from './interface/auth.service.interface';
-import { RegisterUserDto } from './dto/register-user.dto';
+import { IAuthService } from './interfaces/auth.service.interface';
+import { RegisterUserDto } from './dtos/register-user.dto';
 import * as admin from 'firebase-admin';
 
 @Injectable()
 export class AuthService implements IAuthService {
   async validateUser(token: string): Promise<any> {
-    const userRecord = await admin.auth().verifyIdToken(token);
-    const userData = await admin.auth().getUser(userRecord.uid);
+    try {
+      const userRecord = await admin.auth().verifyIdToken(token);
+      const userData = await admin.auth().getUser(userRecord.uid);
 
-    return { userData };
+      return { userData };
+    } catch (error) {
+      return { error: error };
+    }
   }
 
   async registerUser(registerUserDto: RegisterUserDto): Promise<any> {
-    const userRecord = await admin.auth().createUser({
-      email: registerUserDto.email,
-      password: registerUserDto.password,
-    });
+    try {
+      const userRecord = await admin.auth().createUser({
+        email: registerUserDto.email,
+        password: registerUserDto.password,
+      });
 
-    const db = admin.firestore();
-    const userRef = db.collection('users-auth').doc(userRecord.uid);
-    await userRef.set({
-      firstName: registerUserDto.firstName,
-      lastName: registerUserDto.lastName,
-      email: registerUserDto.email,
-    });
+      const db = admin.firestore();
+      const userRef = db.collection('users-auth').doc(userRecord.uid);
+      await userRef.set({
+        firstName: registerUserDto.firstName,
+        lastName: registerUserDto.lastName,
+        email: registerUserDto.email,
+      });
 
-    return { userId: userRecord.uid };
+      return { userId: userRecord.uid };
+    } catch (error) {
+      return { error: error };
+    }
   }
 }

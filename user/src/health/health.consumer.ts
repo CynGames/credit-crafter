@@ -4,24 +4,24 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
-import { AppService } from '../app.service';
+import { HealthService } from './health.service';
 import {
   HEALTH_REQUEST,
   IsHealthMessageRequest,
   PayloadTypeExtractor,
-} from '../dto/types-dto-constants';
+} from '../shared-definitions/types-dto-constants';
 
 @Injectable()
-export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
-  constructor(private readonly appService: AppService) {}
+export class HealthConsumer implements OnModuleInit, OnApplicationShutdown {
+  constructor(private readonly appService: HealthService) {}
 
   private readonly kafka = new Kafka({
     brokers: ['localhost:9092'],
-    clientId: 'credit-crafter-user',
+    clientId: 'credit-crafter-user-health',
   });
 
   private readonly consumer = this.kafka.consumer({
-    groupId: 'user-service-group',
+    groupId: 'user-health-service-group',
     sessionTimeout: 6000,
   });
 

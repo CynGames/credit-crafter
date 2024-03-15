@@ -5,18 +5,23 @@ import {
 } from '@nestjs/common';
 import { Consumer, Kafka } from 'kafkajs';
 import {
-  HEALTH_RESPONSE,
-  IsHealthMessageResponse,
   PayloadTypeExtractor,
-  ServerStatus,
   ServerStatusPayload,
-} from '../dto/types-dto-constants';
+  USER_CREATE_RESPONSE,
+  USER_FETCH_RESPONSE,
+} from '../shared-definitions/types-dto-constants';
+import {
+  UserCreatePayload,
+  UserCreateResponseDto,
+  UserFetchPayload,
+  UserFetchResponseDto,
+} from './user.controller';
 
 @Injectable()
-export class HealthService implements OnModuleInit, OnApplicationShutdown {
+export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
   private readonly kafka = new Kafka({
     brokers: ['localhost:9092'],
-    clientId: 'health-check-api',
+    clientId: 'user-api',
   });
 
   private consumer: Consumer;
@@ -27,7 +32,7 @@ export class HealthService implements OnModuleInit, OnApplicationShutdown {
 
   constructor() {
     this.consumer = this.kafka.consumer({
-      groupId: 'credit-crafter-health-check',
+      groupId: 'user-api-group',
       sessionTimeout: 6000,
     });
   }
@@ -36,7 +41,7 @@ export class HealthService implements OnModuleInit, OnApplicationShutdown {
     try {
       await this.consumer.connect();
       await this.consumer.subscribe({
-        topic: HEALTH_RESPONSE,
+        topics: [USER_CREATE_RESPONSE, USER_FETCH_RESPONSE],
       });
 
       await this.listenForMessages();
@@ -63,63 +68,80 @@ export class HealthService implements OnModuleInit, OnApplicationShutdown {
 
   public async processMessage(message: any) {
     try {
-      console.log('[API GATEWAY] Received Health Response');
+      console.log('[API GATEWAY] Received User Response');
       const parsedMessage = JSON.parse(message.value.toString());
       const typedMessage = PayloadTypeExtractor(parsedMessage);
 
-      if (IsHealthMessageResponse(typedMessage)) {
-        console.log('Health Response Received');
-        const { headers, payload } = typedMessage;
-        const handler = this.responseHandlers.get(headers.correlationId);
+      const { headers, payload } = typedMessage;
+      const handler = this.responseHandlers.get(headers.correlationId);
 
-        if (handler) {
-          console.log('[API GATEWAY] Handler found. Resolving promise...');
-          handler(payload);
-        }
+      if (handler) {
+        console.log('[API GATEWAY] Handler found. Resolving promise...');
+        handler(payload);
       }
     } catch (error) {
       console.error('Failed to process message: ', error);
     }
   }
 
-  public registerResponseHandler(correlationId: string) {
-    const responses: ServerStatus[] = [this.getCurrentServerStatus()];
+  public createUserHandler(correlationId: string): string {
+    let output = '';
 
     this.responseHandlers.set(correlationId, (response) => {
-      console.log('[API GATEWAY] Processing Health Response...');
-      responses.push(response);
+      console.log('[API GATEWAY] Processing Create User Response...');
+      output = response;
     });
 
-    return responses;
+    return output;
   }
 
-  public async waitForResponse(
+  public fetchUserHandler(correlationId: string): any[] {
+    const output = [];
+
+    this.responseHandlers.set(correlationId, (response) => {
+      console.log('[API GATEWAY] Processing Fetch User Response...');
+      output.push(response);
+    });
+
+    return output;
+  }
+
+  public async waitForCreateResponse(
     correlationId: string,
-    responses: ServerStatus[],
-  ): Promise<ServerStatusPayload> {
+    response: string,
+  ): Promise<UserCreatePayload> {
     console.log('[API GATEWAY] Waiting for response...');
-    console.log(responses);
+    console.log(response);
 
     return new Promise((resolve) => {
       const timeoutId = setTimeout(() => {
-        resolve({ data: responses });
+        resolve({ data: { status: 'Unable to Create' } });
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
-      }, 1000);
+      }, 3000);
 
-      if (responses.length >= 3) {
+      if (response) {
         clearTimeout(timeoutId);
-        resolve({ data: responses });
+        resolve({ data: { status: 'User Created' } });
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       }
     });
   }
 
-  private getCurrentServerStatus(): ServerStatus {
-    return {
-      service: 'API Gateway',
-      status: 'OK',
-    };
+  public async waitForFetchResponse(
+    correlationId: string,
+    responses: UserFetchResponseDto[],
+  ): Promise<UserFetchPayload> {
+    console.log('[API GATEWAY] Waiting for response...');
+    console.log(responses);
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ data: responses });
+        this.responseHandlers.delete(correlationId);
+        console.log('[API GATEWAY] Promised Resolved!');
+      }, 3000);
+    });
   }
 }

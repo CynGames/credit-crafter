@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { RequestUserDto } from '../dto/request-user.dto';
+import { RequestUserDto } from '../dtos/request-user.dto';
 import admin from 'firebase-admin';
 
 @Injectable()

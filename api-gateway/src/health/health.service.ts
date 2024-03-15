@@ -1,22 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { ProducerService } from './kafka/producer.service';
-import { HealthService } from './kafka/health.service';
+import { HealthConsumer } from './health.consumer';
+import { ProducerService } from '../kafka/producer.service';
 import {
   GenerateUniqueId,
   HEALTH_REQUEST,
   HealthMessageRequest,
   IsHealthMessageRequest,
   ServerStatusPayload,
-  SpecificMessage,
-  UserRecord,
-} from './dto/types-dto-constants';
-import { AuthService } from './auth/auth.service';
+} from '../shared-definitions/types-dto-constants';
 
 @Injectable()
-export class AppService {
+export class HealthService {
   constructor(
     private readonly producerService: ProducerService,
-    private readonly healthService: HealthService,
+    private readonly healthConsumer: HealthConsumer,
   ) {}
 
   async createHealthRequestMessage(): Promise<ServerStatusPayload> {
@@ -36,9 +33,9 @@ export class AppService {
       await this.producerService.sendMessage(message);
 
       const responsesArray =
-        this.healthService.registerResponseHandler(correlationId);
+        this.healthConsumer.registerResponseHandler(correlationId);
 
-      return await this.healthService.waitForResponse(
+      return await this.healthConsumer.waitForResponse(
         correlationId,
         responsesArray,
       );

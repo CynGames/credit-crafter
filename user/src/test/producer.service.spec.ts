@@ -1,4 +1,7 @@
-import { GenericMessage, ServerStatus } from '../dto/types-dto-constants';
+import {
+  GenericMessage,
+  ServerStatus,
+} from '../shared-definitions/types-dto-constants';
 
 const mockSend = jest.fn();
 

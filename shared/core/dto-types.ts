@@ -6,7 +6,7 @@ export type GenericMessage<T> = {
     type: MessageType;
     correlationId: string;
     offset?: string;
-    userRecord: UserRecord
+    userRecord: UserRecord;
   };
   payload: T;
 };
@@ -65,6 +65,10 @@ export type ServerStatus = {
   status: string;
 };
 
-export type UserDto = {
-  name: string
+export type EmailUserPayload = {
+  data: { email: string }
+}
+
+export type IdUserPayload = {
+  data: { id: string }
 }

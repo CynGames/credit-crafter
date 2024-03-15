@@ -1,4 +1,7 @@
-import { GenerateUniqueId, GenericMessage } from '../dto/types-dto-constants';
+import {
+  GenerateUniqueId,
+  GenericMessage,
+} from '../shared-definitions/types-dto-constants';
 import { ProducerService } from '../kafka/producer.service';
 
 jest.mock('kafkajs', () => ({
@@ -27,7 +30,8 @@ describe('ProducerService', () => {
       headers: {
         topic: 'test-request',
         type: 'CreateHealthRequest',
-        correlationId,
+        correlationId: correlationId,
+        userRecord: null,
       },
       payload: null,
     };

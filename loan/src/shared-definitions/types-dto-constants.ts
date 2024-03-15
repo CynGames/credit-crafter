@@ -4,7 +4,7 @@ export type GenericMessage<T> = {
     type: MessageType;
     correlationId: string;
     offset?: string;
-    userRecord: UserRecord
+    userRecord: UserRecord;
   };
   payload: T;
 };
@@ -12,9 +12,6 @@ export type ServerStatus = {
   service: string;
   status: string;
 };
-export type UserDto = {
-  name: string
-}
 export type UserRecord = {
   uid: string;
   email?: string;
@@ -51,8 +48,10 @@ export type MessageType =
   | 'EmptyMessage'
   | 'CreateHealthRequest'
   | 'CreateHealthResponse'
-  | 'CreateAuthRequest'
-  | 'CreateAuthResponse';
+  | 'CreateUserRequest'
+  | 'CreateUserResponse'
+  | 'FetchEmailUser'
+  | 'FetchIdUser';
 export type EmptyMessage = GenericMessage<void> & {
   headers: { type: 'EmptyMessage' };
 };
@@ -60,19 +59,15 @@ export type SpecificMessage =
   | EmptyMessage
   | HealthMessageRequest
   | HealthMessageResponse
-  | AuthMessageRequest
-  | AuthMessageResponse;
+  | CreateUserRequest
+  | CreateUserResponse
+  | FetchEmailUser
+  | FetchIdUser;
 export type HealthMessageRequest = GenericMessage<void> & {
   headers: { type: 'CreateHealthRequest' };
 };
 export type HealthMessageResponse = GenericMessage<ServerStatus> & {
   headers: { type: 'CreateHealthResponse' };
-};
-export type AuthMessageRequest = GenericMessage<void> & {
-  headers: { type: 'CreateAuthRequest' };
-};
-export type AuthMessageResponse = GenericMessage<void> & {
-  headers: { type: 'CreateAuthResponse' };
 };
 export function IsEmptyMessage(
   message: SpecificMessage,

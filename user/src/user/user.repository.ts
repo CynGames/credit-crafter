@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { pool } from './db/db-connection';
-import { UserDTO } from './dto/user-dto';
-import { CreateUserDTO } from './dto/create-user-dto';
+import { pool } from '../db/db-connection';
+import { UserDTO } from './dtos/user-dto';
+import { CreateUserDTO } from './dtos/create-user-dto';
 
 @Injectable()
-export class UsersRepository {
+export class UserRepository {
   async getUsers(): Promise<UserDTO[]> {
     const queryText =
       'select \
@@ -48,9 +48,15 @@ export class UsersRepository {
   }
 
   async create(user: CreateUserDTO): Promise<string> {
-    const queryText =
-      'insert into users(first_name, lastName, hashed_pass,\
-        email, address1, phone_number) values ($1, $2, $3, $4, $5, $6) returning user_id';
+    const queryText = `
+    INSERT INTO users (
+      first_name,
+      last_name,
+      email,
+      address1,
+      phone_number
+    ) VALUES ($1, $2, $3, $4, $5) RETURNING user_id;
+  `;
     const values = [
       user.firstName,
       user.lastName,
@@ -58,13 +64,15 @@ export class UsersRepository {
       user.address,
       user.phoneNumber,
     ];
+
     try {
       const result = await pool.query(queryText, values);
       return result.rows[0].user_id;
     } catch (error) {
-      throw new Error(`error creating user: ${error.message}`);
+      throw new Error(`Error creating user: ${error.message}`);
     }
   }
+
   async getById(user_id: string): Promise<UserDTO> {
     const queryText =
       'select u.first_name, u.last_name, u.email, u.address1, u.phone_number, u.created_at, u.updated_at, f.credit_score, f.income, f.expenses\

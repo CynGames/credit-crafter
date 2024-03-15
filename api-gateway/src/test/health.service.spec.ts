@@ -1,5 +1,8 @@
-import { HEALTH_RESPONSE, ServerStatus } from '../dto/types-dto-constants';
-import { HealthService } from '../kafka/health.service';
+import {
+  HEALTH_RESPONSE,
+  ServerStatus,
+} from '../shared-definitions/types-dto-constants';
+import { HealthConsumer } from '../health/health.consumer';
 
 jest.mock('kafkajs', () => ({
   Kafka: jest.fn(() => ({
@@ -14,15 +17,15 @@ jest.mock('kafkajs', () => ({
   })),
 }));
 
-describe('HealthService', () => {
-  let healthService: HealthService;
+describe('HealthConsumer', () => {
+  let healthConsumer: HealthConsumer;
 
   beforeEach(async () => {
     jest.clearAllMocks();
     jest.useFakeTimers({ advanceTimers: true });
 
-    healthService = new HealthService();
-    await healthService.onModuleInit();
+    healthConsumer = new HealthConsumer();
+    await healthConsumer.onModuleInit();
   });
 
   afterEach(async () => {
@@ -32,13 +35,15 @@ describe('HealthService', () => {
   it('should aggregate health responses correctly', async () => {
     const correlationId = 'test-correlation-id';
     const testResponse: ServerStatus = { service: 'UserService', status: 'OK' };
-    const responsesArray = healthService.registerResponseHandler(correlationId);
+    const responsesArray =
+      healthConsumer.registerResponseHandler(correlationId);
     const mockMessage = {
       value: JSON.stringify({
         headers: {
           topic: HEALTH_RESPONSE,
           type: 'CreateHealthResponse',
-          correlationId,
+          correlationId: correlationId,
+          userRecord: null,
         },
         payload: testResponse,
       }),
@@ -50,7 +55,7 @@ describe('HealthService', () => {
       message: mockMessage,
     });
 
-    const result = await healthService.waitForResponse(
+    const result = await healthConsumer.waitForResponse(
       correlationId,
       responsesArray,
     );

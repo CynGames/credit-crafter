@@ -1,4 +1,21 @@
-import { EmptyMessage, HealthMessageRequest, HealthMessageResponse, SpecificMessage } from './message-types';
+import {
+  EmptyMessage, FetchEmailUser, FetchIdUser,
+  HealthMessageRequest,
+  HealthMessageResponse,
+  SpecificMessage,
+} from './message-types';
+
+export function IsUserEmailFetchMessage(
+  message: SpecificMessage,
+): message is FetchEmailUser {
+  return message.headers.type === 'FetchEmailUser';
+}
+
+export function IsUserIdFetchMessage(
+  message: SpecificMessage,
+): message is FetchIdUser {
+  return message.headers.type === 'FetchIdUser';
+}
 
 export function IsHealthMessageResponse(
   message: SpecificMessage,

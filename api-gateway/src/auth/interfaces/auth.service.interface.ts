@@ -1,4 +1,4 @@
-import { RegisterUserDto } from '../dto/register-user.dto';
+import { RegisterUserDto } from '../dtos/register-user.dto';
 
 export interface IAuthService {
   validateUser(token: string): Promise<any>;
