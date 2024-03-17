@@ -3,10 +3,12 @@ create
 
 create table financial_data
 (
-    financial_data_id uuid default uuid_generate_v4() primary key unique not null,
+    financial_data_id varchar primary key unique          not null,
     credit_score      integer,
     income            numeric(15, 2),
-    expenses          numeric(15, 2)
+    expenses          numeric(15, 2),
+    created_at        timestamp default current_timestamp not null,
+    updated_at        timestamp default current_timestamp not null
 );
 
 create table users
@@ -17,6 +19,6 @@ create table users
     email             varchar(256) unique                 not null,
     created_at        timestamp default current_timestamp not null,
     updated_at        timestamp default current_timestamp not null,
-    financial_data_id uuid,
+    financial_data_id varchar,
     constraint fk_financial_data_id foreign key (financial_data_id) references financial_data (financial_data_id) on delete cascade
 );

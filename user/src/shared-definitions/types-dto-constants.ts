@@ -15,32 +15,41 @@ export type ServerStatus = {
 export type UserRecord = {
   uid: string;
   email?: string;
-  // emailVerified: boolean;
-  // displayName?: string;
-  // photoURL?: string;
-  // phoneNumber?: string;
-  disabled: boolean;
+  emailVerified?: boolean;
+  displayName?: string;
+  photoURL?: string;
+  phoneNumber?: string;
+  disabled?: boolean;
   metadata: UserMetadata;
   providerData: UserInfo[];
-  // passwordHash?: string;
-  // passwordSalt?: string;
-  // customClaims?: { [key: string]: any; };
-  // tenantId?: string | null;
-  // tokensValidAfterTime?: string;
-  // multiFactor?: MultiFactorSettings;
+  passwordHash?: string;
+  passwordSalt?: string;
+  customClaims?: { [key: string]: any; };
+  tenantId?: string | null;
+  tokensValidAfterTime?: string;
+  multiFactor?: MultiFactorSettings;
 }
 type UserMetadata = {
-  creationTime: string;
-  lastSignInTime: string;
+  creationTime?: string;
+  lastSignInTime?: string;
   lastRefreshTime?: string | null;
 }
-type UserInfo = {
+export type MultiFactorSettings = {
+  enrolledFactors: MultiFactorInfo[];
+}
+export type MultiFactorInfo = {
   readonly uid: string;
-  readonly displayName: string;
-  readonly email: string;
-  readonly photoURL: string;
-  readonly providerId: string;
-  readonly phoneNumber: string;
+  readonly displayName?: string;
+  readonly factorId: string;
+  readonly enrollmentTime?: string;
+}
+type UserInfo = {
+  readonly uid?: string;
+  readonly displayName?: string;
+  readonly email?: string;
+  readonly photoURL?: string;
+  readonly providerId?: string;
+  readonly phoneNumber?: string;
 }
 export type EmailUserPayload = {
   data: { email: string }
@@ -59,20 +68,29 @@ export type FinancialDTO = {
   income: string;
   expenses: string;
 }
-export const HEALTH_REQUEST = 'health-request'
-export const HEALTH_RESPONSE = 'health-response'
-export const USER_CREATE_REQUEST = 'user-create-request'
-export const USER_CREATE_RESPONSE = 'user-create-response'
-export const USER_FETCH_REQUEST = 'user-fetch-request'
-export const USER_FETCH_RESPONSE = 'user-fetch-response'
+export const HEALTH_REQUEST = 'health-request';
+export const HEALTH_RESPONSE = 'health-response';
+export const USER_CREATE_REQUEST = 'user-create-request';
+export const USER_CREATE_RESPONSE = 'user-create-response';
+export const USER_FETCH_REQUEST = 'user-fetch-request';
+export const USER_FETCH_RESPONSE = 'user-fetch-response';
+export const FINANCIAL_DATA_CREATE_REQUEST = 'financial-data-create-request';
+export const FINANCIAL_DATA_CREATE_RESPONSE = 'financial-data-create-response';
+export const FINANCIAL_DATA_FETCH_REQUEST = 'financial-data-fetch-request';
+export const FINANCIAL_DATA_FETCH_RESPONSE = 'financial-data-fetch-response';
 export type MessageType =
   | 'EmptyMessage'
   | 'CreateHealthRequest'
   | 'CreateHealthResponse'
   | 'CreateUserRequest'
   | 'CreateUserResponse'
+  | 'FetchUsers'
   | 'FetchEmailUser'
-  | 'FetchIdUser';
+  | 'FetchIdUser'
+  | 'CreateFinancialDataRequest'
+  | 'CreateFinancialDataResponse'
+  | 'FetchFinancialDataResponse'
+  | 'FetchFinancialDataRequest';
 export type EmptyMessage = GenericMessage<void> & {
   headers: { type: 'EmptyMessage' };
 };
@@ -82,8 +100,13 @@ export type SpecificMessage =
   | HealthMessageResponse
   | CreateUserRequest
   | CreateUserResponse
+  | FetchUsers
   | FetchEmailUser
-  | FetchIdUser;
+  | FetchIdUser
+  | CreateFinancialDataRequest
+  | CreateFinancialDataResponse
+  | FetchFinancialDataResponse
+  | FetchFinancialDataRequest;
 export type HealthMessageRequest = GenericMessage<void> & {
   headers: { type: 'CreateHealthRequest' };
 };
@@ -96,11 +119,26 @@ export type CreateUserRequest = GenericMessage<void> & {
 export type CreateUserResponse = GenericMessage<void> & {
   headers: { type: 'CreateUserResponse' };
 }
+export type FetchUsers = GenericMessage<void> & {
+  headers: { type: 'FetchUsers' };
+}
 export type FetchEmailUser = GenericMessage<void> & {
   headers: { type: 'FetchEmailUser' };
 }
 export type FetchIdUser = GenericMessage<void> & {
   headers: { type: 'FetchIdUser' };
+}
+export type CreateFinancialDataRequest = GenericMessage<void> & {
+  headers: { type: 'CreateFinancialDataRequest' };
+}
+export type CreateFinancialDataResponse = GenericMessage<void> & {
+  headers: { type: 'CreateFinancialDataResponse' };
+}
+export type FetchFinancialDataRequest = GenericMessage<void> & {
+  headers: { type: 'FetchFinancialDataRequest' };
+}
+export type FetchFinancialDataResponse = GenericMessage<void> & {
+  headers: { type: 'FetchFinancialDataResponse' };
 }
 export function IsEmptyMessage(
   message: SpecificMessage,

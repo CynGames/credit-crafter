@@ -10,12 +10,6 @@ export class CreateUserDTO {
   @IsString()
   last_name: string;
 
-  @IsString()
-  phone_number: string;
-
-  @IsString()
-  address: string;
-
   @IsEmail()
   email: string;
 }

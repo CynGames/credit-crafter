@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDTO } from 'src/user/dtos/create-user-dto';
 import { UserRepository } from 'src/user/user.repository';
 import { ProducerService } from '../kafka/producer.service';
 import {
   GenericMessage,
   SpecificMessage,
+  USER_CREATE_RESPONSE,
   USER_FETCH_RESPONSE,
+  UserDTO,
 } from '../shared-definitions/types-dto-constants';
+import { CreateUserDTO } from './dtos/create-user-dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -14,57 +16,105 @@ export class UserService {
     private readonly producerService: ProducerService,
   ) {}
 
-  async create(requestMessage: SpecificMessage): Promise<any> {
+  async findAllUsers(requestMessage: GenericMessage<any>) {
     try {
-      const { providerData, email } = requestMessage.headers.userRecord;
-      // const {} = providerData;
-
       const { userRecord, correlationId } = requestMessage.headers;
-
-      const user: CreateUserDTO = {
-        user_id: userRecord.uid,
-        email: userRecord.email,
-        first_name: 'firstName',
-        last_name: 'lastName',
-        address: 'some address',
-        phone_number: 'some phone',
-      };
-
-      const userId = await this.repo.create(user);
+      const users = await this.repo.getUsers();
 
       const message: GenericMessage<any> = {
         headers: {
-          type: 'CreateUserResponse',
+          type: 'FetchUsers',
           topic: USER_FETCH_RESPONSE,
           correlationId: correlationId,
           userRecord: userRecord,
         },
         payload: {
-          data: { userId: userId },
+          data: users,
         },
       };
 
       return await this.producerService.sendMessage(message);
-
-      // return userId;
     } catch (error) {
       throw new Error(error.message);
     }
   }
 
-  async findOneById(id: string) {
+  async createUser(requestMessage: GenericMessage<any>): Promise<any> {
     try {
-      const user = await this.repo.getById(id);
-      return user;
+      const { userRecord, correlationId } = requestMessage.headers;
+
+      const user: CreateUserDTO = {
+        user_id: userRecord.id,
+        email: userRecord.email,
+        first_name: userRecord.firstName,
+        last_name: userRecord.lastName,
+      };
+
+      await this.repo.create(user);
+
+      const message: GenericMessage<any> = {
+        headers: {
+          type: 'CreateUserResponse',
+          topic: USER_CREATE_RESPONSE,
+          correlationId: correlationId,
+          userRecord: userRecord,
+        },
+        payload: {
+          data: { status: 'success' },
+        },
+      };
+
+      return await this.producerService.sendMessage(message);
     } catch (error) {
       throw new Error(error.message);
     }
   }
 
-  async findOneByEmail(email: string) {
+  async findOneById(requestMessage: GenericMessage<any>) {
     try {
-      const user = await this.repo.getByEmail(email);
-      return user;
+      const { userRecord, correlationId } = requestMessage.headers;
+      const { data } = requestMessage.payload;
+
+      const user = [await this.repo.getById(data.id)];
+
+      const message: GenericMessage<any> = {
+        headers: {
+          type: 'FetchIdUser',
+          topic: USER_FETCH_RESPONSE,
+          correlationId: correlationId,
+          userRecord: userRecord,
+        },
+        payload: {
+          data: user,
+        },
+      };
+
+      return await this.producerService.sendMessage(message);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async findOneByEmail(requestMessage: GenericMessage<any>) {
+    try {
+      const { userRecord, correlationId } = requestMessage.headers;
+      const { data } = requestMessage.payload;
+
+      const user = [await this.repo.getByEmail(data.email)];
+
+      const message: GenericMessage<any> = {
+        headers: {
+          type: 'FetchEmailUser',
+          topic: USER_FETCH_RESPONSE,
+          correlationId: correlationId,
+          userRecord: userRecord,
+        },
+        payload: {
+          data: user,
+        },
+      };
+
+      return await this.producerService.sendMessage(message);
     } catch (error) {
       throw new Error(error.message);
     }

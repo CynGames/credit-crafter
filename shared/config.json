@@ -5,8 +5,11 @@
       "UserDto",
       "ServerStatusPayload",
       "ServerStatus",
+      "UserCreatePayload",
       "UserRecord",
       "UserMetadata",
+      "MultiFactorSettings",
+      "MultiFactorInfo",
       "UserInfo",
       "EmailUserPayload",
       "IdUserPayload",
@@ -20,7 +23,11 @@
       "USER_CREATE_REQUEST",
       "USER_CREATE_RESPONSE",
       "USER_FETCH_REQUEST",
-      "USER_FETCH_RESPONSE"
+      "USER_FETCH_RESPONSE",
+      "FINANCIAL_DATA_CREATE_REQUEST",
+      "FINANCIAL_DATA_CREATE_RESPONSE",
+      "FINANCIAL_DATA_FETCH_REQUEST",
+      "FINANCIAL_DATA_FETCH_RESPONSE"
     ],
     "message-types": [
       "MessageType",
@@ -30,8 +37,13 @@
       "HealthMessageResponse",
       "CreateUserRequest",
       "CreateUserResponse",
+      "FetchUsers",
       "FetchEmailUser",
-      "FetchIdUser"
+      "FetchIdUser",
+      "CreateFinancialDataRequest",
+      "CreateFinancialDataResponse",
+      "FetchFinancialDataResponse",
+      "FetchFinancialDataRequest"
     ],
     "type-guard-functions": [
       "IsEmptyMessage",
@@ -52,6 +64,8 @@
       "UserDto",
       "UserRecord",
       "UserMetadata",
+      "MultiFactorSettings",
+      "MultiFactorInfo",
       "UserInfo",
       "EmailUserPayload",
       "IdUserPayload",
@@ -64,7 +78,11 @@
       "USER_CREATE_REQUEST",
       "USER_CREATE_RESPONSE",
       "USER_FETCH_REQUEST",
-      "USER_FETCH_RESPONSE"
+      "USER_FETCH_RESPONSE",
+      "FINANCIAL_DATA_CREATE_REQUEST",
+      "FINANCIAL_DATA_CREATE_RESPONSE",
+      "FINANCIAL_DATA_FETCH_REQUEST",
+      "FINANCIAL_DATA_FETCH_RESPONSE"
     ],
     "message-types": [
       "MessageType",
@@ -74,8 +92,13 @@
       "HealthMessageResponse",
       "CreateUserRequest",
       "CreateUserResponse",
+      "FetchUsers",
       "FetchEmailUser",
-      "FetchIdUser"
+      "FetchIdUser",
+      "CreateFinancialDataRequest",
+      "CreateFinancialDataResponse",
+      "FetchFinancialDataRequest",
+      "FetchFinancialDataResponse"
     ],
     "type-guard-functions": [
       "IsEmptyMessage",
@@ -94,7 +117,10 @@
       "GenericMessage",
       "ServerStatus",
       "UserRecord",
+      "UserCreatePayload",
       "UserMetadata",
+      "MultiFactorSettings",
+      "MultiFactorInfo",
       "UserInfo"
     ],
     "message-topics": [

@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import * as admin from 'firebase-admin';
 import { HttpService } from '@nestjs/axios';
 import { UserService } from '../user/user.service';
-import { UserDTO, UserRecord } from '../shared-definitions/types-dto-constants';
-import { RegisterUserDto } from './dtos/register-user.dto';
+import {
+  UserCreatePayload,
+  UserDTO,
+} from '../shared-definitions/types-dto-constants';
+import { RegisterUserDTO } from './dtos/register-user-d-t.o';
+import * as admin from 'firebase-admin';
+import { LoginUserDTO } from './dtos/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,14 +16,14 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async login(loginDto: any): Promise<any> {
+  async login(loginDTO: LoginUserDTO): Promise<any> {
     const URL =
       'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
 
     const body = {
-      email: loginDto.email,
-      password: loginDto.password,
-      returnSecureToken: loginDto.returnSecureToken,
+      email: loginDTO.email,
+      password: loginDTO.password,
+      returnSecureToken: loginDTO.returnSecureToken,
     };
 
     const headers = {
@@ -29,32 +33,21 @@ export class AuthService {
     return await this.httpService.axiosRef.post(URL, body, headers);
   }
 
-  async register(registerDto: RegisterUserDto): Promise<any> {
+  async register(registerDTO: RegisterUserDTO): Promise<UserCreatePayload> {
     const userRecord = await admin.auth().createUser({
-      email: registerDto.email,
-      password: registerDto.password,
+      email: registerDTO.email,
+      password: registerDTO.password,
     });
 
-    const userTest: UserDTO = {
+    const userDTO: UserDTO = {
       id: userRecord.uid,
-      firstName: registerDto.firstName,
-      lastName: registerDto.lastName,
-      email: registerDto.email,
+      firstName: registerDTO.firstName,
+      lastName: registerDTO.lastName,
+      email: registerDTO.email,
     };
 
-    await this.userService.createUser(userTest);
+    const result = await this.userService.createUser(userDTO);
 
-    return userTest;
-  }
-
-  async validateUser(token: string): Promise<any> {
-    try {
-      const userRecord = await admin.auth().verifyIdToken(token);
-      const userData = await admin.auth().getUser(userRecord.uid);
-
-      return { userData };
-    } catch (error) {
-      return { error: error };
-    }
+    return { data: { success: result, user: userDTO } };
   }
 }
