@@ -12,7 +12,6 @@ export class LoanService {
 
     async create(loandto: CreateLoanDTO) {
         try {
-            console.log("in loan service: \n");
             const loan_id = await this.repo.create(loandto);
             return loan_id;
         } catch (error) {

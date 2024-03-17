@@ -34,10 +34,12 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
       payload: {
         data: { 
           status: 'success', 
-          id: createdId
+          id: createdId,
       }
       }
     };
+    console.log("producer message: "+ message);
+    
     return await this.sendMessage(message);
   }
 

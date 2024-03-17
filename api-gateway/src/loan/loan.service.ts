@@ -26,6 +26,7 @@ export class LoanService {
         private readonly loanConsumer: LoanConsumer){}
     
     async createLoan(loan: CreateLoanDTO, user: UserRecord){
+       
         loan.user_id = user.uid;
         const correlationId = GenerateUniqueId();
         
@@ -40,10 +41,12 @@ export class LoanService {
         };
 
         await this.producerService.sendMessage(message);
-        const response = this.loanConsumer.createLoanHandler(correlationId);
-        return await this.loanConsumer.waitForCreateResponse(
+        const waitResponse = await this.loanConsumer.waitForCreateResponse(
             correlationId,
-            response,
         );
-    }
+        console.log("[API-GATEWAY][SERVICE]response: "+ waitResponse);
+        return waitResponse;
+        
+        }
+
 }

@@ -43,13 +43,19 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
 
         await this.consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
-                console.log("LOAN_CONSUMER"+ topic);
+                console.log("[LOAN_CONSUMER] "+ topic);
                 switch (topic) {
-                    case LOAN_CREATE_REQUEST:
+                    case LOAN_CREATE_REQUEST: 
                         const parsedMessage = JSON.parse(message.value.toString());
-                        const loanId = await this.loanService.create(parsedMessage.payload);
-                        await this.producerService.constructResponse(parsedMessage.correlationId, parsedMessage.userRecord, 
-                            'CreateUserResponse', USER_CREATE_RESPONSE, loanId);
+                        console.log("message: ");
+                        
+                        console.log(parsedMessage);
+                        
+                        const loanId = await this.loanService.create(parsedMessage.payload); 
+                        console.log('LOANID: '+loanId);
+                                               
+                        await this.producerService.constructResponse(parsedMessage.headers.correlationId, parsedMessage.headers.userRecord, 
+                            'CreateLoanResponse', LOAN_CREATE_RESPONSE, loanId);
                             break;
                     case LOAN_FETCH_REQUEST:
                         // const loan: LoanDTO = await this.loanService.getLoansByUser(message.value.toString());

@@ -13,18 +13,9 @@ export class LoanController {
   @UseGuards(FirebaseAuthGuard)
   async create(@Req(){ user }: RequestUserDto, @Body() loan: CreateLoanDTO){
     try{
-    const loanId = this.loanService.createLoan(loan, user);
-    let response: any;
-    if(loanId){
-       response = {
-        message: "created",
-        loanId: loanId
-      }
-    }
-    else{
-      throw new Error('no loanId returned');
-    }
-    return response
+    const response = await this.loanService.createLoan(loan, user);
+    
+    return response.data
   }catch(error){
     return {
       message: "Error creating loan"
@@ -42,6 +33,7 @@ export type LoanCreatePayload = {
   
   export type LoanCreateResponseDto = {
     status: string;
+    id?: string
     error?: Error;
   };
   

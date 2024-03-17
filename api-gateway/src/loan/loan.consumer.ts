@@ -9,7 +9,8 @@ import {
     ServerStatusPayload,
     LOAN_CREATE_RESPONSE,
     LOAN_FETCH_RESPONSE,
-    PAYMENT_CREATE_RESPONSE
+    PAYMENT_CREATE_RESPONSE,
+    LOAN_FETCH_REQUEST
 
   } from '../dto/types-dto-constants';
 import { LoanCreatePayload } from './controller/loan.controller';
@@ -41,7 +42,7 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
         try {
             await this.consumer.connect();
             await this.consumer.subscribe({
-                topics: [LOAN_CREATE_RESPONSE, LOAN_FETCH_RESPONSE, PAYMENT_CREATE_RESPONSE],
+                topics: [LOAN_CREATE_RESPONSE, LOAN_FETCH_RESPONSE,PAYMENT_CREATE_RESPONSE],
             });
             await this.listenForMessages();
         } catch (error) {
@@ -67,9 +68,9 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
         try {
             console.log('[API GATEWAY] Received Loan Response');
             const parsedMessage = JSON.parse(message.value.toString());
-            const typedMessage = PayloadTypeExtractor(parsedMessage);
+            // const typedMessage = PayloadTypeExtractor(parsedMessage);
 
-            const { headers, payload } = typedMessage;
+            const { headers, payload } = parsedMessage;
             const handler = this.responseHandlers.get(headers.correlationId);
 
             if (handler) {
@@ -80,34 +81,34 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
             console.error('Failed to process message: ', error);
         }
     }
-    public createLoanHandler(correlationId: string): string {
-        let output = '';
+    public createLoanHandler(correlationId: string): LoanCreatePayload {
+        let output: LoanCreatePayload
 
         this.responseHandlers.set(correlationId, (response)=>{
             console.log('[API GATEWAY] processing Create Loan Response... ');
+            console.log(response);
+            
             output = response;
         });
         return output;
     }
     public async waitForCreateResponse(
         correlationId: string,
-        response: string,
     ): Promise<LoanCreatePayload> {
         console.log('[API GATEWAY] Waiting for response...');
-        console.log(response);
 
         return new Promise((resolve)=>{
             const timeoutId = setTimeout(()=>{
-                resolve({ data: {status: 'Unable to Create' } });
+                // resolve(response);
                 this.responseHandlers.delete(correlationId);
                 console.log('[API GATEWAY] Promised Resolved!');
             }, 3000);
-            if (response){
-                clearTimeout(timeoutId);
-                resolve({ data: { status: 'User Created'} });
-                this.responseHandlers.delete(correlationId);
-                console.log('[API GATEWAY] Promised Resolved!');
-            }
+            this.responseHandlers.set(correlationId, (response)=>{
+                console.log('[API GATEWAY] processing Create Loan Response... ');
+                console.log(response);
+                
+                resolve(response);
+            });
         })
         
         
