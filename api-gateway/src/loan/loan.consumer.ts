@@ -11,14 +11,17 @@ import {
     LOAN_FETCH_RESPONSE,
     PAYMENT_CREATE_RESPONSE
 
-  } from '../shared-definitions/types-dto-constants';
+  } from '../dto/types-dto-constants';
+import { LoanCreatePayload } from './controller/loan.controller';
+import { resolve } from 'path';
+import { clearTimeout } from 'timers';
 
 
 @Injectable()
 export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
     private readonly kafka = new Kafka({
-        brokers: ['localhost:9002'],
-        clientId: 'user-api',
+        brokers: ['localhost:9092'],
+        clientId: 'loan-api',
     });
 
     private consumer: Consumer;
@@ -76,5 +79,37 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
         } catch (error) {
             console.error('Failed to process message: ', error);
         }
+    }
+    public createLoanHandler(correlationId: string): string {
+        let output = '';
+
+        this.responseHandlers.set(correlationId, (response)=>{
+            console.log('[API GATEWAY] processing Create Loan Response... ');
+            output = response;
+        });
+        return output;
+    }
+    public async waitForCreateResponse(
+        correlationId: string,
+        response: string,
+    ): Promise<LoanCreatePayload> {
+        console.log('[API GATEWAY] Waiting for response...');
+        console.log(response);
+
+        return new Promise((resolve)=>{
+            const timeoutId = setTimeout(()=>{
+                resolve({ data: {status: 'Unable to Create' } });
+                this.responseHandlers.delete(correlationId);
+                console.log('[API GATEWAY] Promised Resolved!');
+            }, 3000);
+            if (response){
+                clearTimeout(timeoutId);
+                resolve({ data: { status: 'User Created'} });
+                this.responseHandlers.delete(correlationId);
+                console.log('[API GATEWAY] Promised Resolved!');
+            }
+        })
+        
+        
     }
 }

@@ -4,7 +4,8 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
-import { GenericMessage } from '../loan/dtos/types-dto-constants';
+
+import { MessageType, UserRecord, GenericMessage } from 'src/shared-definitions/types-dto-constants';
 
 @Injectable()
 export class ProducerService implements OnModuleInit, OnApplicationShutdown {
@@ -21,6 +22,23 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
 
   async onApplicationShutdown() {
     await this.producer.disconnect();
+  }
+  async constructResponse(correlationId: string, userRecord: UserRecord, type: MessageType, topic: string, createdId: string){
+    const message: GenericMessage<any> = {
+      headers: {
+        type: type,
+        topic: topic,
+        correlationId: correlationId,
+        userRecord: userRecord,
+      },
+      payload: {
+        data: { 
+          status: 'success', 
+          id: createdId
+      }
+      }
+    };
+    return await this.sendMessage(message);
   }
 
   async sendMessage<T = any>(genericMessage: GenericMessage<T>) {

@@ -33,13 +33,15 @@ export class LoanRepository{
     //     const queryText = 'select * from loan'
     // }
     async create(newLoan: CreateLoanDTO): Promise<string>{
-        const queryText = 'insert into loan(user_id, approved_by, \
-            amount, installment, next_installment_date, end_date, \
-            loan_type, created_at, updated_at) \
+        console.log("loanRepo:");
+        console.log(newLoan);
+             
+        const queryText = 'insert into loan(user_id, \
+            amount, installments, next_installment_date, end_date, \
+            loan_type) \
             values ($1, $2, $4, $5, $6) returning loan_id'
         const values = [
             newLoan.user_id,
-            newLoan.approved_by,
             newLoan.amount,
             newLoan.installments,
             newLoan.next_installment_date,
@@ -48,6 +50,8 @@ export class LoanRepository{
         ]
         try{
             const result = await pool.query(queryText, values);
+            console.log(result);
+            
             return result.rows[0].user_id;
         }catch(error){
             throw new Error(`Error creating loan: ${error.message}`);
