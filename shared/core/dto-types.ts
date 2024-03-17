@@ -6,10 +6,23 @@ export type GenericMessage<T> = {
     type: MessageType;
     correlationId: string;
     offset?: string;
-    userRecord: UserRecord;
+    userRecord: UserDTO | null;
   };
   payload: T;
 };
+
+export type UserDTO = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export type FinancialDTO = {
+  id: string;
+  income: string;
+  expenses: string;
+}
 
 export type UserRecord = {
   uid: string;
@@ -29,13 +42,13 @@ export type UserRecord = {
   // multiFactor?: MultiFactorSettings;
 }
 
-export type UserMetadata = {
+type UserMetadata = {
   creationTime: string;
   lastSignInTime: string;
   lastRefreshTime?: string | null;
 }
 
-export type UserInfo = {
+type UserInfo = {
   readonly uid: string;
   readonly displayName: string;
   readonly email: string;

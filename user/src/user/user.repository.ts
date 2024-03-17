@@ -12,11 +12,8 @@ export class UserRepository {
         , u.first_name\
         , u.last_name\
         , u.email\
-        , u.address1\
-        , u.phone_number\
         , u.created_at\
         , u.updated_at\
-        , f.credit_score\
         , f.income\
         , f.expenses\
         from users u\
@@ -48,28 +45,17 @@ export class UserRepository {
   }
 
   async create(user: CreateUserDTO): Promise<string> {
-    const queryText = `
-    INSERT INTO users (
-      first_name,
-      last_name,
-      email,
-      address1,
-      phone_number
-    ) VALUES ($1, $2, $3, $4, $5) RETURNING user_id;
-  `;
-    const values = [
-      user.firstName,
-      user.lastName,
-      user.email,
-      user.address,
-      user.phoneNumber,
-    ];
+    const queryText =
+      'insert into users(user_id, first_name, last_name, \
+        email) values ($1, $2, $3, $4) returning user_id';
+
+    const values = [user.user_id, user.first_name, user.last_name, user.email];
 
     try {
       const result = await pool.query(queryText, values);
       return result.rows[0].user_id;
     } catch (error) {
-      throw new Error(`Error creating user: ${error.message}`);
+      throw new Error(`error creating user: ${error.message}`);
     }
   }
 

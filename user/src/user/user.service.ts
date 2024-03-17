@@ -14,7 +14,7 @@ export class UserService {
     private readonly producerService: ProducerService,
   ) {}
 
-  async create(requestMessage: SpecificMessage): Promise<string> {
+  async create(requestMessage: SpecificMessage): Promise<any> {
     try {
       const { providerData, email } = requestMessage.headers.userRecord;
       // const {} = providerData;
@@ -22,17 +22,15 @@ export class UserService {
       const { userRecord, correlationId } = requestMessage.headers;
 
       const user: CreateUserDTO = {
-        firstName: 'firstName',
-        lastName: 'lastName',
-        email: email,
-        address: null,
-        phoneNumber: null,
+        user_id: userRecord.uid,
+        email: userRecord.email,
+        first_name: 'firstName',
+        last_name: 'lastName',
+        address: 'some address',
+        phone_number: 'some phone',
       };
 
-      console.log('POPIIIIIIIIIIIIIIIS');
-
       const userId = await this.repo.create(user);
-      console.log('POPOOOOOOOOOOOOOOOOOOOOO');
 
       const message: GenericMessage<any> = {
         headers: {
@@ -46,9 +44,9 @@ export class UserService {
         },
       };
 
-      await this.producerService.sendMessage(message);
+      return await this.producerService.sendMessage(message);
 
-      return userId;
+      // return userId;
     } catch (error) {
       throw new Error(error.message);
     }

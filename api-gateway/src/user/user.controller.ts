@@ -1,4 +1,4 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RequestUserDto } from '../auth/dtos/request-user.dto';
 import { FirebaseAuthGuard } from '../auth/guards/auth.guard';
@@ -8,7 +8,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('/create')
-  @UseGuards(FirebaseAuthGuard)
   async create(@Req() { user }: RequestUserDto): Promise<UserCreatePayload> {
     try {
       return await this.userService.createUser(user);
@@ -40,6 +39,32 @@ export class UserController {
       return await this.userService.fetchUserByEmail(user, email);
     } catch (error) {
       return { data: [{ status: 'error', error: error }] };
+    }
+  }
+
+  @Post('/data')
+  @UseGuards(FirebaseAuthGuard)
+  async createFinancialData(
+    @Req() { user }: RequestUserDto,
+    email: string,
+  ): Promise<any> {
+    try {
+      // return await this.userService.fetchUserByEmail(user, email);
+    } catch (error) {
+      // return { data: [{ status: 'error', error: error }] };
+    }
+  }
+
+  @Put('/data')
+  @UseGuards(FirebaseAuthGuard)
+  async updateFinancialData(
+    @Req() { user }: RequestUserDto,
+    email: string,
+  ): Promise<any> {
+    try {
+      // return await this.userService.fetchUserByEmail(user, email);
+    } catch (error) {
+      // return { data: [{ status: 'error', error: error }] };
     }
   }
 }

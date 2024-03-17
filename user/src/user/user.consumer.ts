@@ -45,6 +45,7 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
 
             break;
           case USER_FETCH_REQUEST:
+            // ??
             break;
           default:
             console.warn('Received message from unknown topic: ' + topic);

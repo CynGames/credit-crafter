@@ -6,13 +6,11 @@ import {
 import { Consumer, Kafka } from 'kafkajs';
 import {
   PayloadTypeExtractor,
-  ServerStatusPayload,
   USER_CREATE_RESPONSE,
   USER_FETCH_RESPONSE,
 } from '../shared-definitions/types-dto-constants';
 import {
   UserCreatePayload,
-  UserCreateResponseDto,
   UserFetchPayload,
   UserFetchResponseDto,
 } from './user.controller';
@@ -87,9 +85,9 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
   public createUserHandler(correlationId: string): string {
     let output = '';
 
-    this.responseHandlers.set(correlationId, (response) => {
+    this.responseHandlers.set(correlationId, (payload) => {
       console.log('[API GATEWAY] Processing Create User Response...');
-      output = response;
+      output = payload;
     });
 
     return output;
@@ -98,9 +96,9 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
   public fetchUserHandler(correlationId: string): any[] {
     const output = [];
 
-    this.responseHandlers.set(correlationId, (response) => {
+    this.responseHandlers.set(correlationId, (payload) => {
       console.log('[API GATEWAY] Processing Fetch User Response...');
-      output.push(response);
+      output.push(payload);
     });
 
     return output;

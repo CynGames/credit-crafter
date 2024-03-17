@@ -10,9 +10,10 @@ import { UserService } from './user/user.service';
 import { HealthService } from './health/health.service';
 import { ProducerService } from './kafka/producer.service';
 import { UserConsumer } from './user/user.consumer';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [],
+  imports: [HttpModule],
   controllers: [AuthController, UserController, HealthController],
   providers: [
     AuthService,

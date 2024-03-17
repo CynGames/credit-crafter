@@ -4,7 +4,7 @@ export type GenericMessage<T> = {
     type: MessageType;
     correlationId: string;
     offset?: string;
-    userRecord: UserRecord;
+    userRecord: UserDTO | null;
   };
   payload: T;
 };
@@ -32,12 +32,12 @@ export type UserRecord = {
   // tokensValidAfterTime?: string;
   // multiFactor?: MultiFactorSettings;
 }
-export type UserMetadata = {
+type UserMetadata = {
   creationTime: string;
   lastSignInTime: string;
   lastRefreshTime?: string | null;
 }
-export type UserInfo = {
+type UserInfo = {
   readonly uid: string;
   readonly displayName: string;
   readonly email: string;
@@ -50,6 +50,17 @@ export type EmailUserPayload = {
 }
 export type IdUserPayload = {
   data: { id: string }
+}
+export type UserDTO = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+export type FinancialDTO = {
+  id: string;
+  income: string;
+  expenses: string;
 }
 export const RESPONSE_TO_API_GATEWAY = 'response-to-api-gateway'
 export const HEALTH_REQUEST = 'health-request'

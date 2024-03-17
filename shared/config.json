@@ -9,7 +9,9 @@
       "UserMetadata",
       "UserInfo",
       "EmailUserPayload",
-      "IdUserPayload"
+      "IdUserPayload",
+      "UserDTO",
+      "FinancialDTO"
     ],
     "message-topics": [
       "RESPONSE_TO_API_GATEWAY",
@@ -52,7 +54,9 @@
       "UserMetadata",
       "UserInfo",
       "EmailUserPayload",
-      "IdUserPayload"
+      "IdUserPayload",
+      "UserDTO",
+      "FinancialDTO"
     ],
     "message-topics": [
       "HEALTH_REQUEST",

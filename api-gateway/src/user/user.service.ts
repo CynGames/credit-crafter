@@ -7,6 +7,7 @@ import {
   IdUserPayload,
   USER_CREATE_REQUEST,
   USER_FETCH_REQUEST,
+  UserDTO,
   UserRecord,
 } from '../shared-definitions/types-dto-constants';
 import {
@@ -24,7 +25,7 @@ export class UserService {
     private readonly userConsumer: UserConsumer,
   ) {}
 
-  async createUser(user: UserRecord): Promise<UserCreatePayload> {
+  async createUser(user: UserDTO): Promise<UserCreatePayload> {
     const correlationId = GenerateUniqueId();
 
     const message: GenericMessage<void> = {
@@ -39,15 +40,12 @@ export class UserService {
 
     await this.producerService.sendMessage(message);
 
-    const response = this.userConsumer.createUserHandler(correlationId);
+    const output = this.userConsumer.createUserHandler(correlationId);
 
-    return await this.userConsumer.waitForCreateResponse(
-      correlationId,
-      response,
-    );
+    return await this.userConsumer.waitForCreateResponse(correlationId, output);
   }
 
-  async fetchUserById(user: UserRecord, id: string): Promise<UserFetchPayload> {
+  async fetchUserById(user: UserDTO, id: string): Promise<UserFetchPayload> {
     const correlationId = GenerateUniqueId();
 
     const message: GenericMessage<IdUserPayload> = {
@@ -73,7 +71,7 @@ export class UserService {
   }
 
   async fetchUserByEmail(
-    user: UserRecord,
+    user: UserDTO,
     email: string,
   ): Promise<UserFetchPayload> {
     const correlationId = GenerateUniqueId();
