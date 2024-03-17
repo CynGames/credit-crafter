@@ -43,7 +43,10 @@ import { log } from 'console';
                 break;
                 case LOAN_FETCH_REQUEST:
                     await this.loanService.getLoansByUser(message.value.toString());
-                    break;
+                break;
+                default:
+                    console.warn('Received message from unknown: '+ topic);
+                    
                }
                 
             }

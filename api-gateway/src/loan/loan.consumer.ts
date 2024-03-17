@@ -62,7 +62,7 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
     }
     public async processMessage(message: any) {
         try {
-            console.log('[API GATEWAY] Received User Response');
+            console.log('[API GATEWAY] Received Loan Response');
             const parsedMessage = JSON.parse(message.value.toString());
             const typedMessage = PayloadTypeExtractor(parsedMessage);
 

@@ -7,8 +7,8 @@ import { AppService } from './app.service';
 
 import { AuthController } from './controllers/auth.controller';
 import { AppController } from './controllers/app.controller';
-import { LoanController } from './controllers/loan.controller';
 import { UserController } from './controllers/user.controller';
+import { LoanController } from './loan/controller/loan.controller';
 
 @Module({
   imports: [],
