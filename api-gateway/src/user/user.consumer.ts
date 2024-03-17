@@ -93,28 +93,28 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
     return success;
   }
 
-  public createUserFinancialDataHandler(correlationId: string): FinancialDTO {
-    let success: FinancialDTO;
+  // public createUserFinancialDataHandler(correlationId: string): FinancialDTO {
+  //   let success: FinancialDTO;
+  //
+  //   this.responseHandlers.set(correlationId, (payload) => {
+  //     console.log('[API GATEWAY] Processing Create FINANCIAL DATA Response...');
+  //     success = payload.data;
+  //   });
+  //
+  //   return success;
+  // }
 
-    this.responseHandlers.set(correlationId, (payload) => {
-      console.log('[API GATEWAY] Processing Create FINANCIAL DATA Response...');
-      success = payload.data;
-    });
-
-    return success;
-  }
-
-  public fetchUserHandler(correlationId: string): UserDTO[] {
-    const output: UserDTO[] = [];
-
-    this.responseHandlers.set(correlationId, (payload) => {
-      console.log('[API GATEWAY] Processing Fetch User Response...');
-      output.push(payload.data);
-      // console.log(output);
-    });
-
-    return output;
-  }
+  // public fetchUserHandler(correlationId: string): UserDTO[] {
+  //   const output: UserDTO[] = [];
+  //
+  //   this.responseHandlers.set(correlationId, (payload) => {
+  //     console.log('[API GATEWAY] Processing Fetch User Response...');
+  //     output.push(payload.data);
+  //     // console.log(output);
+  //   });
+  //
+  //   return output;
+  // }
 
   public async waitForCreateUserResponse(
     correlationId: string,
@@ -141,45 +141,93 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
 
   public async waitForFetchUserResponse(
     correlationId: string,
-    responses: any[],
+    // responses: any[],
   ): Promise<any> {
     console.log('[API GATEWAY] Waiting for response...');
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
-        resolve(responses);
+        reject('Error in Promise. Timeout');
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       }, 3000);
 
-      if (responses.length > 0) {
-        clearTimeout(timeoutId);
-        resolve(responses);
+      // if (responses.length > 0) {
+      //   clearTimeout(timeoutId);
+      //   resolve(responses);
+      //   this.responseHandlers.delete(correlationId);
+      //   console.log('[API GATEWAY] Promised Resolved!');
+      // }
+
+      this.responseHandlers.set(correlationId, (payload) => {
+        console.log('[API GATEWAY] Processing Fetch User Response...');
+        // output.push();
+        resolve(payload.data);
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
-      }
+      });
     });
   }
 
   public async waitForCreateUserFinancialDataResponse(
     correlationId: string,
-    output: FinancialDTO,
+    // output: FinancialDTO,
   ): Promise<any> {
     console.log('[API GATEWAY] Waiting for response...');
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
-        resolve(output);
+        reject('Error resolving promise. Timeout');
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       }, 3000);
 
-      if (output) {
+      // if (output) {
+      //   clearTimeout(timeoutId);
+      //   resolve(output);
+      //   this.responseHandlers.delete(correlationId);
+      //   console.log('[API GATEWAY] Promised Resolved!');
+      // }
+
+      this.responseHandlers.set(correlationId, (payload) => {
+        console.log(
+          '[API GATEWAY] Processing Create FINANCIAL DATA Response...',
+        );
+        console.log(payload);
         clearTimeout(timeoutId);
-        resolve(output);
+        resolve(payload);
+        this.responseHandlers.delete(correlationId);
+      });
+    });
+  }
+
+  public async waitForFetchUserFinancialDataResponse(
+    correlationId: string,
+    // responses: any[],
+  ): Promise<any> {
+    console.log('[API GATEWAY] Waiting for response...');
+
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        reject('Error resolving promise. Timeout');
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
-      }
+      }, 3000);
+
+      // if (responses.length > 0) {
+      //   clearTimeout(timeoutId);
+      //   resolve(responses);
+      //   this.responseHandlers.delete(correlationId);
+      //   console.log('[API GATEWAY] Promised Resolved!');
+      // }
+
+      this.responseHandlers.set(correlationId, (payload) => {
+        console.log('[API GATEWAY] Processing Fetch User Response...');
+        resolve(payload.data);
+        this.responseHandlers.delete(correlationId);
+        console.log('[API GATEWAY] Promised Resolved!');
+        // console.log(output);
+      });
     });
   }
 }

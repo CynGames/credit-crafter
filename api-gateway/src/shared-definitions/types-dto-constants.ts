@@ -68,9 +68,9 @@ export type IdUserPayload = {
 };
 export type UserDTO = {
   id: string;
-  firstName: string;
-  lastName: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
 };
 export type FinancialDTO = {
   id: string;

@@ -5,9 +5,11 @@ export class UserDTO {
   email: string;
   createdAt: Date;
   updatedAt: Date;
-  creditScore?: number;
-  income?: number;
-  expenses?: number;
+  financialData?: {
+    creditScore?: number;
+    income?: number;
+    expenses?: number;
+  };
 
   constructor(
     id: string,
@@ -16,9 +18,11 @@ export class UserDTO {
     email: string,
     createdAt: Date,
     updatedAt: Date,
-    creditScore?: number,
-    income?: number,
-    expenses?: number,
+    financialData?: {
+      creditScore?: number;
+      income?: number;
+      expenses?: number;
+    },
   ) {
     this.id = id;
     this.firstName = firstName;
@@ -26,8 +30,6 @@ export class UserDTO {
     this.email = email;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
-    this.creditScore = creditScore;
-    this.income = income;
-    this.expenses = expenses;
+    this.financialData = financialData;
   }
 }

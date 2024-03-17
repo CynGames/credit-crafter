@@ -102,8 +102,7 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
             console.log(FINANCIAL_DATA_CREATE_REQUEST);
             console.log(parsedMessage, null);
 
-            // await this.userService.createFinancialData(parsedMessage);
-
+            await this.userService.createFinancialData(parsedMessage);
             break;
           case FINANCIAL_DATA_FETCH_REQUEST:
             parsedMessage = JSON.parse(
@@ -115,7 +114,7 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
             console.log(FINANCIAL_DATA_FETCH_REQUEST);
             console.log(parsedMessage, null);
 
-            // await this.userService.fetchFinancialData(parsedMessage);
+            await this.userService.fetchFinancialData(parsedMessage);
             break;
           default:
             console.warn('Received message from unknown topic: ' + topic);

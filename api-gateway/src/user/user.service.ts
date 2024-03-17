@@ -36,11 +36,11 @@ export class UserService {
 
     await this.producerService.sendMessage(message);
 
-    const response = this.userConsumer.fetchUserHandler(correlationId);
+    // const response = this.userConsumer.fetchUserHandler(correlationId);
 
     return await this.userConsumer.waitForFetchUserResponse(
       correlationId,
-      response,
+      // response,
     );
   }
 
@@ -84,11 +84,11 @@ export class UserService {
 
     await this.producerService.sendMessage(message);
 
-    const response = this.userConsumer.fetchUserHandler(correlationId);
+    // const response = this.userConsumer.fetchUserHandler(correlationId);
 
     return await this.userConsumer.waitForFetchUserResponse(
       correlationId,
-      response,
+      // response,
     );
   }
 
@@ -109,18 +109,15 @@ export class UserService {
 
     await this.producerService.sendMessage(message);
 
-    const response = this.userConsumer.fetchUserHandler(correlationId);
+    // const response = this.userConsumer.fetchUserHandler(correlationId);
 
     return await this.userConsumer.waitForFetchUserResponse(
       correlationId,
-      response,
+      // response,
     );
   }
 
-  async createFinancialData(
-    user: UserDTO,
-    body: FinancialDTO,
-  ): Promise<boolean> {
+  async createFinancialData(user: UserDTO, body: FinancialDTO): Promise<any> {
     const correlationId = GenerateUniqueId();
 
     const message: GenericMessage<FinancialDTO> = {
@@ -139,12 +136,12 @@ export class UserService {
 
     await this.producerService.sendMessage(message);
 
-    const output =
-      this.userConsumer.createUserFinancialDataHandler(correlationId);
+    // const output =
+    //   this.userConsumer.createUserFinancialDataHandler(correlationId);
 
     return await this.userConsumer.waitForCreateUserFinancialDataResponse(
       correlationId,
-      output,
+      // output,
     );
   }
 
@@ -163,11 +160,11 @@ export class UserService {
 
     await this.producerService.sendMessage(message);
 
-    const output = this.userConsumer.createUserHandler(correlationId);
+    // const output = this.userConsumer.createUserHandler(correlationId);
 
-    return await this.userConsumer.waitForCreateUserResponse(
+    return await this.userConsumer.waitForFetchUserFinancialDataResponse(
       correlationId,
-      output,
+      // output,
     );
   }
 }

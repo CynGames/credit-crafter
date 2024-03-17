@@ -15,11 +15,18 @@ export class CreateFinancialDataDto {
 }
 
 export class CreateFinancialDataDTO {
+  userId: string;
   creditScore: number;
   income: number;
   expenses: number;
 
-  constructor(creditScore: number, income: number, expenses: number) {
+  constructor(
+    userId: string,
+    creditScore: number,
+    income: number,
+    expenses: number,
+  ) {
+    this.userId = userId;
     this.creditScore = creditScore;
     this.income = income;
     this.expenses = expenses;

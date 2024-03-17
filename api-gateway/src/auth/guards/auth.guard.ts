@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { RequestUserDto } from '../dtos/request-user.dto';
 import admin from 'firebase-admin';
+import { UserDTO } from '../../shared-definitions/types-dto-constants';
 
 @Injectable()
 export class FirebaseAuthGuard implements CanActivate {
@@ -11,8 +12,9 @@ export class FirebaseAuthGuard implements CanActivate {
     if (!idToken) return false;
 
     try {
-      const user = await admin.auth().verifyIdToken(idToken);
-      request.user = await admin.auth().getUser(user.uid);
+      const decodedUser = await admin.auth().verifyIdToken(idToken);
+      const userRecord = await admin.auth().getUser(decodedUser.uid);
+      request.user = { id: userRecord.uid, email: userRecord.email };
       return true;
     } catch (error) {
       return false;
