@@ -19,7 +19,7 @@ export class UserRepository {
                f.income,
                f.expenses
         FROM users u
-                 LEFT JOIN financial_data f ON u.financial_data_id = f.financial_data_id;`;
+                 LEFT JOIN financial_data f ON u.user_id = f.financial_data_id;`;
 
     try {
       const result = await pool.query(queryText);
@@ -64,13 +64,17 @@ export class UserRepository {
 
   async getById(user_id: string): Promise<UserDTO> {
     const queryText = `
-        SELECT user_id,
-               first_name,
-               last_name,
-               email,
-               created_at,
-               updated_at
-        FROM users
+        SELECT u.user_id,
+               u.first_name,
+               u.last_name,
+               u.email,
+               u.created_at,
+               u.updated_at,
+               f.credit_score,
+               f.income,
+               f.expenses
+        FROM users u
+        LEFT JOIN financial_data f ON u.user_id = f.financial_data_id
         WHERE user_id = $1`;
 
     try {
@@ -87,8 +91,13 @@ export class UserRepository {
         row.first_name,
         row.last_name,
         row.email,
-        new Date(row.createdAt),
-        new Date(row.updatedAt),
+        new Date(row.created_at),
+        new Date(row.updated_at),
+        {
+          creditScore: row.credit_score,
+          income: row.income,
+          expenses: row.expenses,
+        },
       );
     } catch (error) {
       throw new Error(`Error getting user by ID: ${error.message}`);
@@ -97,13 +106,17 @@ export class UserRepository {
 
   async getByEmail(email: string): Promise<UserDTO> {
     const queryText = `
-        SELECT user_id,
-               first_name,
-               last_name,
-               email,
-               created_at,
-               updated_at
-        FROM users
+        SELECT u.user_id,
+               u.first_name,
+               u.last_name,
+               u.email,
+               u.created_at,
+               u.updated_at,
+               f.credit_score,
+               f.income,
+               f.expenses
+        FROM users u
+                 LEFT JOIN financial_data f ON u.user_id = f.financial_data_id
         WHERE email = $1`;
 
     try {
@@ -120,8 +133,13 @@ export class UserRepository {
         row.first_name,
         row.last_name,
         row.email,
-        new Date(row.createdAt),
-        new Date(row.updatedAt),
+        new Date(row.created_at),
+        new Date(row.updated_at),
+        {
+          creditScore: row.credit_score,
+          income: row.income,
+          expenses: row.expenses,
+        },
       );
     } catch (error) {
       throw new Error(`Error getting user by email: ${error.message}`);
@@ -176,8 +194,8 @@ export class UserRepository {
         row.credit_score,
         row.income,
         row.expenses,
-        new Date(row.createdAt),
-        new Date(row.updatedAt),
+        new Date(row.created_at),
+        new Date(row.updated_at),
       );
     } catch (error) {
       throw new Error(

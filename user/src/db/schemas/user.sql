@@ -5,8 +5,8 @@ create table financial_data
 (
     financial_data_id varchar primary key unique          not null,
     credit_score      integer,
-    income            numeric(15, 2),
-    expenses          numeric(15, 2),
+    income            integer,
+    expenses          integer,
     created_at        timestamp default current_timestamp not null,
     updated_at        timestamp default current_timestamp not null
 );
