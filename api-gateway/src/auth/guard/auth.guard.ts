@@ -15,7 +15,7 @@ export class FirebaseAuthGuard implements CanActivate {
       // const user = await admin.auth().verifyIdToken(idToken); 
       // request.user = await admin.auth().getUser(user.uid);
       const user = {
-        uid: "fbf12830-b953-42ed-855d-0a798b7c6f54"
+        uid: "12345657897"
       }
       request.user = user;
       return true;

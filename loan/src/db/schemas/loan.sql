@@ -8,7 +8,7 @@ create table states (
 create table loan (
 
     loan_id uuid default uuid_generate_v4() primary key unique not null,
-    user_id uuid not null,
+    user_id varchar(256) not null,
     approved_by uuid,
     amount numeric(15, 2),
     installments integer not null,
