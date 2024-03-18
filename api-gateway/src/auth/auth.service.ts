@@ -3,9 +3,9 @@ import * as admin from 'firebase-admin';
 import { LoginUserDTO } from './dtos/login-user.dto';
 import { UserService } from '../user/user.service';
 import { HttpService } from '@nestjs/axios';
-import { RegisterUserDTO } from './dtos/register-user-d-t.o';
+import { RegisterUserDTO } from './dtos/register-user-dto';
 import {
-  UserCreatePayload,
+  CreateUserDTO,
   UserDTO,
 } from '../shared-definitions/types-dto-constants';
 
@@ -41,21 +41,20 @@ export class AuthService {
     }
   }
 
-  async register(registerDTO: RegisterUserDTO): Promise<UserCreatePayload> {
+  async register(registerDTO: RegisterUserDTO): Promise<CreateUserDTO> {
     const userRecord = await admin.auth().createUser({
       email: registerDTO.email,
       password: registerDTO.password,
     });
 
-    const userDTO: UserDTO = {
+    const newUser: UserDTO = {
       id: userRecord.uid,
       firstName: registerDTO.firstName,
       lastName: registerDTO.lastName,
       email: registerDTO.email,
+      roles: registerDTO.roles,
     };
 
-    const result = await this.userService.createUser(userDTO);
-
-    return { data: { success: result, user: userDTO } };
+    return await this.userService.createUser(newUser);
   }
 }

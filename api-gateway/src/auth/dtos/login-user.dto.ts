@@ -1,5 +1,5 @@
-export class LoginUserDTO {
+export type LoginUserDTO = {
   email: string;
   password: string;
-  returnSecureToken?: boolean = false;
-}
+  returnSecureToken?: boolean;
+};

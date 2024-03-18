@@ -1,5 +1,5 @@
 # It should be auto-generated after running a command
-/src/loan/dto/types-dto-constant.ts
+/src/shared-definitions/types-dto-constants.ts
 
 # Personal
 PersonalNotes.md
