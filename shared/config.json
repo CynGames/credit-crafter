@@ -80,7 +80,6 @@
       "UserInfo",
       "EmailUserPayload",
       "IdUserPayload",
-      "FinancialDTO",
       "UserResponseDTO",
       "FinancialDTO",
       "UserPayload",

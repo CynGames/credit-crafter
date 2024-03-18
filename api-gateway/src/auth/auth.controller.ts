@@ -9,10 +9,10 @@ import {
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dtos/register-user-d-t.o';
 import { LoginUserDTO } from './dtos/login-user.dto';
-import admin, { auth } from 'firebase-admin';
-import UserRecord = auth.UserRecord;
 import { UserCreatePayload } from '../shared-definitions/types-dto-constants';
 import { Response } from 'express';
+import admin, { auth } from 'firebase-admin';
+import UserRecord = auth.UserRecord;
 
 @Controller('auth')
 export class AuthController {

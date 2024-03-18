@@ -17,21 +17,28 @@ export class AuthService {
   ) {}
 
   async login(loginDTO: LoginUserDTO): Promise<{ token: string }> {
-    const URL =
-      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
+    try {
+      const URL =
+        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
 
-    const body = {
-      email: loginDTO.email,
-      password: loginDTO.password,
-      returnSecureToken: loginDTO.returnSecureToken,
-    };
+      const body = {
+        email: loginDTO.email,
+        password: loginDTO.password,
+        returnSecureToken: true,
+      };
 
-    const headers = {
-      headers: { Accept: '*/*', 'Content-Type': 'application/json' },
-    };
+      const headers = {
+        headers: { Accept: '*/*', 'Content-Type': 'application/json' },
+      };
 
-    const { data } = await this.httpService.axiosRef.post(URL, body, headers);
-    return { token: data.idToken };
+      const { data } = await this.httpService.axiosRef.post(URL, body, headers);
+
+      console.log(data);
+
+      return { token: data.idToken };
+    } catch (e) {
+      console.log(e, null);
+    }
   }
 
   async register(registerDTO: RegisterUserDTO): Promise<UserCreatePayload> {

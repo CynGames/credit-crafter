@@ -60,16 +60,17 @@ export type IdUserPayload = {
 }
 
 export type IdLoanPayload = {
-  data: {id: string}
+  data: { id: string }
 }
 export type UserIdLoanPayload = {
-  data: {id: string}
+  data: { id: string }
 }
 export type LoanIdPaymentsPayload = {
-  data: {id: string}
+  data: { id: string }
 }
 
 export class UserResponseDTO {
+  status: string | undefined;
   data: UserPayload | UserPayload[] | undefined;
 }
 

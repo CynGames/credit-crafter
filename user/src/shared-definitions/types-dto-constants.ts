@@ -24,11 +24,6 @@ export type EmailUserPayload = {
 export type IdUserPayload = {
   data: { id: string }
 }
-export type FinancialDTO = {
-  id?: string;
-  income: string;
-  expenses: string;
-}
 export class UserResponseDTO {
   data: UserPayload | UserPayload[] | undefined;
 }
