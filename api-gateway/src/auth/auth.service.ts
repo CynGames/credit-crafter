@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { IAuthService } from './interface/auth.service.interface';
 import { RegisterUserDto } from './dto/register-user.dto';
 import * as admin from 'firebase-admin';
+import { response } from 'express'
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -28,4 +29,38 @@ export class AuthService implements IAuthService {
 
     return { userId: userRecord.uid };
   }
+  async loginUser(email: string, password: string): Promise<any> {
+    try {
+      const url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
+      const body = {
+        email: email,
+        password: password
+      };
+      console.log(body);
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const responseData = await response.json();
+      
+      
+      if (responseData && responseData.idToken) {
+       
+        const customToken = responseData.idToken;
+        return customToken;
+      } else {
+        throw new Error('Invalid response from authentication service');
+      }
+    } catch (error) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+  }
+  
 }

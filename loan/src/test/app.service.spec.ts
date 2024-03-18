@@ -3,7 +3,7 @@ import { ProducerService } from '../kafka/producer.service';
 import {
   HEALTH_RESPONSE,
   HealthMessageRequest,
-} from '../dto/types-dto-constants';
+} from '../loan/dtos/types-dto-constants';
 
 jest.mock('../kafka/producer.service', () => ({
   ProducerService: jest.fn().mockImplementation(() => ({

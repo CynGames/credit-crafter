@@ -1,4 +1,4 @@
-import { GenericMessage, ServerStatus } from '../dto/types-dto-constants';
+import { GenericMessage, ServerStatus } from '../loan/dtos/types-dto-constants';
 import { ProducerService } from '../kafka/producer.service';
 
 const mockSend = jest.fn();

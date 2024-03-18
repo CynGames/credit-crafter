@@ -1,4 +1,4 @@
-import { HEALTH_REQUEST } from '../dto/types-dto-constants';
+import { HEALTH_REQUEST } from '../loan/dtos/types-dto-constants';
 
 jest.mock('kafkajs', () => ({
   Kafka: jest.fn(() => ({

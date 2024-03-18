@@ -49,7 +49,8 @@ export type MessageType =
   | 'CreateHealthRequest'
   | 'CreateHealthResponse'
   | 'CreateAuthRequest'
-  | 'CreateAuthResponse';
+  | 'CreateAuthResponse'
+  | 'FetchLoansResponse';
 export type EmptyMessage = GenericMessage<void> & {
   headers: { type: 'EmptyMessage' };
 };
