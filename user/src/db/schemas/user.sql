@@ -17,6 +17,7 @@ create table users
     first_name        varchar(256)                        not null,
     last_name         varchar(256)                        not null,
     email             varchar(256) unique                 not null,
+    roles             varchar(256)[]                      not null,
     created_at        timestamp default current_timestamp not null,
     updated_at        timestamp default current_timestamp not null,
     financial_data_id varchar,

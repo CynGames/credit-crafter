@@ -2,17 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { ProducerService } from '../kafka/producer.service';
 import { UserConsumer } from './user.consumer';
 import {
-  EmailUserPayload,
+  CreateUserDTO,
   FINANCIAL_DATA_CREATE_REQUEST,
   FINANCIAL_DATA_FETCH_REQUEST,
+  FinancialDTO,
   GenerateUniqueId,
   GenericMessage,
-  IdUserPayload,
+  MessageType,
   USER_CREATE_REQUEST,
   USER_FETCH_REQUEST,
   UserDTO,
   UserResponseDTO,
 } from '../shared-definitions/types-dto-constants';
+import { FetchFinancialDataDTO } from './dtos/fetch-financial-data-dto';
+import { CreateFinancialDataDTO } from './dtos/create-financial-data-dto';
 
 @Injectable()
 export class UserService {
@@ -22,138 +25,82 @@ export class UserService {
   ) {}
 
   async fetchUsers(): Promise<UserResponseDTO> {
-    const correlationId = GenerateUniqueId();
-
-    const message: GenericMessage<any> = {
-      headers: {
-        type: 'FetchUsers',
-        topic: USER_FETCH_REQUEST,
-        correlationId: correlationId,
-        userRecord: null,
-      },
-      payload: null,
-    };
-
-    await this.producerService.sendMessage(message);
-
-    return await this.userConsumer.waitForFetchUserResponse(correlationId);
+    return this.genericSendMessageAndWaitForResponse(
+      'FetchUsers',
+      USER_FETCH_REQUEST,
+      null,
+      null,
+    );
   }
 
-  async createUser(user: UserDTO): Promise<boolean> {
-    const correlationId = GenerateUniqueId();
-
-    const message: GenericMessage<void> = {
-      headers: {
-        type: 'CreateUserRequest',
-        topic: USER_CREATE_REQUEST,
-        correlationId: correlationId,
-        userRecord: user,
-      },
-      payload: null,
-    };
-
-    await this.producerService.sendMessage(message);
-
-    return await this.userConsumer.waitForCreateUserResponse(correlationId);
+  async createUser(user: UserDTO): Promise<CreateUserDTO> {
+    return this.genericSendMessageAndWaitForResponse(
+      'CreateUserRequest',
+      USER_CREATE_REQUEST,
+      null,
+      { ...user },
+    );
   }
 
   async fetchUserById(id: string): Promise<UserResponseDTO> {
-    const correlationId = GenerateUniqueId();
-
-    const message: GenericMessage<IdUserPayload> = {
-      headers: {
-        type: 'FetchIdUser',
-        topic: USER_FETCH_REQUEST,
-        correlationId: correlationId,
-        userRecord: null,
-      },
-      payload: {
-        data: { id: id },
-      },
-    };
-
-    await this.producerService.sendMessage(message);
-
-    // const response = this.userConsumer.fetchUserHandler(correlationId);
-
-    return await this.userConsumer.waitForFetchUserResponse(
-      correlationId,
-      // response,
+    return this.genericSendMessageAndWaitForResponse(
+      'FetchIdUser',
+      USER_FETCH_REQUEST,
+      null,
+      { id: id },
     );
   }
 
   async fetchUserByEmail(email: string): Promise<UserResponseDTO> {
-    const correlationId = GenerateUniqueId();
-
-    const message: GenericMessage<EmailUserPayload> = {
-      headers: {
-        type: 'FetchEmailUser',
-        topic: USER_FETCH_REQUEST,
-        correlationId: correlationId,
-        userRecord: null,
-      },
-      payload: {
-        data: { email: email },
-      },
-    };
-
-    await this.producerService.sendMessage(message);
-
-    // const response = this.userConsumer.fetchUserHandler(correlationId);
-
-    return await this.userConsumer.waitForFetchUserResponse(
-      correlationId,
-      // response,
+    return this.genericSendMessageAndWaitForResponse(
+      'FetchEmailUser',
+      USER_FETCH_REQUEST,
+      null,
+      { email: email },
     );
   }
 
-  async createFinancialData(user: UserDTO, body: any): Promise<any> {
-    const correlationId = GenerateUniqueId();
-
-    const message: GenericMessage<any> = {
-      headers: {
-        type: 'CreateFinancialDataRequest',
-        topic: FINANCIAL_DATA_CREATE_REQUEST,
-        correlationId: correlationId,
-        userRecord: user,
-      },
-      payload: {
-        income: body.income,
-        expenses: body.expenses,
-      },
-    };
-
-    await this.producerService.sendMessage(message);
-
-    // const output =
-    //   this.userConsumer.createUserFinancialDataHandler(correlationId);
-
-    return await this.userConsumer.waitForCreateUserFinancialDataResponse(
-      correlationId,
-      // output,
+  async createFinancialData(
+    user: UserDTO,
+    body: FinancialDTO,
+  ): Promise<CreateFinancialDataDTO> {
+    return this.genericSendMessageAndWaitForResponse(
+      'CreateFinancialDataRequest',
+      FINANCIAL_DATA_CREATE_REQUEST,
+      user,
+      { income: body.income, expenses: body.expenses },
     );
   }
 
-  async fetchFinancialData(user: UserDTO): Promise<boolean> {
+  async fetchFinancialData(user: UserDTO): Promise<FetchFinancialDataDTO> {
+    return this.genericSendMessageAndWaitForResponse(
+      'FetchFinancialDataResponse',
+      FINANCIAL_DATA_FETCH_REQUEST,
+      user,
+      null,
+    );
+  }
+
+  async genericSendMessageAndWaitForResponse<P, T>(
+    type: MessageType,
+    topic: string,
+    userRecord: UserDTO,
+    payload: P,
+  ): Promise<T> {
     const correlationId = GenerateUniqueId();
 
-    const message: GenericMessage<void> = {
+    const message: GenericMessage<P> = {
       headers: {
-        type: 'FetchFinancialDataRequest',
-        topic: FINANCIAL_DATA_FETCH_REQUEST,
+        type: type,
+        topic: topic,
         correlationId: correlationId,
-        userRecord: user,
+        userRecord: userRecord,
       },
-      payload: null,
+      payload: payload,
     };
 
     await this.producerService.sendMessage(message);
 
-    // const output = this.userConsumer.createUserHandler(correlationId);
-
-    return await this.userConsumer.waitForFetchUserFinancialDataResponse(
-      correlationId,
-      // output,
-    );
+    return await this.userConsumer.genericWaitForResponse(correlationId);
   }
 }

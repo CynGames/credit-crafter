@@ -8,7 +8,6 @@ import {
   GenericMessage,
   USER_CREATE_RESPONSE,
   USER_FETCH_RESPONSE,
-  UserResponseDTO,
 } from '../shared-definitions/types-dto-constants';
 
 @Injectable()
@@ -64,7 +63,6 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
     try {
       console.log('[API GATEWAY] Received User Response');
       const parsedMessage = JSON.parse(message.value.toString());
-      // const typedMessage = PayloadTypeExtractor(parsedMessage);
 
       const { headers, payload } = parsedMessage as GenericMessage<any>;
       const handler = this.responseHandlers.get(headers.correlationId);
@@ -80,85 +78,19 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
     }
   }
 
-  public async waitForCreateUserResponse(correlationId: string): Promise<any> {
+  public async genericWaitForResponse<T>(correlationId: string): Promise<T> {
     console.log('[API GATEWAY] Waiting for response...');
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve({ success: false });
+        resolve({ status: 'timeout', data: null } as T);
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       }, 3000);
 
       this.responseHandlers.set(correlationId, (payload) => {
-        console.log('[API GATEWAY] Processing Create User Response...');
-        resolve(payload.success);
-        this.responseHandlers.delete(correlationId);
-        console.log('[API GATEWAY] Promised Resolved!');
-      });
-    });
-  }
-
-  public async waitForFetchUserResponse(
-    correlationId: string,
-  ): Promise<UserResponseDTO> {
-    console.log('[API GATEWAY] Waiting for response...');
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject('Error in Promise. Timeout');
-        this.responseHandlers.delete(correlationId);
-        console.log('[API GATEWAY] Promised Resolved!');
-      }, 3000);
-
-      this.responseHandlers.set(correlationId, (payload) => {
-        console.log('[API GATEWAY] Processing Fetch User Response...');
-        resolve(payload.data);
-        this.responseHandlers.delete(correlationId);
-        console.log('[API GATEWAY] Promised Resolved!');
-      });
-    });
-  }
-
-  public async waitForCreateUserFinancialDataResponse(
-    correlationId: string,
-  ): Promise<any> {
-    console.log('[API GATEWAY] Waiting for response...');
-
-    return new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-        reject('Error resolving promise. Timeout');
-        this.responseHandlers.delete(correlationId);
-        console.log('[API GATEWAY] Promised Resolved!');
-      }, 3000);
-
-      this.responseHandlers.set(correlationId, (payload) => {
-        console.log(
-          '[API GATEWAY] Processing Create FINANCIAL DATA Response...',
-        );
-        console.log(payload);
-        clearTimeout(timeoutId);
-        resolve(payload);
-        this.responseHandlers.delete(correlationId);
-      });
-    });
-  }
-
-  public async waitForFetchUserFinancialDataResponse(
-    correlationId: string,
-  ): Promise<any> {
-    console.log('[API GATEWAY] Waiting for response...');
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject('Error resolving promise. Timeout');
-        this.responseHandlers.delete(correlationId);
-        console.log('[API GATEWAY] Promised Resolved!');
-      }, 3000);
-
-      this.responseHandlers.set(correlationId, (payload) => {
-        console.log('[API GATEWAY] Processing Fetch User Response...');
-        resolve(payload.data);
+        console.log(`[API GATEWAY] Processing Response...`);
+        resolve({ status: 'success', data: payload.data } as T);
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       });

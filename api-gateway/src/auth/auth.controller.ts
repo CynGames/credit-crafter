@@ -1,18 +1,11 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Res,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterUserDTO } from './dtos/register-user-d-t.o';
+import { RegisterUserDTO } from './dtos/register-user-dto';
 import { LoginUserDTO } from './dtos/login-user.dto';
+import { Response } from 'express';
 import admin, { auth } from 'firebase-admin';
 import UserRecord = auth.UserRecord;
-import { UserCreatePayload } from '../shared-definitions/types-dto-constants';
-import { Response } from 'express';
+import { CreateUserDTO } from '../shared-definitions/types-dto-constants';
 
 @Controller('auth')
 export class AuthController {
@@ -23,20 +16,14 @@ export class AuthController {
     @Body() loginDTO: LoginUserDTO,
     @Res({ passthrough: true }) res: Response,
   ): Promise<any> {
-    try {
-      const { token } = await this.authService.login(loginDTO);
-      res.cookie('token', token, { httpOnly: true });
+    const { token } = await this.authService.login(loginDTO);
+    res.cookie('token', token, { httpOnly: true });
 
-      return { message: 'Login successful' };
-    } catch (error) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    return { message: 'Login successful' };
   }
 
   @Post('/register')
-  async register(
-    @Body() registerDTO: RegisterUserDTO,
-  ): Promise<UserCreatePayload> {
+  async register(@Body() registerDTO: RegisterUserDTO): Promise<CreateUserDTO> {
     return await this.authService.register(registerDTO);
   }
 

@@ -10,11 +10,12 @@ import {
 import { UserService } from './user.service';
 import { FirebaseAuthGuard } from '../auth/guards/auth.guard';
 import {
-  FinancialData,
   FinancialDTO,
   RequestUserDTO,
   UserResponseDTO,
 } from '../shared-definitions/types-dto-constants';
+import { CreateFinancialDataDTO } from './dtos/create-financial-data-dto';
+import { FetchFinancialDataDTO } from './dtos/fetch-financial-data-dto';
 
 @Controller('users')
 export class UserController {
@@ -37,7 +38,9 @@ export class UserController {
 
   @Get('/data')
   @UseGuards(FirebaseAuthGuard)
-  async fetchFinancialData(@Req() { user }: RequestUserDTO): Promise<any> {
+  async fetchFinancialData(
+    @Req() { user }: RequestUserDTO,
+  ): Promise<FetchFinancialDataDTO> {
     return await this.userService.fetchFinancialData(user);
   }
 
@@ -46,18 +49,7 @@ export class UserController {
   async createFinancialData(
     @Req() { user }: RequestUserDTO,
     @Body() body: FinancialDTO,
-  ): Promise<any> {
+  ): Promise<CreateFinancialDataDTO> {
     return await this.userService.createFinancialData(user, body);
   }
 }
-
-export type FetchFinancialDataDTO = {
-  data: FinancialData;
-};
-
-export type CreateFinancialDataDTO = {
-  data: {
-    success: boolean;
-    financialData: FinancialData;
-  };
-};

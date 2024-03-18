@@ -1,7 +1,7 @@
+import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as admin from 'firebase-admin';
-import 'dotenv/config';
 
 async function bootstrap() {
   admin.initializeApp({
