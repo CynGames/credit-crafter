@@ -42,7 +42,25 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
     
     return await this.sendMessage(message);
   }
-
+async constructFetchResponse(correlationId: string, userRecord: UserRecord, type: MessageType, topic: string, array: any[]){
+  const message: GenericMessage<any> = {
+    headers: {
+      type: type,
+      topic: topic,
+      correlationId: correlationId,
+      userRecord: userRecord,
+    },
+    payload: {
+      query: { 
+        status: 'success', 
+        data: array
+    }
+    }
+  };
+  console.log("producer message: "+ message);
+  
+  return await this.sendMessage(message);
+}
   async sendMessage<T = any>(genericMessage: GenericMessage<T>) {
     const topic = genericMessage.headers.topic;
     const messages: { value: string }[] = [

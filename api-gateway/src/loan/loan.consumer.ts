@@ -13,9 +13,10 @@ import {
     LOAN_FETCH_REQUEST
 
   } from '../dto/types-dto-constants';
-import { LoanCreatePayload } from './controller/loan.controller';
+import { LoanCreatePayload, LoanFetchPayload } from './controller/loan.controller';
 import { resolve } from 'path';
 import { clearTimeout } from 'timers';
+import { response } from 'express';
 
 
 @Injectable()
@@ -42,7 +43,7 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
         try {
             await this.consumer.connect();
             await this.consumer.subscribe({
-                topics: [LOAN_CREATE_RESPONSE, LOAN_FETCH_RESPONSE,PAYMENT_CREATE_RESPONSE],
+                topics: [LOAN_CREATE_RESPONSE, LOAN_FETCH_RESPONSE,PAYMENT_CREATE_RESPONSE, LOAN_FETCH_REQUEST],
             });
             await this.listenForMessages();
         } catch (error) {
@@ -110,7 +111,23 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
                 resolve(response);
             });
         })
-        
-        
+    }
+    public async waitForFetchResponse(correlationId: string): Promise<LoanFetchPayload>{
+            console.log('[API GATEWAY] waiting for response...');
+
+            return new Promise((resolve)=>{
+                const timeoutId = setTimeout(()=>{
+                    this.responseHandlers.delete(correlationId);
+                    console.log('[API-GATEWAY] Resolved');
+                
+                }, 3000);
+                this.responseHandlers.set(correlationId, (response)=>{
+                    console.log('[API-GATEWAY] Processing Fetch Loan Response');
+                    console.log(response.query.data);
+                    resolve(response) 
+                })
+
+            })
+            
     }
 }

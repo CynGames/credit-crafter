@@ -45,6 +45,8 @@ export class LoanService {
     }
     async getLoansByUser(user_id: string) {
         try {
+            console.log('SERVICE: '+ user_id);
+            
             const loans: LoanDTO[] = await this.repo.getLoansByUser(user_id);
             return loans;
         } catch (error) {

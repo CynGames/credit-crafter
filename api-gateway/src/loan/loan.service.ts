@@ -48,5 +48,23 @@ export class LoanService {
         return waitResponse;
         
         }
+    async getLoanByUserId(user_id: string, user: UserRecord): Promise<LoanFetchPayload>{
+        const correlationId = GenerateUniqueId();
+
+        const message: GenericMessage<string> = {
+            headers: {
+                type: 'FetchUserIdLoan',
+                topic: LOAN_FETCH_REQUEST,
+                correlationId: correlationId,
+                userRecord: user
+            },
+            payload: user_id
+        };
+        await this.producerService.sendMessage(message);
+        const waitResponse:any = await this.loanConsumer.waitForFetchResponse(correlationId);
+        console.log(waitResponse);
+        
+        return waitResponse;
+    }
 
 }

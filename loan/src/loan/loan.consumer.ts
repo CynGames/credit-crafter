@@ -11,11 +11,14 @@ import {
     LOAN_FETCH_RESPONSE,
     PAYMENT_CREATE_RESPONSE,
     USER_CREATE_RESPONSE,
+    GenericMessage
 
 } from '../shared-definitions/types-dto-constants';
 import { LoanService } from './loan.service';
 import { ProducerService } from 'src/kafka/producer.service';
 import { LoanDTO } from './dtos/loan-dto';
+import { parse } from 'path';
+
 
 @Injectable()
 export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
@@ -35,7 +38,7 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
     });
 
     async onModuleInit() {
-        const topics = [LOAN_CREATE_RESPONSE, LOAN_CREATE_REQUEST,LOAN_FETCH_RESPONSE, PAYMENT_CREATE_RESPONSE];
+        const topics = [LOAN_CREATE_RESPONSE, LOAN_CREATE_REQUEST,LOAN_FETCH_RESPONSE, PAYMENT_CREATE_RESPONSE, LOAN_FETCH_REQUEST];
         console.log("topics: "+ topics);
         
         await this.consumer.connect();
@@ -44,9 +47,10 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
         await this.consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
                 console.log("[LOAN_CONSUMER] "+ topic);
+                const parsedMessage = JSON.parse(message.value.toString());
                 switch (topic) {
                     case LOAN_CREATE_REQUEST: 
-                        const parsedMessage = JSON.parse(message.value.toString());
+                       
                         console.log("message: ");
                         
                         console.log(parsedMessage);
@@ -58,8 +62,23 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
                             'CreateLoanResponse', LOAN_CREATE_RESPONSE, loanId);
                             break;
                     case LOAN_FETCH_REQUEST:
-                        // const loan: LoanDTO = await this.loanService.getLoansByUser(message.value.toString());
-
+                         const loans: LoanDTO[] = await this.loanService.getLoansByUser(parsedMessage.payload.userId);
+                            console.log(loans);
+                            const fetchMessage:GenericMessage<any> = {
+                                headers: {
+                                type: 'FetchUserIdLoan',
+                                topic: LOAN_FETCH_RESPONSE,
+                                correlationId: parsedMessage.headers.correlationId,
+                                userRecord: parsedMessage.headers.userRecord,
+                                },
+                                payload: {
+                                    query:{
+                                        status: 'success',
+                                        data: loans
+                                    }
+                                }
+                            } 
+                        await this.producerService.sendMessage(fetchMessage)
                         break;
                     default:
                         console.warn('Received message from unknown: ' + topic);

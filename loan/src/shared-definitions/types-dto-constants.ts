@@ -93,7 +93,7 @@ export const USER_FETCH_RESPONSE = 'user-fetch-response'
 export const LOAN_CREATE_REQUEST = 'loan-create-request'
 export const LOAN_CREATE_RESPONSE = 'loan-create-response'
 export const LOAN_FETCH_RESPONSE = 'loan-fetch-response'
-export const LOAN_FETCH_REQUEST = 'loan-fetch-response'
+export const LOAN_FETCH_REQUEST = 'loan-fetch-request'
 export const PAYMENT_CREATE_RESPONSE ='payment-create-response'
 
 
