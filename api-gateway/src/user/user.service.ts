@@ -13,6 +13,12 @@ import {
   USER_FETCH_REQUEST,
   UserDTO,
 } from '../shared-definitions/types-dto-constants';
+import {
+  FetchUserDTO,
+  FetchUsersDTO,
+  FinancialData,
+  RequestDTO,
+} from './user.controller';
 
 @Injectable()
 export class UserService {
@@ -21,7 +27,7 @@ export class UserService {
     private readonly userConsumer: UserConsumer,
   ) {}
 
-  async fetchUsers(user: UserDTO): Promise<any> {
+  async fetchUsers(): Promise<RequestDTO> {
     const correlationId = GenerateUniqueId();
 
     const message: GenericMessage<any> = {
@@ -29,19 +35,14 @@ export class UserService {
         type: 'FetchUsers',
         topic: USER_FETCH_REQUEST,
         correlationId: correlationId,
-        userRecord: user,
+        userRecord: null,
       },
       payload: null,
     };
 
     await this.producerService.sendMessage(message);
 
-    // const response = this.userConsumer.fetchUserHandler(correlationId);
-
-    return await this.userConsumer.waitForFetchUserResponse(
-      correlationId,
-      // response,
-    );
+    return await this.userConsumer.waitForFetchUserResponse(correlationId);
   }
 
   async createUser(user: UserDTO): Promise<boolean> {
@@ -67,7 +68,7 @@ export class UserService {
     );
   }
 
-  async fetchUserById(user: UserDTO, id: string): Promise<any> {
+  async fetchUserById(id: string): Promise<RequestDTO> {
     const correlationId = GenerateUniqueId();
 
     const message: GenericMessage<IdUserPayload> = {
@@ -75,7 +76,7 @@ export class UserService {
         type: 'FetchIdUser',
         topic: USER_FETCH_REQUEST,
         correlationId: correlationId,
-        userRecord: user,
+        userRecord: null,
       },
       payload: {
         data: { id: id },
@@ -92,7 +93,7 @@ export class UserService {
     );
   }
 
-  async fetchUserByEmail(user: UserDTO, email: string): Promise<any> {
+  async fetchUserByEmail(email: string): Promise<RequestDTO> {
     const correlationId = GenerateUniqueId();
 
     const message: GenericMessage<EmailUserPayload> = {
@@ -100,7 +101,7 @@ export class UserService {
         type: 'FetchEmailUser',
         topic: USER_FETCH_REQUEST,
         correlationId: correlationId,
-        userRecord: user,
+        userRecord: null,
       },
       payload: {
         data: { email: email },
@@ -117,10 +118,10 @@ export class UserService {
     );
   }
 
-  async createFinancialData(user: UserDTO, body: FinancialDTO): Promise<any> {
+  async createFinancialData(user: UserDTO, body: any): Promise<any> {
     const correlationId = GenerateUniqueId();
 
-    const message: GenericMessage<FinancialDTO> = {
+    const message: GenericMessage<any> = {
       headers: {
         type: 'CreateFinancialDataRequest',
         topic: FINANCIAL_DATA_CREATE_REQUEST,
@@ -128,7 +129,6 @@ export class UserService {
         userRecord: user,
       },
       payload: {
-        id: user.id,
         income: body.income,
         expenses: body.expenses,
       },

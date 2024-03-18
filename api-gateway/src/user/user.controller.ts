@@ -4,75 +4,94 @@ import {
   Get,
   Param,
   Post,
-  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { RequestUserDto } from '../auth/dtos/request-user.dto';
 import { FirebaseAuthGuard } from '../auth/guards/auth.guard';
-import {
-  FinancialDTO,
-  UserDTO,
-} from '../shared-definitions/types-dto-constants';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('/')
-  async fetchUsers(@Req() { user }: RequestUserDto): Promise<any> {
-    try {
-      return await this.userService.fetchUsers(user);
-    } catch (error) {
-      return { data: [{ status: 'error', error: error }] };
-    }
+  async fetchUsers(): Promise<FetchUsersDTO> {
+    return await this.userService.fetchUsers();
   }
 
   @Get('/id/:id')
-  async fetchById(
-    @Req() { user }: RequestUserDto,
-    @Param('id') id: string,
-  ): Promise<any> {
-    try {
-      return await this.userService.fetchUserById(user, id);
-    } catch (error) {
-      return { data: [{ status: 'error', error: error }] };
-    }
+  async fetchById(@Param('id') id: string): Promise<RequestDTO> {
+    return await this.userService.fetchUserById(id);
   }
 
   @Get('/email/:email')
-  async fetchByEmail(
-    @Req() { user }: RequestUserDto,
-    @Param('email') email: string,
-  ): Promise<any> {
-    try {
-      return await this.userService.fetchUserByEmail(user, email);
-    } catch (error) {
-      return { data: [{ status: 'error', error: error }] };
-    }
+  async fetchByEmail(@Param('email') email: string): Promise<RequestDTO> {
+    return await this.userService.fetchUserByEmail(email);
   }
 
   @Get('/data')
   @UseGuards(FirebaseAuthGuard)
-  async createFinancialData(@Req() { user }: RequestUserDto): Promise<any> {
-    try {
-      return await this.userService.fetchFinancialData(user);
-    } catch (error) {
-      return { data: [{ status: 'error', error: error }] };
-    }
+  async fetchFinancialData(@Req() user: RequestUserDTO): Promise<any> {
+    return await this.userService.fetchFinancialData(user);
   }
 
   @Post('/data')
   @UseGuards(FirebaseAuthGuard)
-  async fetchFinancialData(
-    @Req() { user }: RequestUserDto,
+  async createFinancialData(
+    @Req() user: RequestUserDTO,
     @Body() body: FinancialDTO,
   ): Promise<any> {
-    try {
-      return await this.userService.createFinancialData(user, body);
-    } catch (error) {
-      return { data: [{ status: 'error', error: error }] };
-    }
+    return await this.userService.createFinancialData(user, body);
   }
 }
+
+export interface RequestDTO {
+  data: any;
+}
+
+export type UserDTO = FetchUsersDTO | FetchUserDTO;
+
+export type FinancialDTO = {
+  income: number;
+  expenses: number;
+};
+
+export type FetchFinancialDataDTO = {
+  data: FinancialData;
+};
+
+export type CreateFinancialDataDTO = {
+  data: {
+    success: boolean;
+    financialData: FinancialData;
+  };
+};
+
+export class FetchUserDTO implements RequestDTO {
+  data: UserPayload;
+}
+
+export class FetchUsersDTO implements RequestDTO {
+  data: UserPayload[];
+}
+
+export type UserPayload = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+  financialData?: FinancialData;
+};
+
+export type FinancialData = {
+  creditScore?: number;
+  income?: number;
+  expenses?: number;
+};
+
+export type RequestUserDTO = {
+  id: string;
+  email: string;
+};

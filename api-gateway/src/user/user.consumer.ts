@@ -12,6 +12,7 @@ import {
   USER_FETCH_RESPONSE,
   UserDTO,
 } from '../shared-definitions/types-dto-constants';
+import { FetchUserDTO, FetchUsersDTO, RequestDTO } from './user.controller';
 
 @Injectable()
 export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
@@ -142,7 +143,7 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
   public async waitForFetchUserResponse(
     correlationId: string,
     // responses: any[],
-  ): Promise<any> {
+  ): Promise<RequestDTO> {
     console.log('[API GATEWAY] Waiting for response...');
 
     return new Promise((resolve, reject) => {
