@@ -7,65 +7,96 @@ import { CreateLoanDTO } from "./dtos/creaate-loan-dto";
 
 @Injectable()
 export class LoanRepository{
-    async getLoans(): Promise<LoanDTO[]>{
-        const queryText = 'select * from loan l'
-        try{
-            const result = await pool.query(queryText);
-
-            const loans: LoanDTO[] = result.rows.map((row)=> new LoanDTO(
+   
+    async getLoans(user_id: string): Promise<LoanDTO[]> {
+        const queryText = `
+            SELECT 
+                l.loan_id,
+                l.user_id,
+                l.approved_by,
+                l.amount,
+                l.installments,
+                l.next_installment_date,
+                l.end_date,
+                l.loan_type,
+                s.state_name,
+                l.created_at,
+                l.updated_at
+            FROM 
+                loan l
+            JOIN 
+                states s ON l.state_id = s.state_id
+           `;
+        
+        try {
+            const result = await pool.query(queryText, [user_id]);
+            if (result.rows.length === 0) {
+                throw new NotFoundException('No loans for that user ID');
+            }
+    
+            const loans = result.rows.map(row => new LoanDTO(
                 row.loan_id,
                 row.user_id,
                 row.approved_by,
                 row.amount,
-                row.installment,
+                row.installments,
                 row.next_installment_date,
                 row.end_date,
                 row.loan_type,
+                row.state_name,
                 row.created_at,
-                row.updated_at));
+                row.updated_at
+            ));
+    
             return loans;
-        }catch(error){
-            throw new Error(`error getting loans: ${error.message}`);
+        } catch (error) {
+            throw new Error(`Error getting loans: ${error.message}`);
         }
-   
     }
-    // async getLoanByUser(user_id: string): Promise<LoanDTO[]>{
-    //     const queryText = 'select * from loan'
-    // }
     async create(newLoan: CreateLoanDTO): Promise<string>{         
-        const queryText = 'insert into loan(user_id, \
+        const loanQuery = 'insert into loan(user_id, \
             amount, installments, next_installment_date, end_date, \
-            loan_type) \
-            values ($1, $2, $3, $4, $5, $6) returning loan_id'
-        const values = [
-            newLoan.user_id,
-            newLoan.amount,
-            newLoan.installments,
-            newLoan.next_installment_date,
-            newLoan.end_date,
-            newLoan.loan_type,
-        ]
-        try{
-            const result = await pool.query(queryText, values);            
-            const loanId = result.rows[0].loan_id;
-            console.log('REPO: '+loanId);
+            loan_type, state_id)  \
+            values ($1, $2, $3, $4, $5, $6, $7) returning loan_id'
+        const stateQuery = 'select state_id from states where state_name = $1';
+       
+        try{     
+            await pool.query('BEGIN');
+            const defaultStatus = 'toReview'
+            const stateResult = await pool.query(stateQuery, [defaultStatus]);
+            const state_id = stateResult.rows[0].state_id;
+           
             
+            const values = [
+                newLoan.user_id,
+                newLoan.amount,
+                newLoan.installments,
+                newLoan.next_installment_date,
+                newLoan.end_date,
+                newLoan.loan_type,
+                state_id
+            ]
+            const loanResult = await pool.query(loanQuery, values);
+            const loanId = loanResult.rows[0].loan_id;
+            await pool.query('commit');
             return loanId;
         }catch(error){
             throw new Error(`Error creating loan: ${error.message}`);
         }
     }
     async getLoanById(loanId:string): Promise<LoanDTO>{
-        const queryText = 'select * from loan where loan_id = $1'
+        const loanQuery = 'select * from loan where loan_id = $1';
+        const stateQuery = 'select state_name from states where state_id = $1'
         try{
-            const result = await pool.query(queryText, [loanId]);
+            const result = await pool.query(loanQuery, [loanId]);
             if(result.rows === null){
-                throw new NotFoundException('no user with that id');
+                throw new NotFoundException('no loan with that id');
             }
             const row = result.row[0];
-
+            const stateResult = pool.query(stateQuery, [row.state_id]);
+            const state = stateResult.rows[0].state_name;
             const loan = new LoanDTO(row.loan_id, row.user_id, row.approved_by, row.amount, row.installment, row.next_installment_date,
-                row.end_date, row.loan_type, row.created_at, row.updated_at);
+                row.end_date, row.loan_type, state, row.created_at, row.updated_at);
             return loan;
         }catch(error){ 
             throw new Error(`Error getting loan: ${error.message}`)
@@ -100,19 +131,49 @@ export class LoanRepository{
             throw new Error(`error getting payments: ${error.message}`)
         }
     }
-    async getLoansByUser(user_id: string): Promise<LoanDTO[]>{
-        const queryText = 'select * from loan where user_id = $1'
-
-        try{
+    async getLoansByUser(user_id: string): Promise<LoanDTO[]> {
+        const queryText = `
+            SELECT 
+                l.loan_id,
+                l.user_id,
+                l.approved_by,
+                l.amount,
+                l.installments,
+                l.next_installment_date,
+                l.end_date,
+                l.loan_type,
+                s.state_name,
+                l.created_at,
+                l.updated_at
+            FROM 
+                loan l
+            JOIN 
+                states s ON l.state_id = s.state_id
+            WHERE 
+                l.user_id = $1`;
+        
+        try {
             const result = await pool.query(queryText, [user_id]);
-            if(result.rows === null){
-                throw new NotFoundException('no loans for that id');
+            if (result.rows.length === 0) {
+                throw new NotFoundException('No loans for that user ID');
             }
-            const loans = result.rows.map((row)=>new LoanDTO(row.loan_id, user_id, row.approved_by, row.amount,
-                row.installments, row.next_installment_date, row.end_date, 
-                row.loan_type, row.created_at, row.updated_at));
-            return loans
-        }catch(error){
+    
+            const loans = result.rows.map(row => new LoanDTO(
+                row.loan_id,
+                row.user_id,
+                row.approved_by,
+                row.amount,
+                row.installments,
+                row.next_installment_date,
+                row.end_date,
+                row.loan_type,
+                row.state_name,
+                row.created_at,
+                row.updated_at
+            ));
+    
+            return loans;
+        } catch (error) {
             throw new Error(`Error getting loans: ${error.message}`);
         }
     }
