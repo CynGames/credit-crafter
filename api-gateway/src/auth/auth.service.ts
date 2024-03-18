@@ -23,7 +23,7 @@ export class AuthService {
     const body = {
       email: loginDTO.email,
       password: loginDTO.password,
-      returnSecureToken: loginDTO.returnSecureToken,
+      returnSecureToken: true,
     };
 
     const headers = {
