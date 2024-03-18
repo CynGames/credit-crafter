@@ -5,7 +5,11 @@ import {
 } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
 
-import { MessageType, UserRecord, GenericMessage } from 'src/shared-definitions/types-dto-constants';
+import {
+  MessageType,
+  GenericMessage,
+  UserDTO,
+} from 'src/shared-definitions/types-dto-constants';
 
 @Injectable()
 export class ProducerService implements OnModuleInit, OnApplicationShutdown {
@@ -23,7 +27,13 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
   async onApplicationShutdown() {
     await this.producer.disconnect();
   }
-  async constructResponse(correlationId: string, userRecord: UserRecord, type: MessageType, topic: string, createdId: string){
+  async constructResponse(
+    correlationId: string,
+    userRecord: UserDTO,
+    type: MessageType,
+    topic: string,
+    createdId: string,
+  ) {
     const message: GenericMessage<any> = {
       headers: {
         type: type,
@@ -32,35 +42,41 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
         userRecord: userRecord,
       },
       payload: {
-        data: { 
-          status: 'success', 
+        data: {
+          status: 'success',
           id: createdId,
-      }
-      }
+        },
+      },
     };
-    console.log("producer message: "+ message);
-    
+    console.log('producer message: ' + message);
+
     return await this.sendMessage(message);
   }
-async constructFetchResponse(correlationId: string, userRecord: UserRecord, type: MessageType, topic: string, array: any[]){
-  const message: GenericMessage<any> = {
-    headers: {
-      type: type,
-      topic: topic,
-      correlationId: correlationId,
-      userRecord: userRecord,
-    },
-    payload: {
-      query: { 
-        status: 'success', 
-        data: array
-    }
-    }
-  };
-  console.log("producer message: "+ message);
-  
-  return await this.sendMessage(message);
-}
+  async constructFetchResponse(
+    correlationId: string,
+    userRecord: UserDTO,
+    type: MessageType,
+    topic: string,
+    array: any[],
+  ) {
+    const message: GenericMessage<any> = {
+      headers: {
+        type: type,
+        topic: topic,
+        correlationId: correlationId,
+        userRecord: userRecord,
+      },
+      payload: {
+        query: {
+          status: 'success',
+          data: array,
+        },
+      },
+    };
+    console.log('producer message: ' + message);
+
+    return await this.sendMessage(message);
+  }
   async sendMessage<T = any>(genericMessage: GenericMessage<T>) {
     const topic = genericMessage.headers.topic;
     const messages: { value: string }[] = [

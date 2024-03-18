@@ -1,66 +1,54 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { IAuthService } from './interface/auth.service.interface';
-import { RegisterUserDto } from './dto/register-user.dto';
+import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
-import { response } from 'express'
+import { LoginUserDTO } from './dtos/login-user.dto';
+import { UserService } from '../user/user.service';
+import { HttpService } from '@nestjs/axios';
+import { RegisterUserDTO } from './dtos/register-user-d-t.o';
+import {
+  UserCreatePayload,
+  UserDTO,
+} from '../shared-definitions/types-dto-constants';
 
 @Injectable()
-export class AuthService implements IAuthService {
-  async validateUser(token: string): Promise<any> {
-    const userRecord = await admin.auth().verifyIdToken(token);
-    const userData = await admin.auth().getUser(userRecord.uid);
+export class AuthService {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly userService: UserService,
+  ) {}
 
-    return { userData };
+  async login(loginDTO: LoginUserDTO): Promise<{ token: string }> {
+    const URL =
+      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
+
+    const body = {
+      email: loginDTO.email,
+      password: loginDTO.password,
+      returnSecureToken: loginDTO.returnSecureToken,
+    };
+
+    const headers = {
+      headers: { Accept: '*/*', 'Content-Type': 'application/json' },
+    };
+
+    const { data } = await this.httpService.axiosRef.post(URL, body, headers);
+    return { token: data.idToken };
   }
 
-  async registerUser(registerUserDto: RegisterUserDto): Promise<any> {
+  async register(registerDTO: RegisterUserDTO): Promise<UserCreatePayload> {
     const userRecord = await admin.auth().createUser({
-      email: registerUserDto.email,
-      password: registerUserDto.password,
+      email: registerDTO.email,
+      password: registerDTO.password,
     });
 
-    const db = admin.firestore();
-    const userRef = db.collection('users-auth').doc(userRecord.uid);
-    await userRef.set({
-      firstName: registerUserDto.firstName,
-      lastName: registerUserDto.lastName,
-      email: registerUserDto.email,
-    });
+    const userDTO: UserDTO = {
+      id: userRecord.uid,
+      firstName: registerDTO.firstName,
+      lastName: registerDTO.lastName,
+      email: registerDTO.email,
+    };
 
-    return { userId: userRecord.uid };
+    const result = await this.userService.createUser(userDTO);
+
+    return { data: { success: result, user: userDTO } };
   }
-  async loginUser(email: string, password: string): Promise<any> {
-    try {
-      const url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
-      const body = {
-        email: email,
-        password: password
-      };
-      console.log(body);
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-  
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const responseData = await response.json();
-      
-      
-      if (responseData && responseData.idToken) {
-       
-        const customToken = responseData.idToken;
-        return customToken;
-      } else {
-        throw new Error('Invalid response from authentication service');
-      }
-    } catch (error) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-  }
-  
 }

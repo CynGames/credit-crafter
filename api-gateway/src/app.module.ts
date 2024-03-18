@@ -1,20 +1,38 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 
-import { HealthService } from './kafka/health.service';
-import { ProducerService } from './kafka/producer.service';
+import { AuthController } from './auth/auth.controller';
+import { UserController } from './user/user.controller';
+import { LoanController } from './loan/loan.controller';
+import { HealthController } from './health/health.controller';
+
 import { AuthService } from './auth/auth.service';
-import { AppService } from './app.service';
-
-import { AuthController } from './controllers/auth.controller';
-import { AppController } from './controllers/app.controller';
-import { LoanController } from './loan/controller/loan.controller';
+import { UserService } from './user/user.service';
 import { LoanService } from './loan/loan.service';
-import { LoanConsumer } from './loan/loan.consumer';
+import { HealthService } from './health/health.service';
+import { ProducerService } from './kafka/producer.service';
 
+import { LoanConsumer } from './loan/loan.consumer';
+import { HealthConsumer } from './health/health.consumer';
+import { UserConsumer } from './user/user.consumer';
 
 @Module({
-  imports: [],
-  controllers: [AuthController, AppController, LoanController],
-  providers: [AppService, AuthService, ProducerService, HealthService, LoanConsumer, LoanService],
+  imports: [HttpModule],
+  controllers: [
+    AuthController,
+    UserController,
+    HealthController,
+    LoanController,
+  ],
+  providers: [
+    AuthService,
+    UserService,
+    UserConsumer,
+    HealthService,
+    HealthConsumer,
+    ProducerService,
+    LoanConsumer,
+    LoanService,
+  ],
 })
 export class AppModule {}

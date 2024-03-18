@@ -4,64 +4,25 @@ export type GenericMessage<T> = {
     type: MessageType;
     correlationId: string;
     offset?: string;
-    userRecord: UserRecord;
+    userRecord: UserDTO | null;
   };
   payload: T;
-};
-export type ServerStatusPayload = {
-  data: ServerStatus[];
 };
 export type ServerStatus = {
   service: string;
   status: string;
 };
-export type UserRecord = {
-  uid: string;
-  email?: string;
-  // emailVerified: boolean;
-  // displayName?: string;
-  // photoURL?: string;
-  // phoneNumber?: string;
-  disabled: boolean;
-  metadata: UserMetadata;
-  providerData: UserInfo[];
-  // passwordHash?: string;
-  // passwordSalt?: string;
-  // customClaims?: { [key: string]: any; };
-  // tenantId?: string | null;
-  // tokensValidAfterTime?: string;
-  // multiFactor?: MultiFactorSettings;
-}
-export type LoanRecord = {
-  uid: string;
-  user_id: string;
-  approved_by: string;
-  amount: number;
-  installment: number;
-  next_installment_date: Date;
-  end_date: Date;
-  loan_type: string;
-  created_at: Date;
-  updated_at: Date;
-}
-export type UserMetadata = {
-  creationTime: string;
-  lastSignInTime: string;
-  lastRefreshTime?: string | null;
-}
-export type UserInfo = {
-  readonly uid: string;
-  readonly displayName: string;
-  readonly email: string;
-  readonly photoURL: string;
-  readonly providerId: string;
-  readonly phoneNumber: string;
-}
-export type EmailUserPayload = {
-  data: { email: string }
-}
-export type IdUserPayload = {
-  data: { id: string }
+export type UserCreatePayload = {
+  data: {
+    success: boolean;
+    user: UserDTO;
+  };
+};
+export type UserDTO = {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  email: string;
 }
 export type LoanInfo = {
   readonly uid: string;
@@ -82,29 +43,26 @@ export type UserIdLoanPayload = {
 export type LoanIdPaymentsPayload = {
   data: {id: string}
 }
-
-export const RESPONSE_TO_API_GATEWAY = 'response-to-api-gateway'
-export const HEALTH_REQUEST = 'health-request'
-export const HEALTH_RESPONSE = 'health-response'
-export const USER_CREATE_REQUEST = 'user-create-request'
-export const USER_CREATE_RESPONSE = 'user-create-response'
-export const USER_FETCH_REQUEST = 'user-fetch-request'
-export const USER_FETCH_RESPONSE = 'user-fetch-response'
+export const HEALTH_REQUEST = 'health-request';
+export const HEALTH_RESPONSE = 'health-response';
 export const LOAN_CREATE_REQUEST = 'loan-create-request'
 export const LOAN_CREATE_RESPONSE = 'loan-create-response'
 export const LOAN_FETCH_RESPONSE = 'loan-fetch-response'
 export const LOAN_FETCH_REQUEST = 'loan-fetch-request'
 export const PAYMENT_CREATE_RESPONSE ='payment-create-response'
-
-
 export type MessageType =
   | 'EmptyMessage'
   | 'CreateHealthRequest'
   | 'CreateHealthResponse'
   | 'CreateUserRequest'
   | 'CreateUserResponse'
+  | 'FetchUsers'
   | 'FetchEmailUser'
   | 'FetchIdUser'
+  | 'CreateFinancialDataRequest'
+  | 'CreateFinancialDataResponse'
+  | 'FetchFinancialDataResponse'
+  | 'FetchFinancialDataRequest'
   | 'CreateLoanRequest'
   | 'CreateLoanResponse'
   | 'FetchIdLoan'
@@ -121,8 +79,20 @@ export type SpecificMessage =
   | HealthMessageResponse
   | CreateUserRequest
   | CreateUserResponse
+  | FetchUsers
   | FetchEmailUser
-  | FetchIdUser;
+  | FetchIdUser
+  | CreateFinancialDataRequest
+  | CreateFinancialDataResponse
+  | FetchFinancialDataResponse
+  | FetchFinancialDataRequest
+  | CreateLoanRequest
+  | CreateLoanResponse
+  | FetchIdLoan
+  | FetchUserIdLoan
+  | FetchLoanIdPayments
+  | CreatePaymentRequest
+  | CreatePaymentResponse;
 export type HealthMessageRequest = GenericMessage<void> & {
   headers: { type: 'CreateHealthRequest' };
 };
@@ -135,11 +105,47 @@ export type CreateUserRequest = GenericMessage<void> & {
 export type CreateUserResponse = GenericMessage<void> & {
   headers: { type: 'CreateUserResponse' };
 }
+export type FetchUsers = GenericMessage<void> & {
+  headers: { type: 'FetchUsers' };
+}
 export type FetchEmailUser = GenericMessage<void> & {
   headers: { type: 'FetchEmailUser' };
 }
 export type FetchIdUser = GenericMessage<void> & {
   headers: { type: 'FetchIdUser' };
+}
+export type CreateFinancialDataRequest = GenericMessage<void> & {
+  headers: { type: 'CreateFinancialDataRequest' };
+}
+export type CreateFinancialDataResponse = GenericMessage<void> & {
+  headers: { type: 'CreateFinancialDataResponse' };
+}
+export type FetchFinancialDataResponse = GenericMessage<void> & {
+  headers: { type: 'FetchFinancialDataResponse' };
+}
+export type FetchFinancialDataRequest = GenericMessage<void> & {
+  headers: { type: 'FetchFinancialDataRequest' };
+}
+export type CreateLoanRequest = GenericMessage<void> & {
+  headers: { type: 'CreateLoanRequest' };
+}
+export type CreateLoanResponse = GenericMessage<void> & {
+  headers: { type: 'CreateLoanResponse' };
+}
+export type FetchIdLoan = GenericMessage<void> & {
+  headers: { type: 'FetchIdLoan' };
+}
+export type FetchUserIdLoan = GenericMessage<void> & {
+  headers: { type: 'FetchUserIdLoan' };
+}
+export type FetchLoanIdPayments = GenericMessage<void> & {
+  headers: { type: 'FetchLoanIdPayments' };
+}
+export type CreatePaymentRequest = GenericMessage<void> & {
+  headers: { type: 'CreatePaymentRequest' };
+}
+export type CreatePaymentResponse = GenericMessage<void> & {
+  headers: { type: 'CreatePaymentResponse' };
 }
 export function IsEmptyMessage(
   message: SpecificMessage,
@@ -155,16 +161,6 @@ export function IsHealthMessageRequest(
   message: SpecificMessage,
 ): message is HealthMessageRequest {
   return message.headers.type === 'CreateHealthRequest';
-}
-export function IsUserEmailFetchMessage(
-  message: SpecificMessage,
-): message is FetchEmailUser {
-  return message.headers.type === 'FetchEmailUser';
-}
-export function IsUserIdFetchMessage(
-  message: SpecificMessage,
-): message is FetchIdUser {
-  return message.headers.type === 'FetchIdUser';
 }
 export function PayloadTypeExtractor(
   message: SpecificMessage,

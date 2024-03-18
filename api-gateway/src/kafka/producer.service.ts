@@ -4,7 +4,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
-import { GenericMessage } from '../dto/types-dto-constants';
+import { GenericMessage } from '../shared-definitions/types-dto-constants';
 
 @Injectable()
 export class ProducerService implements OnModuleInit, OnApplicationShutdown {
@@ -24,6 +24,8 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
   }
 
   async sendMessage<T = any>(genericMessage: GenericMessage<T>) {
+    console.log(genericMessage, null);
+
     const topic = genericMessage.headers.topic;
     const messages: { value: string }[] = [
       { value: JSON.stringify(genericMessage) },
