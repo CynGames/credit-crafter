@@ -21,61 +21,64 @@ export type UserCreatePayload = {
     user: UserDTO;
   };
 };
-export type UserRecord = {
-  uid: string;
-  email?: string;
-  emailVerified?: boolean;
-  displayName?: string;
-  photoURL?: string;
-  phoneNumber?: string;
-  disabled?: boolean;
-  metadata: UserMetadata;
-  providerData: UserInfo[];
-  passwordHash?: string;
-  passwordSalt?: string;
-  customClaims?: { [key: string]: any };
-  tenantId?: string | null;
-  tokensValidAfterTime?: string;
-  multiFactor?: MultiFactorSettings;
-};
-type UserMetadata = {
-  creationTime?: string;
-  lastSignInTime?: string;
-  lastRefreshTime?: string | null;
-};
-export type MultiFactorSettings = {
-  enrolledFactors: MultiFactorInfo[];
-};
-export type MultiFactorInfo = {
-  readonly uid: string;
-  readonly displayName?: string;
-  readonly factorId: string;
-  readonly enrollmentTime?: string;
-};
-type UserInfo = {
-  readonly uid?: string;
-  readonly displayName?: string;
-  readonly email?: string;
-  readonly photoURL?: string;
-  readonly providerId?: string;
-  readonly phoneNumber?: string;
-};
-export type EmailUserPayload = {
-  data: { email: string };
-};
-export type IdUserPayload = {
-  data: { id: string };
-};
 export type UserDTO = {
   id: string;
-  email: string;
   firstName?: string;
   lastName?: string;
-};
+  email: string;
+}
+export type EmailUserPayload = {
+  data: { email: string }
+}
+export type IdUserPayload = {
+  data: { id: string }
+}
 export type FinancialDTO = {
-  id: string;
+  id?: string;
   income: string;
   expenses: string;
+}
+export type LoanInfo = {
+  readonly uid: string;
+  readonly userId: string;
+  readonly approvedBy: string;
+  readonly amount: number;
+  readonly installment: number;
+  readonly nextInstallmentDate: Date;
+  readonly end_date: Date;
+  readonly loan_type: string;
+}
+export type IdLoanPayload = {
+  data: {id: string}
+}
+export type UserIdLoanPayload = {
+  data: {id: string}
+}
+export type LoanIdPaymentsPayload = {
+  data: {id: string}
+}
+export class UserResponseDTO {
+  data: UserPayload | UserPayload[] | undefined;
+}
+export type UserPayload = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+  financialData?: FinancialData;
+};
+export type FinancialData = {
+  creditScore?: number;
+  income?: number;
+  expenses?: number;
+};
+export type RequestUserDTO = {
+  user: {
+    id: string;
+    email: string;
+  }
 };
 export const RESPONSE_TO_API_GATEWAY = 'response-to-api-gateway';
 export const HEALTH_REQUEST = 'health-request';
@@ -88,6 +91,11 @@ export const FINANCIAL_DATA_CREATE_REQUEST = 'financial-data-create-request';
 export const FINANCIAL_DATA_CREATE_RESPONSE = 'financial-data-create-response';
 export const FINANCIAL_DATA_FETCH_REQUEST = 'financial-data-fetch-request';
 export const FINANCIAL_DATA_FETCH_RESPONSE = 'financial-data-fetch-response';
+export const LOAN_CREATE_REQUEST = 'loan-create-request'
+export const LOAN_CREATE_RESPONSE = 'loan-create-response'
+export const LOAN_FETCH_RESPONSE = 'loan-fetch-response'
+export const LOAN_FETCH_REQUEST = 'loan-fetch-request'
+export const PAYMENT_CREATE_RESPONSE ='payment-create-response'
 export type MessageType =
   | 'EmptyMessage'
   | 'CreateHealthRequest'
@@ -100,7 +108,14 @@ export type MessageType =
   | 'CreateFinancialDataRequest'
   | 'CreateFinancialDataResponse'
   | 'FetchFinancialDataResponse'
-  | 'FetchFinancialDataRequest';
+  | 'FetchFinancialDataRequest'
+  | 'CreateLoanRequest'
+  | 'CreateLoanResponse'
+  | 'FetchIdLoan'
+  | 'FetchUserIdLoan'
+  | 'FetchLoanIdPayments'
+  | 'CreatePaymentRequest'
+  | 'CreatePaymentResponse';
 export type EmptyMessage = GenericMessage<void> & {
   headers: { type: 'EmptyMessage' };
 };
@@ -116,7 +131,14 @@ export type SpecificMessage =
   | CreateFinancialDataRequest
   | CreateFinancialDataResponse
   | FetchFinancialDataResponse
-  | FetchFinancialDataRequest;
+  | FetchFinancialDataRequest
+  | CreateLoanRequest
+  | CreateLoanResponse
+  | FetchIdLoan
+  | FetchUserIdLoan
+  | FetchLoanIdPayments
+  | CreatePaymentRequest
+  | CreatePaymentResponse;
 export type HealthMessageRequest = GenericMessage<void> & {
   headers: { type: 'CreateHealthRequest' };
 };
@@ -125,31 +147,52 @@ export type HealthMessageResponse = GenericMessage<ServerStatus> & {
 };
 export type CreateUserRequest = GenericMessage<void> & {
   headers: { type: 'CreateUserRequest' };
-};
+}
 export type CreateUserResponse = GenericMessage<void> & {
   headers: { type: 'CreateUserResponse' };
-};
+}
 export type FetchUsers = GenericMessage<void> & {
   headers: { type: 'FetchUsers' };
-};
+}
 export type FetchEmailUser = GenericMessage<void> & {
   headers: { type: 'FetchEmailUser' };
-};
+}
 export type FetchIdUser = GenericMessage<void> & {
   headers: { type: 'FetchIdUser' };
-};
+}
 export type CreateFinancialDataRequest = GenericMessage<void> & {
   headers: { type: 'CreateFinancialDataRequest' };
-};
+}
 export type CreateFinancialDataResponse = GenericMessage<void> & {
   headers: { type: 'CreateFinancialDataResponse' };
-};
+}
 export type FetchFinancialDataResponse = GenericMessage<void> & {
   headers: { type: 'FetchFinancialDataResponse' };
-};
+}
 export type FetchFinancialDataRequest = GenericMessage<void> & {
   headers: { type: 'FetchFinancialDataRequest' };
-};
+}
+export type CreateLoanRequest = GenericMessage<void> & {
+  headers: { type: 'CreateLoanRequest' };
+}
+export type CreateLoanResponse = GenericMessage<void> & {
+  headers: { type: 'CreateLoanResponse' };
+}
+export type FetchIdLoan = GenericMessage<void> & {
+  headers: { type: 'FetchIdLoan' };
+}
+export type FetchUserIdLoan = GenericMessage<void> & {
+  headers: { type: 'FetchUserIdLoan' };
+}
+export type FetchLoanIdPayments = GenericMessage<void> & {
+  headers: { type: 'FetchLoanIdPayments' };
+}
+export type CreatePaymentRequest = GenericMessage<void> & {
+  headers: { type: 'CreatePaymentRequest' };
+}
+export type CreatePaymentResponse = GenericMessage<void> & {
+  headers: { type: 'CreatePaymentResponse' };
+}
 export function IsEmptyMessage(
   message: SpecificMessage,
 ): message is EmptyMessage {
@@ -181,7 +224,7 @@ export function PayloadTypeExtractor(
   if (IsHealthMessageResponse(message)) return message;
   if (IsHealthMessageRequest(message)) return message;
   if (IsEmptyMessage(message)) return message;
-
+  
   throw new Error(`Unknown message type: ${message}`);
 }
 export function GenerateUniqueId() {

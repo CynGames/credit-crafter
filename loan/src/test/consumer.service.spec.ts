@@ -1,4 +1,4 @@
-import { HEALTH_REQUEST } from '../dto/types-dto-constants';
+import { HEALTH_REQUEST } from '../loan/dtos/types-dto-constants';
 
 jest.mock('kafkajs', () => ({
   Kafka: jest.fn(() => ({
@@ -13,7 +13,7 @@ jest.mock('kafkajs', () => ({
   })),
 }));
 
-jest.mock('../app.service', () => ({
+jest.mock('../health/health.service', () => ({
   AppService: jest.fn().mockImplementation(() => ({
     handleHealthCheckResponse: jest.fn(),
   })),
@@ -25,19 +25,21 @@ jest.mock('../kafka/producer.service', () => ({
   })),
 }));
 
-import { ConsumerService } from '../kafka/consumer.service';
-import { AppService } from '../app.service';
+import { ConsumerService } from '../health/consumer.service';
+import { HealthService } from '../health/health.service';
 import { ProducerService } from '../kafka/producer.service';
 
 describe('ConsumerService', () => {
   let consumerService: ConsumerService;
-  let appService: jest.Mocked<AppService>;
+  let appService: jest.Mocked<HealthService>;
   let producerService: jest.Mocked<ProducerService>;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    appService = new AppService(producerService) as jest.Mocked<AppService>;
+    appService = new HealthService(
+      producerService,
+    ) as jest.Mocked<HealthService>;
     consumerService = new ConsumerService(appService);
   });
 

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
+import * as admin from 'firebase-admin';
+import { LoginUserDTO } from './dtos/login-user.dto';
 import { UserService } from '../user/user.service';
+import { HttpService } from '@nestjs/axios';
+import { RegisterUserDTO } from './dtos/register-user-d-t.o';
 import {
   UserCreatePayload,
   UserDTO,
 } from '../shared-definitions/types-dto-constants';
-import { RegisterUserDTO } from './dtos/register-user-d-t.o';
-import * as admin from 'firebase-admin';
-import { LoginUserDTO } from './dtos/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,7 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async login(loginDTO: LoginUserDTO): Promise<any> {
+  async login(loginDTO: LoginUserDTO): Promise<{ token: string }> {
     const URL =
       'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
 
@@ -30,7 +30,8 @@ export class AuthService {
       headers: { Accept: '*/*', 'Content-Type': 'application/json' },
     };
 
-    return await this.httpService.axiosRef.post(URL, body, headers);
+    const { data } = await this.httpService.axiosRef.post(URL, body, headers);
+    return { token: data.idToken };
   }
 
   async register(registerDTO: RegisterUserDTO): Promise<UserCreatePayload> {

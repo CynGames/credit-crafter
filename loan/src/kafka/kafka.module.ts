@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConsumerService } from './consumer.service';
-import { AppService } from '../app.service';
+import { HealthService } from '../health/health.service';
 import { ProducerService } from './producer.service';
 
 @Module({
-  providers: [ConsumerService, AppService, ProducerService],
-  exports: [ConsumerService, ProducerService],
+  providers: [HealthService, ProducerService],
+  exports: [ProducerService],
 })
 export class KafkaModule {}

@@ -5,20 +5,14 @@ import {
   EmailUserPayload,
   FINANCIAL_DATA_CREATE_REQUEST,
   FINANCIAL_DATA_FETCH_REQUEST,
-  FinancialDTO,
   GenerateUniqueId,
   GenericMessage,
   IdUserPayload,
   USER_CREATE_REQUEST,
   USER_FETCH_REQUEST,
   UserDTO,
+  UserResponseDTO,
 } from '../shared-definitions/types-dto-constants';
-import {
-  FetchUserDTO,
-  FetchUsersDTO,
-  FinancialData,
-  RequestDTO,
-} from './user.controller';
 
 @Injectable()
 export class UserService {
@@ -27,7 +21,7 @@ export class UserService {
     private readonly userConsumer: UserConsumer,
   ) {}
 
-  async fetchUsers(): Promise<RequestDTO> {
+  async fetchUsers(): Promise<UserResponseDTO> {
     const correlationId = GenerateUniqueId();
 
     const message: GenericMessage<any> = {
@@ -60,15 +54,10 @@ export class UserService {
 
     await this.producerService.sendMessage(message);
 
-    const output = this.userConsumer.createUserHandler(correlationId);
-
-    return await this.userConsumer.waitForCreateUserResponse(
-      correlationId,
-      output,
-    );
+    return await this.userConsumer.waitForCreateUserResponse(correlationId);
   }
 
-  async fetchUserById(id: string): Promise<RequestDTO> {
+  async fetchUserById(id: string): Promise<UserResponseDTO> {
     const correlationId = GenerateUniqueId();
 
     const message: GenericMessage<IdUserPayload> = {
@@ -93,7 +82,7 @@ export class UserService {
     );
   }
 
-  async fetchUserByEmail(email: string): Promise<RequestDTO> {
+  async fetchUserByEmail(email: string): Promise<UserResponseDTO> {
     const correlationId = GenerateUniqueId();
 
     const message: GenericMessage<EmailUserPayload> = {

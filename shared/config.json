@@ -2,22 +2,92 @@
   "api-gateway": {
     "dto-types": [
       "GenericMessage",
-      "UserDto",
       "ServerStatusPayload",
       "ServerStatus",
       "UserCreatePayload",
-      "UserRecord",
-      "UserMetadata",
-      "MultiFactorSettings",
-      "MultiFactorInfo",
+      "UserDTO",
       "UserInfo",
       "EmailUserPayload",
       "IdUserPayload",
-      "UserDTO",
-      "FinancialDTO"
+      "FinancialDTO",
+      "LoanInfo",
+      "IdLoanPayload",
+      "UserIdLoanPayload",
+      "LoanIdPaymentsPayload",
+      "UserResponseDTO",
+      "UserPayload",
+      "FinancialData",
+      "RequestUserDTO"
     ],
     "message-topics": [
       "RESPONSE_TO_API_GATEWAY",
+      "HEALTH_REQUEST",
+      "HEALTH_RESPONSE",
+      "USER_CREATE_REQUEST",
+      "USER_CREATE_RESPONSE",
+      "USER_FETCH_REQUEST",
+      "USER_FETCH_RESPONSE",
+      "FINANCIAL_DATA_CREATE_REQUEST",
+      "FINANCIAL_DATA_CREATE_RESPONSE",
+      "FINANCIAL_DATA_FETCH_REQUEST",
+      "FINANCIAL_DATA_FETCH_RESPONSE",
+      "LOAN_CREATE_REQUEST",
+      "LOAN_CREATE_RESPONSE",
+      "LOAN_FETCH_RESPONSE",
+      "LOAN_FETCH_REQUEST",
+      "PAYMENT_CREATE_RESPONSE"
+    ],
+    "message-types": [
+      "MessageType",
+      "EmptyMessage",
+      "SpecificMessage",
+      "HealthMessageRequest",
+      "HealthMessageResponse",
+      "CreateUserRequest",
+      "CreateUserResponse",
+      "FetchUsers",
+      "FetchEmailUser",
+      "FetchIdUser",
+      "CreateFinancialDataRequest",
+      "CreateFinancialDataResponse",
+      "FetchFinancialDataResponse",
+      "FetchFinancialDataRequest",
+      "CreateLoanRequest",
+      "CreateLoanResponse",
+      "FetchIdLoan",
+      "FetchUserIdLoan",
+      "FetchLoanIdPayments",
+      "CreatePaymentRequest",
+      "CreatePaymentResponse"
+    ],
+    "type-guard-functions": [
+      "IsEmptyMessage",
+      "IsHealthMessageResponse",
+      "IsHealthMessageRequest",
+      "IsUserEmailFetchMessage",
+      "IsUserIdFetchMessage"
+    ],
+    "utility-functions": [
+      "PayloadTypeExtractor",
+      "GenerateUniqueId"
+    ]
+  },
+  "user": {
+    "dto-types": [
+      "GenericMessage",
+      "ServerStatus",
+      "UserDTO",
+      "UserInfo",
+      "EmailUserPayload",
+      "IdUserPayload",
+      "FinancialDTO",
+      "UserResponseDTO",
+      "FinancialDTO",
+      "UserPayload",
+      "FinancialData",
+      "RequestUserDTO"
+    ],
+    "message-topics": [
       "HEALTH_REQUEST",
       "HEALTH_RESPONSE",
       "USER_CREATE_REQUEST",
@@ -43,62 +113,14 @@
       "CreateFinancialDataRequest",
       "CreateFinancialDataResponse",
       "FetchFinancialDataResponse",
-      "FetchFinancialDataRequest"
-    ],
-    "type-guard-functions": [
-      "IsEmptyMessage",
-      "IsHealthMessageResponse",
-      "IsHealthMessageRequest",
-      "IsUserEmailFetchMessage",
-      "IsUserIdFetchMessage"
-    ],
-    "utility-functions": [
-      "PayloadTypeExtractor",
-      "GenerateUniqueId"
-    ]
-  },
-  "user": {
-    "dto-types": [
-      "GenericMessage",
-      "ServerStatus",
-      "UserDto",
-      "UserRecord",
-      "UserMetadata",
-      "MultiFactorSettings",
-      "MultiFactorInfo",
-      "UserInfo",
-      "EmailUserPayload",
-      "IdUserPayload",
-      "UserDTO",
-      "FinancialDTO"
-    ],
-    "message-topics": [
-      "HEALTH_REQUEST",
-      "HEALTH_RESPONSE",
-      "USER_CREATE_REQUEST",
-      "USER_CREATE_RESPONSE",
-      "USER_FETCH_REQUEST",
-      "USER_FETCH_RESPONSE",
-      "FINANCIAL_DATA_CREATE_REQUEST",
-      "FINANCIAL_DATA_CREATE_RESPONSE",
-      "FINANCIAL_DATA_FETCH_REQUEST",
-      "FINANCIAL_DATA_FETCH_RESPONSE"
-    ],
-    "message-types": [
-      "MessageType",
-      "EmptyMessage",
-      "SpecificMessage",
-      "HealthMessageRequest",
-      "HealthMessageResponse",
-      "CreateUserRequest",
-      "CreateUserResponse",
-      "FetchUsers",
-      "FetchEmailUser",
-      "FetchIdUser",
-      "CreateFinancialDataRequest",
-      "CreateFinancialDataResponse",
       "FetchFinancialDataRequest",
-      "FetchFinancialDataResponse"
+      "CreateLoanRequest",
+      "CreateLoanResponse",
+      "FetchIdLoan",
+      "FetchUserIdLoan",
+      "FetchLoanIdPayments",
+      "CreatePaymentRequest",
+      "CreatePaymentResponse"
     ],
     "type-guard-functions": [
       "IsEmptyMessage",
@@ -118,21 +140,43 @@
       "ServerStatus",
       "UserRecord",
       "UserCreatePayload",
-      "UserMetadata",
-      "MultiFactorSettings",
-      "MultiFactorInfo",
-      "UserInfo"
+      "UserDTO",
+      "LoanInfo",
+      "IdLoanPayload",
+      "UserIdLoanPayload",
+      "LoanIdPaymentsPayload"
     ],
     "message-topics": [
       "HEALTH_REQUEST",
-      "HEALTH_RESPONSE"
+      "HEALTH_RESPONSE",
+      "LOAN_CREATE_REQUEST",
+      "LOAN_CREATE_RESPONSE",
+      "LOAN_FETCH_RESPONSE",
+      "LOAN_FETCH_REQUEST",
+      "PAYMENT_CREATE_RESPONSE"
     ],
     "message-types": [
       "MessageType",
       "EmptyMessage",
       "SpecificMessage",
       "HealthMessageRequest",
-      "HealthMessageResponse"
+      "HealthMessageResponse",
+      "CreateUserRequest",
+      "CreateUserResponse",
+      "FetchUsers",
+      "FetchEmailUser",
+      "FetchIdUser",
+      "CreateFinancialDataRequest",
+      "CreateFinancialDataResponse",
+      "FetchFinancialDataResponse",
+      "FetchFinancialDataRequest",
+      "CreateLoanRequest",
+      "CreateLoanResponse",
+      "FetchIdLoan",
+      "FetchUserIdLoan",
+      "FetchLoanIdPayments",
+      "CreatePaymentRequest",
+      "CreatePaymentResponse"
     ],
     "type-guard-functions": [
       "IsEmptyMessage",

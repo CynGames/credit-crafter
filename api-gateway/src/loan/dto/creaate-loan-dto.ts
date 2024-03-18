@@ -4,9 +4,6 @@ export class CreateLoanDTO{
     @IsString()
     user_id: string;
 
-    @IsString()
-    approved_by: string;
-
     @IsNumber()
     amount: number;
 

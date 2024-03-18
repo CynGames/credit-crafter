@@ -13,59 +13,26 @@ export type GenericMessage<T> = {
 
 export type UserDTO = {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
 }
 
 export type FinancialDTO = {
-  id: string;
+  id?: string;
   income: string;
   expenses: string;
 }
 
-export type UserRecord = {
-  uid: string;
-  email?: string;
-  emailVerified?: boolean;
-  displayName?: string;
-  photoURL?: string;
-  phoneNumber?: string;
-  disabled?: boolean;
-  metadata: UserMetadata;
-  providerData: UserInfo[];
-  passwordHash?: string;
-  passwordSalt?: string;
-  customClaims?: { [key: string]: any; };
-  tenantId?: string | null;
-  tokensValidAfterTime?: string;
-  multiFactor?: MultiFactorSettings;
-}
-
-type UserMetadata = {
-  creationTime?: string;
-  lastSignInTime?: string;
-  lastRefreshTime?: string | null;
-}
-
-type UserInfo = {
-  readonly uid?: string;
-  readonly displayName?: string;
-  readonly email?: string;
-  readonly photoURL?: string;
-  readonly providerId?: string;
-  readonly phoneNumber?: string;
-}
-
-export type MultiFactorSettings = {
-  enrolledFactors: MultiFactorInfo[];
-}
-
-export type MultiFactorInfo = {
+export type LoanInfo = {
   readonly uid: string;
-  readonly displayName?: string;
-  readonly factorId: string;
-  readonly enrollmentTime?: string;
+  readonly userId: string;
+  readonly approvedBy: string;
+  readonly amount: number;
+  readonly installment: number;
+  readonly nextInstallmentDate: Date;
+  readonly end_date: Date;
+  readonly loan_type: string;
 }
 
 export type UserCreatePayload = {
@@ -91,3 +58,40 @@ export type EmailUserPayload = {
 export type IdUserPayload = {
   data: { id: string }
 }
+
+export type IdLoanPayload = {
+  data: {id: string}
+}
+export type UserIdLoanPayload = {
+  data: {id: string}
+}
+export type LoanIdPaymentsPayload = {
+  data: {id: string}
+}
+
+export class UserResponseDTO {
+  data: UserPayload | UserPayload[] | undefined;
+}
+
+export type UserPayload = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+  financialData?: FinancialData;
+};
+
+export type FinancialData = {
+  creditScore?: number;
+  income?: number;
+  expenses?: number;
+};
+
+export type RequestUserDTO = {
+  user: {
+    id: string;
+    email: string;
+  }
+};

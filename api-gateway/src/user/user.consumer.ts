@@ -5,14 +5,11 @@ import {
 } from '@nestjs/common';
 import { Consumer, Kafka } from 'kafkajs';
 import {
-  FinancialDTO,
   GenericMessage,
-  PayloadTypeExtractor,
   USER_CREATE_RESPONSE,
   USER_FETCH_RESPONSE,
-  UserDTO,
+  UserResponseDTO,
 } from '../shared-definitions/types-dto-constants';
-import { FetchUserDTO, FetchUsersDTO, RequestDTO } from './user.controller';
 
 @Injectable()
 export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
@@ -83,86 +80,39 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
     }
   }
 
-  public createUserHandler(correlationId: string): boolean {
-    let success: boolean;
-
-    this.responseHandlers.set(correlationId, (payload) => {
-      console.log('[API GATEWAY] Processing Create User Response...');
-      success = payload.success;
-    });
-
-    return success;
-  }
-
-  // public createUserFinancialDataHandler(correlationId: string): FinancialDTO {
-  //   let success: FinancialDTO;
-  //
-  //   this.responseHandlers.set(correlationId, (payload) => {
-  //     console.log('[API GATEWAY] Processing Create FINANCIAL DATA Response...');
-  //     success = payload.data;
-  //   });
-  //
-  //   return success;
-  // }
-
-  // public fetchUserHandler(correlationId: string): UserDTO[] {
-  //   const output: UserDTO[] = [];
-  //
-  //   this.responseHandlers.set(correlationId, (payload) => {
-  //     console.log('[API GATEWAY] Processing Fetch User Response...');
-  //     output.push(payload.data);
-  //     // console.log(output);
-  //   });
-  //
-  //   return output;
-  // }
-
-  public async waitForCreateUserResponse(
-    correlationId: string,
-    output: boolean,
-  ): Promise<any> {
+  public async waitForCreateUserResponse(correlationId: string): Promise<any> {
     console.log('[API GATEWAY] Waiting for response...');
-    console.log(output);
 
     return new Promise((resolve) => {
-      const timeoutId = setTimeout(() => {
-        resolve({ success: output });
+      setTimeout(() => {
+        resolve({ success: false });
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       }, 3000);
 
-      if (output) {
-        clearTimeout(timeoutId);
-        resolve({ success: output });
+      this.responseHandlers.set(correlationId, (payload) => {
+        console.log('[API GATEWAY] Processing Create User Response...');
+        resolve(payload.success);
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
-      }
+      });
     });
   }
 
   public async waitForFetchUserResponse(
     correlationId: string,
-    // responses: any[],
-  ): Promise<RequestDTO> {
+  ): Promise<UserResponseDTO> {
     console.log('[API GATEWAY] Waiting for response...');
 
     return new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
+      setTimeout(() => {
         reject('Error in Promise. Timeout');
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       }, 3000);
 
-      // if (responses.length > 0) {
-      //   clearTimeout(timeoutId);
-      //   resolve(responses);
-      //   this.responseHandlers.delete(correlationId);
-      //   console.log('[API GATEWAY] Promised Resolved!');
-      // }
-
       this.responseHandlers.set(correlationId, (payload) => {
         console.log('[API GATEWAY] Processing Fetch User Response...');
-        // output.push();
         resolve(payload.data);
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
@@ -172,7 +122,6 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
 
   public async waitForCreateUserFinancialDataResponse(
     correlationId: string,
-    // output: FinancialDTO,
   ): Promise<any> {
     console.log('[API GATEWAY] Waiting for response...');
 
@@ -182,13 +131,6 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       }, 3000);
-
-      // if (output) {
-      //   clearTimeout(timeoutId);
-      //   resolve(output);
-      //   this.responseHandlers.delete(correlationId);
-      //   console.log('[API GATEWAY] Promised Resolved!');
-      // }
 
       this.responseHandlers.set(correlationId, (payload) => {
         console.log(
@@ -204,30 +146,21 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
 
   public async waitForFetchUserFinancialDataResponse(
     correlationId: string,
-    // responses: any[],
   ): Promise<any> {
     console.log('[API GATEWAY] Waiting for response...');
 
     return new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
+      setTimeout(() => {
         reject('Error resolving promise. Timeout');
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
       }, 3000);
-
-      // if (responses.length > 0) {
-      //   clearTimeout(timeoutId);
-      //   resolve(responses);
-      //   this.responseHandlers.delete(correlationId);
-      //   console.log('[API GATEWAY] Promised Resolved!');
-      // }
 
       this.responseHandlers.set(correlationId, (payload) => {
         console.log('[API GATEWAY] Processing Fetch User Response...');
         resolve(payload.data);
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
-        // console.log(output);
       });
     });
   }

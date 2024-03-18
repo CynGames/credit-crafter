@@ -53,7 +53,8 @@ function generateContentForMicroservice(elements, sharedDataFile) {
             sharedDataFile.getTypeAlias(element) ||
             sharedDataFile.getVariableStatement(element) ||
             sharedDataFile.getFunction(element) ||
-            sharedDataFile.getEnum(element);
+            sharedDataFile.getEnum(element) ||
+            sharedDataFile.getClass(element);
         if (found) {
             content += found.getText() + '\n';
         }

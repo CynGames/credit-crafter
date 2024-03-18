@@ -12,7 +12,14 @@ export type MessageType =
   | 'CreateFinancialDataRequest'
   | 'CreateFinancialDataResponse'
   | 'FetchFinancialDataResponse'
-  | 'FetchFinancialDataRequest';
+  | 'FetchFinancialDataRequest'
+  | 'CreateLoanRequest'
+  | 'CreateLoanResponse'
+  | 'FetchIdLoan'
+  | 'FetchUserIdLoan'
+  | 'FetchLoanIdPayments'
+  | 'CreatePaymentRequest'
+  | 'CreatePaymentResponse';
 
 export type SpecificMessage =
   | EmptyMessage
@@ -26,7 +33,42 @@ export type SpecificMessage =
   | CreateFinancialDataRequest
   | CreateFinancialDataResponse
   | FetchFinancialDataResponse
-  | FetchFinancialDataRequest;
+  | FetchFinancialDataRequest
+  | CreateLoanRequest
+  | CreateLoanResponse
+  | FetchIdLoan
+  | FetchUserIdLoan
+  | FetchLoanIdPayments
+  | CreatePaymentRequest
+  | CreatePaymentResponse;
+
+export type CreateLoanRequest = GenericMessage<void> & {
+  headers: { type: 'CreateLoanRequest' };
+}
+
+export type CreateLoanResponse = GenericMessage<void> & {
+  headers: { type: 'CreateLoanResponse' };
+}
+
+export type FetchIdLoan = GenericMessage<void> & {
+  headers: { type: 'FetchIdLoan' };
+}
+
+export type FetchUserIdLoan = GenericMessage<void> & {
+  headers: { type: 'FetchUserIdLoan' };
+}
+
+export type FetchLoanIdPayments = GenericMessage<void> & {
+  headers: { type: 'FetchLoanIdPayments' };
+}
+
+export type CreatePaymentRequest = GenericMessage<void> & {
+  headers: { type: 'CreatePaymentRequest' };
+}
+
+export type CreatePaymentResponse = GenericMessage<void> & {
+  headers: { type: 'CreatePaymentResponse' };
+}
 
 export type FetchFinancialDataResponse = GenericMessage<void> & {
   headers: { type: 'FetchFinancialDataResponse' };

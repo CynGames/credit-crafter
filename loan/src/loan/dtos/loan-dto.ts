@@ -7,6 +7,7 @@ export class LoanDTO{
     _next_installment_date: Date;
     _end_date: Date;
     _loan_type: string;
+    _state: string;
     _created_at: Date;
     _updated_at: Date;
 
@@ -19,6 +20,7 @@ export class LoanDTO{
         next_installment_date: Date,
         end_date: Date,
         loan_type: string,
+        state: string,
         created_at: Date,
         updated_at: Date
     ){
@@ -30,6 +32,7 @@ export class LoanDTO{
         this._next_installment_date = next_installment_date;
         this._end_date = end_date;
         this._loan_type = loan_type;
+        this._state = state;
         this._created_at = created_at;
         this._updated_at = updated_at;
     }

@@ -15,3 +15,12 @@ export const FINANCIAL_DATA_CREATE_REQUEST = 'financial-data-create-request';
 export const FINANCIAL_DATA_CREATE_RESPONSE = 'financial-data-create-response';
 export const FINANCIAL_DATA_FETCH_REQUEST = 'financial-data-fetch-request';
 export const FINANCIAL_DATA_FETCH_RESPONSE = 'financial-data-fetch-response';
+
+// Loan
+export const LOAN_CREATE_REQUEST = 'loan-create-request'
+export const LOAN_CREATE_RESPONSE = 'loan-create-response'
+export const LOAN_FETCH_RESPONSE = 'loan-fetch-response'
+export const LOAN_FETCH_REQUEST = 'loan-fetch-request'
+
+// Payment
+export const PAYMENT_CREATE_RESPONSE ='payment-create-response'

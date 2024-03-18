@@ -1,19 +1,22 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { RequestUserDto } from '../dtos/request-user.dto';
 import admin from 'firebase-admin';
-import { UserDTO } from '../../shared-definitions/types-dto-constants';
+import { RequestUserDTO } from '../../shared-definitions/types-dto-constants';
 
 @Injectable()
 export class FirebaseAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest() as RequestUserDto;
-    const idToken = request.headers.authorization?.split('Bearer ')[1];
+    const request = context.switchToHttp().getRequest();
+    const authToken = request.headers.authorization?.split('Bearer ')[1];
+    const cookieToken = request.headers.cookie.split('token=')[1];
 
-    if (!idToken) return false;
+    if (!authToken && !cookieToken) return false;
+
+    const token = authToken || cookieToken;
 
     try {
-      const decodedUser = await admin.auth().verifyIdToken(idToken);
+      const decodedUser = await admin.auth().verifyIdToken(token);
       const userRecord = await admin.auth().getUser(decodedUser.uid);
+
       request.user = { id: userRecord.uid, email: userRecord.email };
       return true;
     } catch (error) {

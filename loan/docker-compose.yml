@@ -9,12 +9,12 @@ services:
     environment:
       POSTGRES_USER: ${PG_USER}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
-      POSTGRES_DB: ${PG_DB}
+      POSTGRES_DB: ${PG_DATABASE}
     volumes:
       - db_data:/var/lib/postgresql/db_data
       - ./src/db/schemas/loan.sql:/docker-entrypoint-initdb.d/loan.sql
     
     ports:
-      - 3232:3232
+      - 3232:5432
 volumes:
   db_data:
