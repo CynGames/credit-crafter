@@ -96,6 +96,8 @@ export const LOAN_CREATE_RESPONSE = 'loan-create-response'
 export const LOAN_FETCH_RESPONSE = 'loan-fetch-response'
 export const LOAN_FETCH_REQUEST = 'loan-fetch-request'
 export const PAYMENT_CREATE_RESPONSE ='payment-create-response'
+export const LOAN_UPDATE_REQUEST = 'loan-update-request'
+export const LOAN_UPDATE_RESPONSE = 'loan-update-response'
 export type MessageType =
   | 'EmptyMessage'
   | 'CreateHealthRequest'
@@ -115,7 +117,9 @@ export type MessageType =
   | 'FetchUserIdLoan'
   | 'FetchLoanIdPayments'
   | 'CreatePaymentRequest'
-  | 'CreatePaymentResponse';
+  | 'CreatePaymentResponse'
+  | 'UpdateLoanRequest'
+  | 'UpdateLoanResponse';
 export type EmptyMessage = GenericMessage<void> & {
   headers: { type: 'EmptyMessage' };
 };

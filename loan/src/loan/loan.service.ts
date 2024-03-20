@@ -49,4 +49,11 @@ export class LoanService {
       throw new Error(`${error.message}`);
     }
   }
+  async changLoanState(loan_id: string, state: string){
+      try{
+        await this.repo.updateLoanState(loan_id, state);
+      }catch(error){
+        throw new Error(error.message);
+      }
+  }
 }

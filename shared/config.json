@@ -35,7 +35,9 @@
       "LOAN_CREATE_RESPONSE",
       "LOAN_FETCH_RESPONSE",
       "LOAN_FETCH_REQUEST",
-      "PAYMENT_CREATE_RESPONSE"
+      "PAYMENT_CREATE_RESPONSE",
+      "LOAN_UPDATE_REQUEST",
+      "LOAN_UPDATE_RESPONSE"
     ],
     "message-types": [
       "MessageType",
@@ -58,7 +60,10 @@
       "FetchUserIdLoan",
       "FetchLoanIdPayments",
       "CreatePaymentRequest",
-      "CreatePaymentResponse"
+      "CreatePaymentResponse",
+      "UpdateLoanRequest",
+      "UpdateLoanResponse"
+      
     ],
     "type-guard-functions": [
       "IsEmptyMessage",
@@ -144,7 +149,11 @@
       "LoanInfo",
       "IdLoanPayload",
       "UserIdLoanPayload",
-      "LoanIdPaymentsPayload"
+      "LoanIdPaymentsPayload",
+      "LoanUpdateRequest",
+      "LoanUpdateResponse",
+      "LoanUpdatePayload",
+      "LoanFetchPayload"
     ],
     "message-topics": [
       "HEALTH_REQUEST",
@@ -153,7 +162,9 @@
       "LOAN_CREATE_RESPONSE",
       "LOAN_FETCH_RESPONSE",
       "LOAN_FETCH_REQUEST",
-      "PAYMENT_CREATE_RESPONSE"
+      "PAYMENT_CREATE_RESPONSE",
+      "LOAN_UPDATE_REQUEST",
+      "LOAN_UPDATE_RESPONSE"
     ],
     "message-types": [
       "MessageType",

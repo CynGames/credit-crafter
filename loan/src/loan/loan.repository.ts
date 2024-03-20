@@ -81,6 +81,7 @@ export class LoanRepository{
             await pool.query('commit');
             return loanId;
         }catch(error){
+            await pool.query('rollback');
             throw new Error(`Error creating loan: ${error.message}`);
         }
     }
@@ -175,6 +176,24 @@ export class LoanRepository{
             return loans;
         } catch (error) {
             throw new Error(`Error getting loans: ${error.message}`);
+        }
+    }
+    async updateLoanState(loan_id: string, state:string){
+        try{
+            const stateQuery = 'SELECT state_id FROM states WHERE state_name = $1';
+            const loanQuery = 'UPDATE loan SET state_id = $1 WHERE loan_id = $2';
+            await pool.query('begin');
+            const stateResult = await pool.query(stateQuery, [state]);
+            if(stateResult.rows === null){
+                throw new NotFoundException(`state: ${state} does not exist`);
+            }
+            const state_id = stateResult.rows[0].state_id;
+            await pool.query(loanQuery, [state_id, loan_id]);
+            await pool.query('COMMIT');   
+        }catch (error) {
+            await pool.query('ROLLBACK');
+            console.error('Error occurred while changing loan state: '+ error.message);
+            throw error;
         }
     }
 }

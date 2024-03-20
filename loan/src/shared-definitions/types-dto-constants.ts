@@ -43,6 +43,25 @@ export type UserIdLoanPayload = {
 export type LoanIdPaymentsPayload = {
   data: {id: string}
 }
+export type LoanUpdateRequest = {
+  loanId: string;
+  state: string;
+}
+export type LoanUpdateResponse = {
+  loanId?: string,
+  state?: string,
+  error?: string
+}
+export type LoanUpdatePayload = {
+  status: string,
+  data: LoanUpdateResponse
+}
+export type LoanFetchPayload = {
+  status: string
+  data: {
+    loans: any[]
+  }
+};
 export const HEALTH_REQUEST = 'health-request';
 export const HEALTH_RESPONSE = 'health-response';
 export const LOAN_CREATE_REQUEST = 'loan-create-request'
@@ -50,6 +69,8 @@ export const LOAN_CREATE_RESPONSE = 'loan-create-response'
 export const LOAN_FETCH_RESPONSE = 'loan-fetch-response'
 export const LOAN_FETCH_REQUEST = 'loan-fetch-request'
 export const PAYMENT_CREATE_RESPONSE ='payment-create-response'
+export const LOAN_UPDATE_REQUEST = 'loan-update-request'
+export const LOAN_UPDATE_RESPONSE = 'loan-update-response'
 export type MessageType =
   | 'EmptyMessage'
   | 'CreateHealthRequest'
@@ -69,7 +90,9 @@ export type MessageType =
   | 'FetchUserIdLoan'
   | 'FetchLoanIdPayments'
   | 'CreatePaymentRequest'
-  | 'CreatePaymentResponse';
+  | 'CreatePaymentResponse'
+  | 'UpdateLoanRequest'
+  | 'UpdateLoanResponse';
 export type EmptyMessage = GenericMessage<void> & {
   headers: { type: 'EmptyMessage' };
 };

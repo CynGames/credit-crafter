@@ -73,6 +73,27 @@ export class UserResponseDTO {
   data: UserPayload | UserPayload[] | undefined;
 }
 
+export type LoanUpdateRequest = {
+  loanId: string;
+  state: string;
+}
+export type LoanUpdateResponse = {
+  loanId?: string,
+  state?: string,
+  error?: string
+}
+
+export type LoanUpdatePayload = {
+  status: string,
+  data: LoanUpdateResponse,
+}
+export type LoanFetchPayload = {
+  status: string
+  data: {
+    loans: any[]
+  }
+};
+
 export type UserPayload = {
   id: string;
   firstName: string;

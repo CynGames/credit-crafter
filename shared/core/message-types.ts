@@ -19,7 +19,9 @@ export type MessageType =
   | 'FetchUserIdLoan'
   | 'FetchLoanIdPayments'
   | 'CreatePaymentRequest'
-  | 'CreatePaymentResponse';
+  | 'CreatePaymentResponse'
+  | 'UpdateLoanRequest'
+  | 'UpdateLoanResponse';
 
 export type SpecificMessage =
   | EmptyMessage

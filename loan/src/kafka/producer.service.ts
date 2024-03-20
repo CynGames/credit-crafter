@@ -43,7 +43,6 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
       },
       payload: {
         data: {
-          status: 'success',
           id: createdId,
         },
       },
