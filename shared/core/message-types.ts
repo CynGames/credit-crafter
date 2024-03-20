@@ -1,18 +1,48 @@
-import { GenericMessage, ServerStatus } from './dto-types';
+import { GenericMessage } from './dto-types';
 
-export type MessageType =
-  | 'EmptyMessage'
-  | 'CreateHealthRequest'
-  | 'CreateHealthResponse'
+export type MessageTypes =
+  | HeathMessageType
+  | UserMessageType
+  | FinancialMessageType
+  | LoanMessageType;
+
+// export type MessageType =
+//   | 'EmptyMessage'
+//   // | 'CreateUserRequest'
+//   // | 'CreateUserResponse'
+//   // | 'FetchUsers'
+//   // | 'FetchEmailUser'
+//   // | 'FetchIdUser'
+//   | 'CreateFinancialDataRequest'
+//   | 'CreateFinancialDataResponse'
+//   | 'FetchFinancialDataResponse'
+//   | 'FetchFinancialDataRequest'
+//   | 'CreateLoanRequest'
+//   | 'CreateLoanResponse'
+//   | 'FetchIdLoan'
+//   | 'FetchUserIdLoan'
+//   | 'FetchLoanIdPayments'
+//   | 'CreatePaymentRequest'
+//   | 'CreatePaymentResponse';
+
+export type HeathMessageType =
+  | 'HealthMessageRequest'
+  | 'HealthMessageResponse';
+
+export type UserMessageType =
   | 'CreateUserRequest'
   | 'CreateUserResponse'
   | 'FetchUsers'
   | 'FetchEmailUser'
-  | 'FetchIdUser'
+  | 'FetchIdUser';
+
+export type FinancialMessageType =
   | 'CreateFinancialDataRequest'
   | 'CreateFinancialDataResponse'
   | 'FetchFinancialDataResponse'
-  | 'FetchFinancialDataRequest'
+  | 'FetchFinancialDataRequest';
+
+export type LoanMessageType =
   | 'CreateLoanRequest'
   | 'CreateLoanResponse'
   | 'FetchIdLoan'
@@ -20,100 +50,3 @@ export type MessageType =
   | 'FetchLoanIdPayments'
   | 'CreatePaymentRequest'
   | 'CreatePaymentResponse';
-
-export type SpecificMessage =
-  | EmptyMessage
-  | HealthMessageRequest
-  | HealthMessageResponse
-  | CreateUserRequest
-  | CreateUserResponse
-  | FetchUsers
-  | FetchEmailUser
-  | FetchIdUser
-  | CreateFinancialDataRequest
-  | CreateFinancialDataResponse
-  | FetchFinancialDataResponse
-  | FetchFinancialDataRequest
-  | CreateLoanRequest
-  | CreateLoanResponse
-  | FetchIdLoan
-  | FetchUserIdLoan
-  | FetchLoanIdPayments
-  | CreatePaymentRequest
-  | CreatePaymentResponse;
-
-export type CreateLoanRequest = GenericMessage<void> & {
-  headers: { type: 'CreateLoanRequest' };
-}
-
-export type CreateLoanResponse = GenericMessage<void> & {
-  headers: { type: 'CreateLoanResponse' };
-}
-
-export type FetchIdLoan = GenericMessage<void> & {
-  headers: { type: 'FetchIdLoan' };
-}
-
-export type FetchUserIdLoan = GenericMessage<void> & {
-  headers: { type: 'FetchUserIdLoan' };
-}
-
-export type FetchLoanIdPayments = GenericMessage<void> & {
-  headers: { type: 'FetchLoanIdPayments' };
-}
-
-export type CreatePaymentRequest = GenericMessage<void> & {
-  headers: { type: 'CreatePaymentRequest' };
-}
-
-export type CreatePaymentResponse = GenericMessage<void> & {
-  headers: { type: 'CreatePaymentResponse' };
-}
-
-export type FetchFinancialDataResponse = GenericMessage<void> & {
-  headers: { type: 'FetchFinancialDataResponse' };
-}
-
-export type FetchFinancialDataRequest = GenericMessage<void> & {
-  headers: { type: 'FetchFinancialDataRequest' };
-}
-
-export type CreateFinancialDataRequest = GenericMessage<void> & {
-  headers: { type: 'CreateFinancialDataRequest' };
-}
-
-export type CreateFinancialDataResponse = GenericMessage<void> & {
-  headers: { type: 'CreateFinancialDataResponse' };
-}
-
-export type FetchUsers = GenericMessage<void> & {
-  headers: { type: 'FetchUsers' };
-}
-
-export type FetchEmailUser = GenericMessage<void> & {
-  headers: { type: 'FetchEmailUser' };
-}
-
-export type FetchIdUser = GenericMessage<void> & {
-  headers: { type: 'FetchIdUser' };
-}
-
-export type CreateUserRequest = GenericMessage<void> & {
-  headers: { type: 'CreateUserRequest' };
-}
-
-export type CreateUserResponse = GenericMessage<void> & {
-  headers: { type: 'CreateUserResponse' };
-}
-
-export type HealthMessageResponse = GenericMessage<ServerStatus> & {
-  headers: { type: 'CreateHealthResponse' };
-};
-
-export type HealthMessageRequest = GenericMessage<void> & {
-  headers: { type: 'CreateHealthRequest' };
-};
-
-export type EmptyMessage = GenericMessage<void> & {
-  headers: { type: 'EmptyMessage' };
-};

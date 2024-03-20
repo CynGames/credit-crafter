@@ -5,11 +5,7 @@ import {
 } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
 import { HealthService } from './health.service';
-import {
-  HEALTH_REQUEST,
-  IsHealthMessageRequest,
-  PayloadTypeExtractor,
-} from '../shared-definitions/types-dto-constants';
+import { HEALTH_REQUEST } from '../shared-definitions/types-dto-constants';
 
 @Injectable()
 export class HealthConsumer implements OnModuleInit, OnApplicationShutdown {
@@ -41,11 +37,7 @@ export class HealthConsumer implements OnModuleInit, OnApplicationShutdown {
             );
 
             const parsedMessage = JSON.parse(message.value.toString());
-            const typedMessage = PayloadTypeExtractor(parsedMessage);
-
-            if (IsHealthMessageRequest(typedMessage)) {
-              await this.appService.handleHealthCheckResponse(typedMessage);
-            }
+            await this.appService.handleHealthCheckResponse(parsedMessage);
             break;
           default:
             console.warn('Received message from unknown topic: ' + topic);

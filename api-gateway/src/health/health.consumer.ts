@@ -4,13 +4,11 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { Consumer, Kafka } from 'kafkajs';
+import { HEALTH_RESPONSE } from '../shared-definitions/types-dto-constants';
 import {
-  HEALTH_RESPONSE,
-  IsHealthMessageResponse,
-  PayloadTypeExtractor,
   ServerStatus,
   ServerStatusPayload,
-} from '../shared-definitions/types-dto-constants';
+} from './dtos/fetch-server-status.dto';
 
 @Injectable()
 export class HealthConsumer implements OnModuleInit, OnApplicationShutdown {
@@ -65,17 +63,14 @@ export class HealthConsumer implements OnModuleInit, OnApplicationShutdown {
     try {
       console.log('[API GATEWAY] Received Health Response');
       const parsedMessage = JSON.parse(message.value.toString());
-      const typedMessage = PayloadTypeExtractor(parsedMessage);
 
-      if (IsHealthMessageResponse(typedMessage)) {
-        console.log('Health Response Received');
-        const { headers, payload } = typedMessage;
-        const handler = this.responseHandlers.get(headers.correlationId);
+      console.log('Health Response Received');
+      const { headers, payload } = parsedMessage;
+      const handler = this.responseHandlers.get(headers.correlationId);
 
-        if (handler) {
-          console.log('[API GATEWAY] Handler found. Resolving promise...');
-          handler(payload);
-        }
+      if (handler) {
+        console.log('[API GATEWAY] Handler found. Resolving promise...');
+        handler(payload);
       }
     } catch (error) {
       console.error('Failed to process message: ', error);
