@@ -3,11 +3,8 @@ import * as admin from 'firebase-admin';
 import { LoginUserDTO } from './dtos/login-user.dto';
 import { UserService } from '../user/user.service';
 import { HttpService } from '@nestjs/axios';
-import { RegisterUserDTO } from './dtos/register-user-dto';
-import {
-  CreateUserDTO,
-  UserDTO,
-} from '../shared-definitions/types-dto-constants';
+import { CreateUserDTO, RegisterUserDTO } from './dtos/register-user-dto';
+import { UserDTO } from '../shared-definitions/types-dto-constants';
 
 @Injectable()
 export class AuthService {
@@ -21,13 +18,11 @@ export class AuthService {
       const URL =
         'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
 
-
       const body = {
         email: loginDTO.email,
         password: loginDTO.password,
         returnSecureToken: true,
       };
-
 
       const headers = {
         headers: { Accept: '*/*', 'Content-Type': 'application/json' },

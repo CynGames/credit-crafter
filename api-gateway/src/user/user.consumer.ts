@@ -82,7 +82,7 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
     console.log('[API GATEWAY] Waiting for response...');
 
     return new Promise((resolve) => {
-      setTimeout(() => {
+      const id = setTimeout(() => {
         resolve({ status: 'timeout', data: null } as T);
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
@@ -92,6 +92,7 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
         console.log(`[API GATEWAY] Processing Response...`);
         resolve({ status: 'success', data: payload.data } as T);
         this.responseHandlers.delete(correlationId);
+        clearTimeout(id);
         console.log('[API GATEWAY] Promised Resolved!');
       });
     });

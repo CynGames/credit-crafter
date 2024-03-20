@@ -1,9 +1,9 @@
-import { MessageType } from './message-types';
+import { MessageTypes } from './message-types';
 
 export type GenericMessage<T> = {
   headers: {
     topic: string;
-    type: MessageType;
+    type: MessageTypes;
     correlationId: string;
     offset?: string;
     userRecord: UserDTO | null;
@@ -42,6 +42,7 @@ export type CreateUserDTO = {
     user: UserDTO;
   };
 };
+
 export type ServerStatusPayload = {
   data: ServerStatus[];
 };

@@ -3,11 +3,10 @@ import { HealthConsumer } from './health.consumer';
 import { ProducerService } from '../kafka/producer.service';
 import {
   GenerateUniqueId,
+  GenericMessage,
   HEALTH_REQUEST,
-  HealthMessageRequest,
-  IsHealthMessageRequest,
-  ServerStatusPayload,
 } from '../shared-definitions/types-dto-constants';
+import { ServerStatusPayload } from './dtos/fetch-server-status.dto';
 
 @Injectable()
 export class HealthService {
@@ -19,27 +18,25 @@ export class HealthService {
   async createHealthRequestMessage(): Promise<ServerStatusPayload> {
     const correlationId = GenerateUniqueId();
 
-    const message: HealthMessageRequest = {
+    const message: GenericMessage<void> = {
       headers: {
         topic: HEALTH_REQUEST,
-        type: 'CreateHealthRequest',
+        type: 'HealthMessageRequest',
         correlationId: correlationId,
         userRecord: null,
       },
       payload: null,
     };
 
-    if (IsHealthMessageRequest(message)) {
-      await this.producerService.sendMessage(message);
+    await this.producerService.sendMessage(message);
 
-      const responsesArray =
-        this.healthConsumer.registerResponseHandler(correlationId);
+    const responsesArray =
+      this.healthConsumer.registerResponseHandler(correlationId);
 
-      return await this.healthConsumer.waitForResponse(
-        correlationId,
-        responsesArray,
-      );
-    }
+    return await this.healthConsumer.waitForResponse(
+      correlationId,
+      responsesArray,
+    );
 
     throw new Error('[API Gateway] Health Request Malformed');
   }

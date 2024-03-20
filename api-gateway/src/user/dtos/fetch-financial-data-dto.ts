@@ -1,6 +1,10 @@
-import { FinancialData } from '../../shared-definitions/types-dto-constants';
+import { ApiProperty } from '@nestjs/swagger';
+import { FinancialDataDTO } from './financial-data.dto';
 
-export type FetchFinancialDataDTO = {
+export class FetchFinancialDataDTO {
+  @ApiProperty({ example: 'success', description: 'Success message' })
   status: string;
-  data: FinancialData;
-};
+
+  @ApiProperty({ type: FinancialDataDTO, description: 'Financial data' })
+  data: FinancialDataDTO;
+}
