@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ProducerService } from '../kafka/producer.service';
 import { LoanConsumer } from './loan.consumer';
-import { auth } from 'firebase-admin';
 import { CreateLoanDTO } from './dto/creaate-loan-dto';
 import {
+  CreatePaymentRequest,
   FetchUserIdLoan,
   GenerateUniqueId,
   GenericMessage,
@@ -11,11 +11,20 @@ import {
   LOAN_FETCH_REQUEST,
   LOAN_UPDATE_REQUEST,
   MessageType,
+  PAYMENT_CREATE_REQUEST,
+  PAYMENT_CREATE_RESPONSE,
+  PAYMENT_FETCH_REQUEST,
+  PAYMENT_FETCH_RESPONSE,
+  PaymentCreatePayload,
+  PaymentCreateRequest,
+  PaymentFetchPayload,
+  PaymentFetchRequest,
   RequestUserDTO,
   UserDTO,
+  
 } from '../shared-definitions/types-dto-constants';
 import { LoanCreatePayload, LoanFetchPayload, LoanFetchRespond, LoanUpdatePayload, LoanUpdateRequest, LoanUpdateResponse } from './dto/payload-dtos';
-import { UserRecord } from 'firebase-admin/lib/auth/user-record';
+
 
 @Injectable()
 export class LoanService {
@@ -94,5 +103,25 @@ export class LoanService {
         const waitResponse: any =
         await this.loanConsumer.genericWaitResponse<LoanUpdatePayload>(correlationId);
         return waitResponse;
+  }
+  async createPayment(loan_id: string, amount_paid: number, { user }: RequestUserDTO){
+    const waitResponse = await this.genericSendMessageAndWaitForResponse<PaymentCreateRequest, PaymentCreatePayload>(
+      'CreatePaymentRequest', 
+      PAYMENT_CREATE_REQUEST, 
+      user, 
+      {loan_id, amount_paid});
+    return waitResponse;
+  }
+  async getPaymentsByLoanId(loan_id: string, { user }: RequestUserDTO): Promise<PaymentFetchPayload>{
+   const payLoad: PaymentFetchRequest = {
+      loan_id: loan_id
+    }
+    const waitResponse = await this.genericSendMessageAndWaitForResponse<PaymentFetchRequest, PaymentFetchPayload>(
+      'FetchLoanIdPayments',
+      PAYMENT_FETCH_REQUEST,
+      user,
+      payLoad
+    )
+      return waitResponse;
   }
 }

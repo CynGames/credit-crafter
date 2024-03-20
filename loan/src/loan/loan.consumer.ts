@@ -16,10 +16,17 @@ import {
   LOAN_UPDATE_RESPONSE,
   LoanFetchPayload,
   LoanUpdatePayload,
+  PAYMENT_CREATE_REQUEST,
+  CreatePaymentResponse,
+  PaymentCreatePayload,
+  PAYMENT_FETCH_REQUEST,
+  PaymentFetchPayload,
+  PAYMENT_FETCH_RESPONSE,
 } from '../shared-definitions/types-dto-constants';
 import { LoanService } from './loan.service';
 import { ProducerService } from 'src/kafka/producer.service';
 import { LoanDTO } from './dtos/loan-dto';
+import { CreatePaymentDTO } from './dtos/create-payment-dto';
 
 @Injectable()
 export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
@@ -42,9 +49,10 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
     const topics = [
       LOAN_CREATE_RESPONSE,
       LOAN_CREATE_REQUEST,
-      PAYMENT_CREATE_RESPONSE,
       LOAN_FETCH_REQUEST,
-      LOAN_UPDATE_REQUEST
+      LOAN_UPDATE_REQUEST,
+      PAYMENT_CREATE_REQUEST,
+      PAYMENT_FETCH_REQUEST
     ];
     console.log('topics: ' + topics);
 
@@ -55,6 +63,8 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
       eachMessage: async ({ topic, partition, message }) => {
         console.log('[LOAN_CONSUMER] ' + topic);
         const parsedMessage = JSON.parse(message.value.toString());
+        console.log(parsedMessage);
+        
         switch (topic) {
           case LOAN_CREATE_REQUEST:
             const loanId = await this.loanService.create(parsedMessage.payload);
@@ -125,6 +135,78 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
               }
               await this.producerService.sendMessage(errorMessage)
             }
+            break;
+          case PAYMENT_CREATE_REQUEST:
+            try{
+            const payment_id = await this.loanService.createPayment(parsedMessage.payload);
+            const successMessage: GenericMessage<PaymentCreatePayload> = {
+              headers: {
+                type: 'CreatePaymentResponse',
+                topic: PAYMENT_CREATE_RESPONSE,
+                correlationId: parsedMessage.headers.correlationId,
+                userRecord: parsedMessage.headers.userRecord
+              },
+              payload: {
+                status: 'success',
+                data: {
+                  paymentId: payment_id
+                }
+              }
+            }
+            await this.producerService.sendMessage(successMessage);
+            }catch(error){
+              const errorMessage: GenericMessage<PaymentCreatePayload> = {
+                headers: {
+                  type: 'CreatePaymentResponse',
+                  topic: PAYMENT_CREATE_RESPONSE,
+                  correlationId: parsedMessage.headers.correlationId,
+                  userRecord: parsedMessage.headers.userRecord
+                },
+                payload: {
+                  status: 'Error',
+                  data: {
+                    error: error.message
+                  }
+                }
+              }
+              await this.producerService.sendMessage(errorMessage);
+            }
+
+            break;
+            case PAYMENT_FETCH_REQUEST:
+            try{
+              const payments = await this.loanService.getPaymentsByLoan(parsedMessage.payload.loan_id.loan_id);
+              const successMessage: GenericMessage<PaymentFetchPayload> = {
+              headers: {
+                type: 'FetchLoanIdPayments',
+                topic: PAYMENT_FETCH_RESPONSE,
+                correlationId: parsedMessage.headers.correlationId,
+                userRecord: parsedMessage.headers.userRecord
+              },
+             payload:{
+              status: 'success',
+              data: {
+                payments
+              }}};
+              await this.producerService.sendMessage(successMessage);
+          }catch(error){
+            const errorMessage: GenericMessage<PaymentFetchPayload> = {
+              headers: {
+                type: 'FetchLoanIdPayments',
+                topic: PAYMENT_FETCH_RESPONSE,
+                correlationId: parsedMessage.headers.correlationId,
+                userRecord: parsedMessage.headers.userRecord
+              },
+              payload:{
+                status: 'Error',
+                data: {
+                  error: error.message
+                }
+              }
+            }
+            await this.producerService.sendMessage(errorMessage);
+          }
+          
             break;
           default:
             console.warn('Received message from unknown: ' + topic);

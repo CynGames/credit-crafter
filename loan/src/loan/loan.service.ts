@@ -33,7 +33,7 @@ export class LoanService {
       throw new Error(`${error.message}`);
     }
   }
-  async getPaymentsByLoan(loan_id: string) {
+  async getPaymentsByLoan(loan_id: string ) {
     try {
       const payments: PaymentDTO[] = await this.repo.getPaymentsByLoan(loan_id);
       return payments;

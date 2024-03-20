@@ -1,11 +1,10 @@
-export class CreatePaymentDTO{
-    loan_id: string;
-    amount_paid: number;
-    due_date: Date;
+import { IsNumber, isNumber, IsString } from "class-validator";
 
-    constructor(loan_id:string, amount_paid: number, due_date: Date){
-        this.loan_id = loan_id;
-        this.amount_paid = amount_paid;
-        this.due_date = due_date;
-    }
+export class CreatePaymentDTO{
+    @IsString()
+    loan_id: string;
+
+    @IsNumber()
+    amount_paid: number
+
 }

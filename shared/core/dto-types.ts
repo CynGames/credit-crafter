@@ -93,6 +93,27 @@ export type LoanFetchPayload = {
     loans: any[]
   }
 };
+export type PaymentCreatePayload = {
+  status: string,
+  data: {
+    paymentId?: string,
+    error?: string
+  }
+}
+export type PaymentCreateRequest = {
+  loan_id: string,
+  amount_paid: number
+}
+export type PaymentFetchRequest = {
+  loan_id: string
+}
+export type PaymentFetchPayload = {
+  status: string,
+  data: {
+    payments?: any[],
+    error?: string
+  }
+}
 
 export type UserPayload = {
   id: string;

@@ -32,6 +32,11 @@ export type FinancialDTO = {
 export class UserResponseDTO {
   data: UserPayload | UserPayload[] | undefined;
 }
+export type FinancialDTO = {
+  id?: string;
+  income: string;
+  expenses: string;
+}
 export type UserPayload = {
   id: string;
   firstName: string;

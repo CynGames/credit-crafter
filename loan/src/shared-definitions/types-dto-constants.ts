@@ -54,7 +54,7 @@ export type LoanUpdateResponse = {
 }
 export type LoanUpdatePayload = {
   status: string,
-  data: LoanUpdateResponse
+  data: LoanUpdateResponse,
 }
 export type LoanFetchPayload = {
   status: string
@@ -62,6 +62,27 @@ export type LoanFetchPayload = {
     loans: any[]
   }
 };
+export type PaymentCreatePayload = {
+  status: string,
+  data: {
+    paymentId?: string,
+    error?: string
+  }
+}
+export type PaymentCreateRequest = {
+  loan_id: string,
+  amount_paid: number
+}
+export type PaymentFetchRequest = {
+  loan_id: string
+}
+export type PaymentFetchPayload = {
+  status: string,
+  data: {
+    payments?: any[],
+    error?: string
+  }
+}
 export const HEALTH_REQUEST = 'health-request';
 export const HEALTH_RESPONSE = 'health-response';
 export const LOAN_CREATE_REQUEST = 'loan-create-request'
@@ -71,6 +92,9 @@ export const LOAN_FETCH_REQUEST = 'loan-fetch-request'
 export const PAYMENT_CREATE_RESPONSE ='payment-create-response'
 export const LOAN_UPDATE_REQUEST = 'loan-update-request'
 export const LOAN_UPDATE_RESPONSE = 'loan-update-response'
+export const PAYMENT_CREATE_REQUEST = 'payment-create-request'
+export const PAYMENT_FETCH_REQUEST = 'payment-fetch-request'
+export const PAYMENT_FETCH_RESPONSE = 'payment-fetch-response'
 export type MessageType =
   | 'EmptyMessage'
   | 'CreateHealthRequest'

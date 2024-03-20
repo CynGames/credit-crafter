@@ -17,7 +17,11 @@
       "UserResponseDTO",
       "UserPayload",
       "FinancialData",
-      "RequestUserDTO"
+      "RequestUserDTO",
+      "PaymentCreateRequest",
+      "PaymentCreatePayload",
+      "PaymentFetchRequest",
+      "PaymentFetchPayload"
     ],
     "message-topics": [
       "RESPONSE_TO_API_GATEWAY",
@@ -37,7 +41,10 @@
       "LOAN_FETCH_REQUEST",
       "PAYMENT_CREATE_RESPONSE",
       "LOAN_UPDATE_REQUEST",
-      "LOAN_UPDATE_RESPONSE"
+      "LOAN_UPDATE_RESPONSE",
+      "PAYMENT_CREATE_REQUEST",
+      "PAYMENT_FETCH_REQUEST",
+      "PAYMENT_FETCH_RESPONSE"
     ],
     "message-types": [
       "MessageType",
@@ -103,6 +110,7 @@
       "FINANCIAL_DATA_CREATE_RESPONSE",
       "FINANCIAL_DATA_FETCH_REQUEST",
       "FINANCIAL_DATA_FETCH_RESPONSE"
+   
     ],
     "message-types": [
       "MessageType",
@@ -153,7 +161,11 @@
       "LoanUpdateRequest",
       "LoanUpdateResponse",
       "LoanUpdatePayload",
-      "LoanFetchPayload"
+      "LoanFetchPayload",
+      "PaymentCreatePayload",
+      "PaymentCreateRequest",
+      "PaymentFetchRequest",
+      "PaymentFetchPayload"
     ],
     "message-topics": [
       "HEALTH_REQUEST",
@@ -164,7 +176,10 @@
       "LOAN_FETCH_REQUEST",
       "PAYMENT_CREATE_RESPONSE",
       "LOAN_UPDATE_REQUEST",
-      "LOAN_UPDATE_RESPONSE"
+      "LOAN_UPDATE_RESPONSE",
+      "PAYMENT_CREATE_REQUEST",
+      "PAYMENT_FETCH_REQUEST",
+      "PAYMENT_FETCH_RESPONSE"
     ],
     "message-types": [
       "MessageType",

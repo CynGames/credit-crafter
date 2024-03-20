@@ -104,16 +104,15 @@ export class LoanRepository{
         }
     }
     async createPayment(payment: CreatePaymentDTO): Promise<string>{
-        const queryText = 'insert into payment(loan_id, amount_paid, due_date) \
-        values ($1, $2, $3) returning payment_id'
+        const queryText = 'insert into payment(loan_id, amount_paid) \
+        values ($1, $2) returning payment_id'
         const values =[
             payment.loan_id,
             payment.amount_paid,
-            payment.due_date
         ]
         try{
             const result = await pool.query(queryText, values);
-            return result.rows[0].user_id;
+            return result.rows[0].payment_id;
         }catch(error){
             throw new Error(`Error creating payment: ${error.message}`);
         }

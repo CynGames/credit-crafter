@@ -10,6 +10,7 @@ import {
   LOAN_FETCH_RESPONSE,
   LOAN_UPDATE_RESPONSE,
   PAYMENT_CREATE_RESPONSE,
+  PAYMENT_FETCH_RESPONSE,
 } from '../shared-definitions/types-dto-constants';
 import { LoanCreatePayload, LoanFetchPayload } from './dto/payload-dtos';
 import { resolve } from 'path';
@@ -42,7 +43,8 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
           LOAN_CREATE_RESPONSE,
           LOAN_FETCH_RESPONSE,
           PAYMENT_CREATE_RESPONSE,
-          LOAN_UPDATE_RESPONSE
+          LOAN_UPDATE_RESPONSE,
+          PAYMENT_FETCH_RESPONSE
         ],
       });
       await this.listenForMessages();
@@ -96,7 +98,7 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
         console.log('[API GATEWAY] Processing Fetch User Response...');
          console.log(payload);
         
-        resolve({ status: 'success', data: payload.data } as t);
+        resolve({ status: payload.status, data: payload.data } as t);
         this.responseHandlers.delete(correlationId);
         clearTimeout(id);
         console.log('[API GATEWAY] Promised Resolved!');
