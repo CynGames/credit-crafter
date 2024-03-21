@@ -2,13 +2,9 @@
   "api-gateway": {
     "dto-types": [
       "GenericMessage",
-      "ServerStatusPayload",
-      "ServerStatus",
-      "UserCreatePayload",
+      "CreateUserDTO",
       "UserDTO",
       "UserInfo",
-      "EmailUserPayload",
-      "IdUserPayload",
       "FinancialDTO",
       "LoanInfo",
       "IdLoanPayload",
@@ -47,16 +43,17 @@
       "PAYMENT_FETCH_RESPONSE"
     ],
     "message-types": [
+      "MessageTypes",
+      "HeathMessageType",
+      "UserMessageType",
+      "FinancialMessageType",
+      "LoanMessageType",
       "MessageType",
       "EmptyMessage",
       "SpecificMessage",
-      "HealthMessageRequest",
+      "SpecificHealthMessage",
       "HealthMessageResponse",
-      "CreateUserRequest",
-      "CreateUserResponse",
-      "FetchUsers",
-      "FetchEmailUser",
-      "FetchIdUser",
+      "HealthMessageRequest",
       "CreateFinancialDataRequest",
       "CreateFinancialDataResponse",
       "FetchFinancialDataResponse",
@@ -73,14 +70,8 @@
       
     ],
     "type-guard-functions": [
-      "IsEmptyMessage",
-      "IsHealthMessageResponse",
-      "IsHealthMessageRequest",
-      "IsUserEmailFetchMessage",
-      "IsUserIdFetchMessage"
     ],
     "utility-functions": [
-      "PayloadTypeExtractor",
       "GenerateUniqueId"
     ]
   },
@@ -92,7 +83,6 @@
       "UserInfo",
       "EmailUserPayload",
       "IdUserPayload",
-      "FinancialDTO",
       "UserResponseDTO",
       "FinancialDTO",
       "UserPayload",
@@ -113,6 +103,11 @@
    
     ],
     "message-types": [
+      "MessageTypes",
+      "HeathMessageType",
+      "UserMessageType",
+      "FinancialMessageType",
+      "LoanMessageType",
       "MessageType",
       "EmptyMessage",
       "SpecificMessage",
@@ -152,7 +147,7 @@
       "GenericMessage",
       "ServerStatus",
       "UserRecord",
-      "UserCreatePayload",
+      "CreateUserDTO",
       "UserDTO",
       "LoanInfo",
       "IdLoanPayload",

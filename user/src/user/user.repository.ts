@@ -1,18 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { pool } from '../db/db-connection';
-import { UserDTO } from './dtos/user-dto';
+import { UserModel } from './dtos/user-model';
 import { CreateUserDTO } from './dtos/create-user-dto';
 import { FinancialDataDTO } from './dtos/financial-data-dto';
 import { CreateFinancialDataDTO } from './dtos/create-financial-data-dto';
 
 @Injectable()
 export class UserRepository {
-  async getUsers(): Promise<UserDTO[]> {
+  async getUsers(): Promise<UserModel[]> {
     const queryText = `
         SELECT u.user_id,
                u.first_name,
                u.last_name,
                u.email,
+               u.roles,
                u.created_at,
                u.updated_at,
                f.credit_score,
@@ -26,11 +27,12 @@ export class UserRepository {
 
       return result.rows.map(
         (row) =>
-          new UserDTO(
+          new UserModel(
             row.user_id,
             row.first_name,
             row.last_name,
             row.email,
+            row.roles,
             new Date(row.created_at),
             new Date(row.updated_at),
             {
@@ -47,11 +49,17 @@ export class UserRepository {
 
   async create(user: CreateUserDTO): Promise<string> {
     const queryText = `
-        INSERT INTO users(user_id, first_name, last_name, email)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO users(user_id, first_name, last_name, email, roles)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING user_id`;
 
-    const values = [user.user_id, user.first_name, user.last_name, user.email];
+    const values = [
+      user.user_id,
+      user.first_name,
+      user.last_name,
+      user.email,
+      Array.isArray(user.roles) ? user.roles : [user.roles],
+    ];
 
     try {
       const result = await pool.query(queryText, values);
@@ -62,12 +70,13 @@ export class UserRepository {
     }
   }
 
-  async getById(user_id: string): Promise<UserDTO> {
+  async getById(user_id: string): Promise<UserModel> {
     const queryText = `
         SELECT u.user_id,
                u.first_name,
                u.last_name,
                u.email,
+               u.roles,
                u.created_at,
                u.updated_at,
                f.credit_score,
@@ -86,11 +95,12 @@ export class UserRepository {
 
       const row = result.rows[0];
 
-      return new UserDTO(
+      return new UserModel(
         row.user_id,
         row.first_name,
         row.last_name,
         row.email,
+        row.roles,
         new Date(row.created_at),
         new Date(row.updated_at),
         {
@@ -104,12 +114,13 @@ export class UserRepository {
     }
   }
 
-  async getByEmail(email: string): Promise<UserDTO> {
+  async getByEmail(email: string): Promise<UserModel> {
     const queryText = `
         SELECT u.user_id,
                u.first_name,
                u.last_name,
                u.email,
+               u.roles,
                u.created_at,
                u.updated_at,
                f.credit_score,
@@ -128,11 +139,12 @@ export class UserRepository {
 
       const row = result.rows[0];
 
-      return new UserDTO(
+      return new UserModel(
         row.user_id,
         row.first_name,
         row.last_name,
         row.email,
+        row.roles,
         new Date(row.created_at),
         new Date(row.updated_at),
         {

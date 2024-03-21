@@ -1,9 +1,9 @@
-import { MessageType } from './message-types';
+import { MessageTypes } from './message-types';
 
 export type GenericMessage<T> = {
   headers: {
     topic: string;
-    type: MessageType;
+    type: MessageTypes;
     correlationId: string;
     offset?: string;
     userRecord: UserDTO | null;
@@ -16,6 +16,7 @@ export type UserDTO = {
   firstName?: string;
   lastName?: string;
   email: string;
+  roles?: string[]
 }
 
 export type FinancialDTO = {
@@ -35,9 +36,9 @@ export type LoanInfo = {
   readonly loan_type: string;
 }
 
-export type UserCreatePayload = {
+export type CreateUserDTO = {
+  success: string;
   data: {
-    success: boolean;
     user: UserDTO;
   };
 };
@@ -51,25 +52,18 @@ export type ServerStatus = {
   status: string;
 };
 
-export type EmailUserPayload = {
-  data: { email: string }
+export type IdLoanPayload = {
+  data: { id: string }
 }
-
-export type IdUserPayload = {
+export type UserIdLoanPayload = {
+  data: { id: string }
+}
+export type LoanIdPaymentsPayload = {
   data: { id: string }
 }
 
-export type IdLoanPayload = {
-  data: {id: string}
-}
-export type UserIdLoanPayload = {
-  data: {id: string}
-}
-export type LoanIdPaymentsPayload = {
-  data: {id: string}
-}
-
 export class UserResponseDTO {
+  status: string | undefined;
   data: UserPayload | UserPayload[] | undefined;
 }
 
@@ -120,6 +114,7 @@ export type UserPayload = {
   firstName: string;
   lastName: string;
   email: string;
+  roles: string[];
   createdAt: Date;
   updatedAt: Date;
   financialData?: FinancialData;
@@ -135,5 +130,6 @@ export type RequestUserDTO = {
   user: {
     id: string;
     email: string;
+    roles?: string[];
   }
 };

@@ -3,11 +3,8 @@ import * as admin from 'firebase-admin';
 import { LoginUserDTO } from './dtos/login-user.dto';
 import { UserService } from '../user/user.service';
 import { HttpService } from '@nestjs/axios';
-import { RegisterUserDTO } from './dtos/register-user-d-t.o';
-import {
-  UserCreatePayload,
-  UserDTO,
-} from '../shared-definitions/types-dto-constants';
+import { CreateUserDTO, RegisterUserDTO } from './dtos/register-user-dto';
+import { UserDTO } from '../shared-definitions/types-dto-constants';
 
 @Injectable()
 export class AuthService {
@@ -17,38 +14,44 @@ export class AuthService {
   ) {}
 
   async login(loginDTO: LoginUserDTO): Promise<{ token: string }> {
-    const URL =
-      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
+    try {
+      const URL =
+        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCzqUCT1u8pRuEPIhfNAsY5sQCjVVluPVk';
 
-    const body = {
-      email: loginDTO.email,
-      password: loginDTO.password,
-      returnSecureToken: true,
-    };
+      const body = {
+        email: loginDTO.email,
+        password: loginDTO.password,
+        returnSecureToken: true,
+      };
 
-    const headers = {
-      headers: { Accept: '*/*', 'Content-Type': 'application/json' },
-    };
+      const headers = {
+        headers: { Accept: '*/*', 'Content-Type': 'application/json' },
+      };
 
-    const { data } = await this.httpService.axiosRef.post(URL, body, headers);
-    return { token: data.idToken };
+      const { data } = await this.httpService.axiosRef.post(URL, body, headers);
+
+      console.log(data);
+
+      return { token: data.idToken };
+    } catch (e) {
+      console.log(e, null);
+    }
   }
 
-  async register(registerDTO: RegisterUserDTO): Promise<UserCreatePayload> {
+  async register(registerDTO: RegisterUserDTO): Promise<CreateUserDTO> {
     const userRecord = await admin.auth().createUser({
       email: registerDTO.email,
       password: registerDTO.password,
     });
 
-    const userDTO: UserDTO = {
+    const newUser: UserDTO = {
       id: userRecord.uid,
       firstName: registerDTO.firstName,
       lastName: registerDTO.lastName,
       email: registerDTO.email,
+      roles: registerDTO.roles,
     };
 
-    const result = await this.userService.createUser(userDTO);
-
-    return { data: { success: result, user: userDTO } };
+    return await this.userService.createUser(newUser);
   }
 }

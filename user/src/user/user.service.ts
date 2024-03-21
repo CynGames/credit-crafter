@@ -2,12 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from 'src/user/user.repository';
 import { ProducerService } from '../kafka/producer.service';
 import {
+  FinancialDTO,
   GenericMessage,
   USER_CREATE_RESPONSE,
   USER_FETCH_RESPONSE,
+  UserDTO,
+  UserPayload,
+  UserResponseDTO,
 } from '../shared-definitions/types-dto-constants';
 import { CreateUserDTO } from './dtos/create-user-dto';
 import { CreateFinancialDataDTO } from './dtos/create-financial-data-dto';
+import { UserModel } from './dtos/user-model';
+import { FinancialDataDTO } from './dtos/financial-data-dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -15,21 +21,19 @@ export class UserService {
     private readonly producerService: ProducerService,
   ) {}
 
-  async findAllUsers(requestMessage: GenericMessage<any>) {
+  async findAllUsers(requestMessage: GenericMessage<UserResponseDTO>) {
     try {
       const { userRecord, correlationId } = requestMessage.headers;
       const users = await this.repo.getUsers();
 
-      const message: GenericMessage<any> = {
+      const message: GenericMessage<{ data: UserModel[] }> = {
         headers: {
           type: 'FetchUsers',
           topic: USER_FETCH_RESPONSE,
           correlationId: correlationId,
           userRecord: userRecord,
         },
-        payload: {
-          data: users,
-        },
+        payload: { data: users },
       };
 
       return await this.producerService.sendMessage(message);
@@ -38,29 +42,29 @@ export class UserService {
     }
   }
 
-  async createUser(requestMessage: GenericMessage<any>): Promise<any> {
+  async createUser(requestMessage: GenericMessage<UserDTO>): Promise<any> {
     try {
-      const { userRecord, correlationId } = requestMessage.headers;
+      const { correlationId } = requestMessage.headers;
+      const { id, email, firstName, lastName, roles } = requestMessage.payload;
 
       const user: CreateUserDTO = {
-        user_id: userRecord.id,
-        email: userRecord.email,
-        first_name: userRecord.firstName,
-        last_name: userRecord.lastName,
+        user_id: id,
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
+        roles: roles ? roles : ['User'],
       };
 
       await this.repo.create(user);
 
-      const message: GenericMessage<any> = {
+      const message: GenericMessage<{ data: CreateUserDTO }> = {
         headers: {
           type: 'CreateUserResponse',
           topic: USER_CREATE_RESPONSE,
           correlationId: correlationId,
-          userRecord: userRecord,
+          userRecord: null,
         },
-        payload: {
-          data: { status: 'success' },
-        },
+        payload: { data: user },
       };
 
       return await this.producerService.sendMessage(message);
@@ -69,14 +73,14 @@ export class UserService {
     }
   }
 
-  async findOneById(requestMessage: GenericMessage<any>) {
+  async findOneById(requestMessage: GenericMessage<UserResponseDTO>) {
     try {
       const { userRecord, correlationId } = requestMessage.headers;
-      const { data } = requestMessage.payload;
+      const { id } = requestMessage.payload as unknown as UserPayload;
 
-      const user = [await this.repo.getById(data.id)];
+      const user = [await this.repo.getById(id)];
 
-      const message: GenericMessage<any> = {
+      const message: GenericMessage<{ data: UserModel[] }> = {
         headers: {
           type: 'FetchIdUser',
           topic: USER_FETCH_RESPONSE,
@@ -94,14 +98,14 @@ export class UserService {
     }
   }
 
-  async findOneByEmail(requestMessage: GenericMessage<any>) {
+  async findOneByEmail(requestMessage: GenericMessage<UserResponseDTO>) {
     try {
       const { userRecord, correlationId } = requestMessage.headers;
-      const { data } = requestMessage.payload;
+      const { email } = requestMessage.payload as unknown as UserPayload;
 
-      const user = [await this.repo.getByEmail(data.email)];
+      const user = [await this.repo.getByEmail(email)];
 
-      const message: GenericMessage<any> = {
+      const message: GenericMessage<{ data: UserModel[] }> = {
         headers: {
           type: 'FetchEmailUser',
           topic: USER_FETCH_RESPONSE,
@@ -144,9 +148,7 @@ export class UserService {
           correlationId: correlationId,
           userRecord: userRecord,
         },
-        payload: {
-          data: { status: 'success' },
-        },
+        payload: { data: financialData },
       };
 
       return await this.producerService.sendMessage(message);
@@ -155,14 +157,14 @@ export class UserService {
     }
   }
 
-  async fetchFinancialData(requestMessage: GenericMessage<any>) {
+  async fetchFinancialData(requestMessage: GenericMessage<FinancialDTO>) {
     try {
       const { userRecord, correlationId } = requestMessage.headers;
       const { id } = userRecord;
 
       const financialData = await this.repo.getFinancialDataById(id);
 
-      const message: GenericMessage<any> = {
+      const message: GenericMessage<{ data: FinancialDataDTO }> = {
         headers: {
           type: 'FetchFinancialDataResponse',
           topic: USER_FETCH_RESPONSE,

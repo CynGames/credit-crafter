@@ -15,9 +15,9 @@ export type ServerStatus = {
   service: string;
   status: string;
 };
-export type UserCreatePayload = {
+export type CreateUserDTO = {
+  success: string;
   data: {
-    success: boolean;
     user: UserDTO;
   };
 };
@@ -26,12 +26,7 @@ export type UserDTO = {
   firstName?: string;
   lastName?: string;
   email: string;
-}
-export type EmailUserPayload = {
-  data: { email: string }
-}
-export type IdUserPayload = {
-  data: { id: string }
+  roles?: string[]
 }
 export type FinancialDTO = {
   id?: string;
@@ -49,15 +44,16 @@ export type LoanInfo = {
   readonly loan_type: string;
 }
 export type IdLoanPayload = {
-  data: {id: string}
+  data: { id: string }
 }
 export type UserIdLoanPayload = {
-  data: {id: string}
+  data: { id: string }
 }
 export type LoanIdPaymentsPayload = {
-  data: {id: string}
+  data: { id: string }
 }
 export class UserResponseDTO {
+  status: string | undefined;
   data: UserPayload | UserPayload[] | undefined;
 }
 export type UserPayload = {
@@ -65,6 +61,7 @@ export type UserPayload = {
   firstName: string;
   lastName: string;
   email: string;
+  roles: string[];
   createdAt: Date;
   updatedAt: Date;
   financialData?: FinancialData;
@@ -78,6 +75,7 @@ export type RequestUserDTO = {
   user: {
     id: string;
     email: string;
+    roles?: string[];
   }
 };
 export type PaymentCreateRequest = {
