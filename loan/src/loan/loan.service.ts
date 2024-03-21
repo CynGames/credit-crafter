@@ -33,7 +33,7 @@ export class LoanService {
       throw new Error(`${error.message}`);
     }
   }
-  async getPaymentsByLoan(loan_id: string ) {
+  async getPaymentsByLoan(loan_id: string) {
     try {
       const payments: PaymentDTO[] = await this.repo.getPaymentsByLoan(loan_id);
       return payments;
@@ -49,11 +49,11 @@ export class LoanService {
       throw new Error(`${error.message}`);
     }
   }
-  async changLoanState(loan_id: string, state: string){
-      try{
-        await this.repo.updateLoanState(loan_id, state);
-      }catch(error){
-        throw new Error(error.message);
-      }
+  async changLoanState(loan_id: string, state: string) {
+    try {
+      await this.repo.updateLoanState(loan_id, state);
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }

@@ -177,7 +177,11 @@
       "PAYMENT_FETCH_RESPONSE"
     ],
     "message-types": [
-      "MessageType",
+      "MessageTypes",
+      "HeathMessageType",
+      "UserMessageType",
+      "FinancialMessageType",
+      "LoanMessageType",
       "EmptyMessage",
       "SpecificMessage",
       "HealthMessageRequest",

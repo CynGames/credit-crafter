@@ -55,6 +55,7 @@ export class UserService {
         roles: roles ? roles : ['User'],
       };
 
+      delete user.email;
       await this.repo.create(user);
 
       const message: GenericMessage<{ data: CreateUserDTO }> = {
@@ -69,7 +70,19 @@ export class UserService {
 
       return await this.producerService.sendMessage(message);
     } catch (error) {
-      throw new Error(error.message);
+      const { correlationId } = requestMessage.headers;
+
+      const message: GenericMessage<{ data: any }> = {
+        headers: {
+          type: 'CreateUserResponse',
+          topic: USER_CREATE_RESPONSE,
+          correlationId: correlationId,
+          userRecord: null,
+        },
+        payload: { data: error },
+      };
+
+      return await this.producerService.sendMessage(message);
     }
   }
 

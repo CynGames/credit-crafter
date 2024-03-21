@@ -6,7 +6,7 @@ import {
 import { Kafka } from 'kafkajs';
 
 import {
-  MessageType,
+  MessageTypes,
   GenericMessage,
   UserDTO,
 } from 'src/shared-definitions/types-dto-constants';
@@ -30,7 +30,7 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
   async constructResponse(
     correlationId: string,
     userRecord: UserDTO,
-    type: MessageType,
+    type: MessageTypes,
     topic: string,
     createdId: string,
   ) {
@@ -54,7 +54,7 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
   async constructFetchResponse(
     correlationId: string,
     userRecord: UserDTO,
-    type: MessageType,
+    type: MessageTypes,
     topic: string,
     array: any[],
   ) {
