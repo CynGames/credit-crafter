@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  console.log(logo);
+ 
 
   admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -25,7 +25,12 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
+  const logoWithColor = yellowColor + logo + resetColor;
+  console.log(logoWithColor);
 }
+const yellowColor = '\x1b[33m'; 
+const resetColor = '\x1b[0m'; 
+
 
 const logo = `
   ______   _______   ________  _______   ______ ________
@@ -41,6 +46,7 @@ $$    $$/ $$ |  $$ |$$       |$$    $$/ / $$   |  $$ |
   
   ______   _______    ______   ________ ________ ________  _______
  /      \ /       \  /      \ /        /        /        |/       \
+
 /$$$$$$  |$$$$$$$  |/$$$$$$  |$$$$$$$$/$$$$$$$$/$$$$$$$$/ $$$$$$$  |
 $$ |  $$/ $$ |__$$ |$$ |__$$ |$$ |__      $$ |  $$ |__    $$ |__$$ |
 $$ |      $$    $$< $$    $$ |$$    |     $$ |  $$    |   $$    $$<
