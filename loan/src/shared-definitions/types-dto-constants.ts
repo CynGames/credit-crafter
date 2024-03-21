@@ -60,7 +60,8 @@ export type LoanUpdatePayload = {
 export type LoanFetchPayload = {
   status: string
   data: {
-    loans: any[]
+    loans?: any[],
+    error?: string
   }
 };
 export type PaymentCreatePayload = {
@@ -83,6 +84,14 @@ export type PaymentFetchPayload = {
     payments?: any[],
     error?: string
   }
+}
+export type LoanCreatePayload = {
+  status: string,
+  data: {
+    loan_id?: string,
+    error?: string
+  }
+
 }
 export const HEALTH_REQUEST = 'health-request';
 export const HEALTH_RESPONSE = 'health-response';

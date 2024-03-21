@@ -9,12 +9,12 @@ import { LoanDTO } from './dtos/loan-dto';
 export class LoanService {
   constructor(private repo: LoanRepository) {}
 
-  async create(loandto: CreateLoanDTO) {
+  async create(newLoan: CreateLoanDTO) {
     try {
-      const loan_id = await this.repo.create(loandto);
+      const loan_id = await this.repo.create(newLoan);
       return loan_id;
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      throw new Error(error.message);
     }
   }
   async getLoanById(loanId: string) {

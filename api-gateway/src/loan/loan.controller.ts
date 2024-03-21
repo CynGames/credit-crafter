@@ -12,6 +12,7 @@ import { LoanService } from './loan.service';
 import { CreateLoanDTO } from 'src/loan/dto/creaate-loan-dto';
 import { FirebaseAuthGuard } from '../auth/guards/auth.guard';
 import { RequestUserDTO } from '../shared-definitions/types-dto-constants';
+import { response } from 'express';
 
 @Controller('loan')
 export class LoanController {
@@ -22,11 +23,14 @@ export class LoanController {
   async create(@Req() user: RequestUserDTO, @Body() loan: CreateLoanDTO) {
     try {
       const response = await this.loanService.createLoan(loan, user);
-
+      if (response.data.error) {
+        throw new Error(response.data.error.toString());
+      }
       return response;
     } catch (error) {
       return {
-        message: 'Error creating loan',
+        status: 'Error',
+        message: error.message,
       };
     }
   }
@@ -38,13 +42,14 @@ export class LoanController {
         userId,
         user,
       );
-      // console.log('controller: ');
-      // console.log(response);
-
+      if (response.data.error) {
+        throw new Error(response.data.error.toString());
+      }
       return response;
     } catch (error) {
       return {
-        message: 'Error getting user',
+        status: 'Error',
+        message: error.message,
       };
     }
   }
