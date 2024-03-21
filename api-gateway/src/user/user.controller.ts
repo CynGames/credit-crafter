@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { FirebaseAuthGuard } from '../auth/guards/auth.guard';
+import { FirebaseAuthGuard } from '../decorators/guards/auth.guard';
 import {
   FinancialDTO,
   RequestUserDTO,

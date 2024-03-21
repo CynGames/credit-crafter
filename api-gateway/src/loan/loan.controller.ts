@@ -10,8 +10,10 @@ import {
 } from '@nestjs/common';
 import { LoanService } from './loan.service';
 import { CreateLoanDTO } from 'src/loan/dto/creaate-loan-dto';
-import { FirebaseAuthGuard } from '../auth/guards/auth.guard';
+import { FirebaseAuthGuard } from '../decorators/guards/auth.guard';
 import { RequestUserDTO } from '../shared-definitions/types-dto-constants';
+import { RolesGuard } from '../decorators/guards/role.guard';
+import { Roles } from '../decorators/roles.decorator';
 
 @Controller('loan')
 export class LoanController {
@@ -30,6 +32,7 @@ export class LoanController {
       };
     }
   }
+
   @Get('user/:userId')
   @UseGuards(FirebaseAuthGuard)
   async getLoanByUserId(@Req() user: RequestUserDTO, @Param() userId: string) {
@@ -38,8 +41,6 @@ export class LoanController {
         userId,
         user,
       );
-      // console.log('controller: ');
-      // console.log(response);
 
       return response;
     } catch (error) {
@@ -48,8 +49,10 @@ export class LoanController {
       };
     }
   }
+
+  @UseGuards(FirebaseAuthGuard, RolesGuard)
+  @Roles('admin')
   @Put('/changeState')
-  @UseGuards(FirebaseAuthGuard)
   async updateState(
     @Req() user: RequestUserDTO,
     @Body() body: { loan_id: string; state: string },
@@ -74,8 +77,9 @@ export class LoanController {
       };
     }
   }
-  @Post('/payment/create')
+
   @UseGuards(FirebaseAuthGuard)
+  @Post('/payment/create')
   async createPayment(
     @Req() user: RequestUserDTO,
     @Body() body: { loan_id: string; amount_paid: number },

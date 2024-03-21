@@ -44,6 +44,8 @@ export class AuthService {
       password: registerDTO.password,
     });
 
+    await admin.auth().setCustomUserClaims(userRecord.uid, { admin: true });
+
     const newUser: UserDTO = {
       id: userRecord.uid,
       firstName: registerDTO.firstName,
