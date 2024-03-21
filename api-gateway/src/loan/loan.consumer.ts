@@ -8,9 +8,12 @@ import {
   LOAN_CREATE_RESPONSE,
   LOAN_FETCH_REQUEST,
   LOAN_FETCH_RESPONSE,
+  LOAN_UPDATE_RESPONSE,
   PAYMENT_CREATE_RESPONSE,
+  PAYMENT_FETCH_RESPONSE,
 } from '../shared-definitions/types-dto-constants';
-import { LoanCreatePayload, LoanFetchPayload } from './loan.controller';
+import { LoanCreatePayload, LoanFetchPayload } from './dto/payload-dtos';
+import { resolve } from 'path';
 
 @Injectable()
 export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
@@ -40,7 +43,8 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
           LOAN_CREATE_RESPONSE,
           LOAN_FETCH_RESPONSE,
           PAYMENT_CREATE_RESPONSE,
-          LOAN_FETCH_REQUEST,
+          LOAN_UPDATE_RESPONSE,
+          PAYMENT_FETCH_RESPONSE
         ],
       });
       await this.listenForMessages();
@@ -80,51 +84,25 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
       console.error('Failed to process message: ', error);
     }
   }
-  public createLoanHandler(correlationId: string): LoanCreatePayload {
-    let output: LoanCreatePayload;
 
-    this.responseHandlers.set(correlationId, (response) => {
-      console.log('[API GATEWAY] processing Create Loan Response... ');
-      console.log(response);
+  public async genericWaitResponse<t>(correlationId: string): Promise<t>{
+    console.log('[API-GATEWAY] Waiting for response...');
 
-      output = response;
-    });
-    return output;
-  }
-  public async waitForCreateResponse(
-    correlationId: string,
-  ): Promise<LoanCreatePayload> {
-    console.log('[API GATEWAY] Waiting for response...');
-
-    return new Promise((resolve) => {
-      const timeoutId = setTimeout(() => {
-        // resolve(response);
+    return new Promise((resolve):void =>{
+    const id: NodeJS.Timeout = setTimeout((): void=>{
+      resolve({status: 'timeout', data: null} as t);
+      this.responseHandlers.delete(correlationId);
+      console.log('[API GATEWAY] Promised Resolved! (timeout)');
+    }, 3000);
+      this.responseHandlers.set(correlationId, (payload):void=>{
+        console.log('[API GATEWAY] Processing Fetch User Response...');
+         console.log(payload);
+        
+        resolve({ status: payload.status, data: payload.data } as t);
         this.responseHandlers.delete(correlationId);
+        clearTimeout(id);
         console.log('[API GATEWAY] Promised Resolved!');
-      }, 3000);
-      this.responseHandlers.set(correlationId, (response) => {
-        console.log('[API GATEWAY] processing Create Loan Response... ');
-        console.log(response);
-
-        resolve(response);
-      });
-    });
-  }
-  public async waitForFetchResponse(
-    correlationId: string,
-  ): Promise<LoanFetchPayload> {
-    console.log('[API GATEWAY] waiting for response...');
-
-    return new Promise((resolve) => {
-      const timeoutId = setTimeout(() => {
-        this.responseHandlers.delete(correlationId);
-        console.log('[API-GATEWAY] Resolved');
-      }, 3000);
-      this.responseHandlers.set(correlationId, (response) => {
-        console.log('[API-GATEWAY] Processing Fetch Loan Response');
-        console.log(response.query.data);
-        resolve(response);
-      });
-    });
+      })
+    })
   }
 }

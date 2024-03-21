@@ -21,6 +21,11 @@ export const LOAN_CREATE_REQUEST = 'loan-create-request'
 export const LOAN_CREATE_RESPONSE = 'loan-create-response'
 export const LOAN_FETCH_RESPONSE = 'loan-fetch-response'
 export const LOAN_FETCH_REQUEST = 'loan-fetch-request'
+export const LOAN_UPDATE_REQUEST = 'loan-update-request'
+export const LOAN_UPDATE_RESPONSE = 'loan-update-response'
 
 // Payment
 export const PAYMENT_CREATE_RESPONSE ='payment-create-response'
+export const PAYMENT_CREATE_REQUEST = 'payment-create-request'
+export const PAYMENT_FETCH_REQUEST = 'payment-fetch-request'
+export const PAYMENT_FETCH_RESPONSE = 'payment-fetch-response'

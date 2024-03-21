@@ -49,4 +49,6 @@ export type LoanMessageType =
   | 'FetchUserIdLoan'
   | 'FetchLoanIdPayments'
   | 'CreatePaymentRequest'
-  | 'CreatePaymentResponse';
+  | 'CreatePaymentResponse'
+  | 'UpdateLoanRequest'
+  | 'UpdateLoanResponse';

@@ -10,7 +10,14 @@
       "IdLoanPayload",
       "UserIdLoanPayload",
       "LoanIdPaymentsPayload",
-      "RequestUserDTO"
+      "UserResponseDTO",
+      "UserPayload",
+      "FinancialData",
+      "RequestUserDTO",
+      "PaymentCreateRequest",
+      "PaymentCreatePayload",
+      "PaymentFetchRequest",
+      "PaymentFetchPayload"
     ],
     "message-topics": [
       "RESPONSE_TO_API_GATEWAY",
@@ -28,7 +35,12 @@
       "LOAN_CREATE_RESPONSE",
       "LOAN_FETCH_RESPONSE",
       "LOAN_FETCH_REQUEST",
-      "PAYMENT_CREATE_RESPONSE"
+      "PAYMENT_CREATE_RESPONSE",
+      "LOAN_UPDATE_REQUEST",
+      "LOAN_UPDATE_RESPONSE",
+      "PAYMENT_CREATE_REQUEST",
+      "PAYMENT_FETCH_REQUEST",
+      "PAYMENT_FETCH_RESPONSE"
     ],
     "message-types": [
       "MessageTypes",
@@ -52,7 +64,10 @@
       "FetchUserIdLoan",
       "FetchLoanIdPayments",
       "CreatePaymentRequest",
-      "CreatePaymentResponse"
+      "CreatePaymentResponse",
+      "UpdateLoanRequest",
+      "UpdateLoanResponse"
+      
     ],
     "type-guard-functions": [
     ],
@@ -85,6 +100,7 @@
       "FINANCIAL_DATA_CREATE_RESPONSE",
       "FINANCIAL_DATA_FETCH_REQUEST",
       "FINANCIAL_DATA_FETCH_RESPONSE"
+   
     ],
     "message-types": [
       "MessageTypes",
@@ -136,7 +152,15 @@
       "LoanInfo",
       "IdLoanPayload",
       "UserIdLoanPayload",
-      "LoanIdPaymentsPayload"
+      "LoanIdPaymentsPayload",
+      "LoanUpdateRequest",
+      "LoanUpdateResponse",
+      "LoanUpdatePayload",
+      "LoanFetchPayload",
+      "PaymentCreatePayload",
+      "PaymentCreateRequest",
+      "PaymentFetchRequest",
+      "PaymentFetchPayload"
     ],
     "message-topics": [
       "HEALTH_REQUEST",
@@ -145,10 +169,19 @@
       "LOAN_CREATE_RESPONSE",
       "LOAN_FETCH_RESPONSE",
       "LOAN_FETCH_REQUEST",
-      "PAYMENT_CREATE_RESPONSE"
+      "PAYMENT_CREATE_RESPONSE",
+      "LOAN_UPDATE_REQUEST",
+      "LOAN_UPDATE_RESPONSE",
+      "PAYMENT_CREATE_REQUEST",
+      "PAYMENT_FETCH_REQUEST",
+      "PAYMENT_FETCH_RESPONSE"
     ],
     "message-types": [
-      "MessageType",
+      "MessageTypes",
+      "HeathMessageType",
+      "UserMessageType",
+      "FinancialMessageType",
+      "LoanMessageType",
       "EmptyMessage",
       "SpecificMessage",
       "HealthMessageRequest",

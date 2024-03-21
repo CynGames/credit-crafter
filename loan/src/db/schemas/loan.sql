@@ -28,7 +28,6 @@ create table payment(
     payment_id uuid default uuid_generate_v4() primary key unique not null,
     loan_id uuid not null,
     amount_paid numeric(15, 2),
-    due_date timestamp,
     created_at timestamp default current_timestamp not null,
     updated_at timestamp default current_timestamp not null,
     constraint fk_loan_id foreign key (loan_id) references loan(loan_id) on delete cascade

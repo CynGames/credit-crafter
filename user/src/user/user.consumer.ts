@@ -43,6 +43,8 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
     await this.consumer.subscribe({ topics });
 
     await this.consumer.run({
+      // autoCommitInterval: 1000,
+      // autoCommitThreshold: 1,
       eachMessage: async ({ topic, partition, message }) => {
         console.log('[USER SERVICE] Received response');
         let parsedMessage = null;
@@ -58,6 +60,14 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
             console.log(parsedMessage, null);
 
             await this.userService.createUser(parsedMessage);
+
+            // await this.consumer.commitOffsets([
+            //   {
+            //     topic: USER_CREATE_REQUEST,
+            //     partition,
+            //     offset: String(Number(offset) + 1),
+            //   },
+            // ]);
 
             // const { userRecord, correlationId } = parsedMessage.headers;
             //
@@ -128,3 +138,22 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
     await this.consumer.disconnect();
   }
 }
+
+// async genericConstructAndSendResponse<P>(
+//   parsedMessage: GenericMessage<any>,
+//   payload: P,
+// ): Promise<void> {
+//   const { userRecord, correlationId, type, topic } = parsedMessage.headers;
+//
+//   const responseMessage: GenericMessage<P> = {
+//     headers: {
+//       type: type,
+//       topic: topic,
+//       correlationId: correlationId,
+//       userRecord: userRecord,
+//     },
+//     payload: payload,
+//   };
+//
+//   await this.producerService.sendMessage(responseMessage);
+// }
