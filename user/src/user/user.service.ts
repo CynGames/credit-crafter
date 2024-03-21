@@ -52,10 +52,10 @@ export class UserService {
         email: email,
         first_name: firstName,
         last_name: lastName,
-        roles: roles ? roles : ['User'],
+        roles: roles ? roles : ['user'],
       };
 
-      delete user.email;
+      // delete user.email;
       await this.repo.create(user);
 
       const message: GenericMessage<{ data: CreateUserDTO }> = {
