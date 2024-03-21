@@ -13,11 +13,11 @@ export class HealthConsumer implements OnModuleInit, OnApplicationShutdown {
 
   private readonly kafka = new Kafka({
     brokers: ['localhost:9092'],
-    clientId: 'credit-crafter-user-health',
+    clientId: 'credit-crafter-loan',
   });
 
   private readonly consumer = this.kafka.consumer({
-    groupId: 'user-health-service-group',
+    groupId: 'loan-health-service-group',
     sessionTimeout: 6000,
   });
 
@@ -32,7 +32,7 @@ export class HealthConsumer implements OnModuleInit, OnApplicationShutdown {
         switch (topic) {
           case HEALTH_REQUEST:
             console.log(
-              '[USER SERVICE] Received message from health-check:' +
+              '[LOAN SERVICE] Received message from health-check:' +
                 message.value.toString(),
             );
 

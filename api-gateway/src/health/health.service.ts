@@ -37,7 +37,5 @@ export class HealthService {
       correlationId,
       responsesArray,
     );
-
-    throw new Error('[API Gateway] Health Request Malformed');
   }
 }

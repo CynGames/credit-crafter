@@ -100,7 +100,7 @@ export class HealthConsumer implements OnModuleInit, OnApplicationShutdown {
         resolve({ data: responses });
         this.responseHandlers.delete(correlationId);
         console.log('[API GATEWAY] Promised Resolved!');
-      }, 1000);
+      }, 1500);
 
       if (responses.length >= 3) {
         clearTimeout(timeoutId);

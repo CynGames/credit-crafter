@@ -10,7 +10,7 @@ export class HealthService {
   constructor(private readonly producerService: ProducerService) {}
 
   async handleHealthCheckResponse(typedMessage: any): Promise<void> {
-    console.log(`[USER SERVICE] Health Check Request Received`);
+    console.log(`[LOAN SERVICE] Health Check Request Received`);
 
     const state: ServerStatus = this.getCurrentServerStatus();
 
@@ -29,7 +29,7 @@ export class HealthService {
 
   private getCurrentServerStatus(): ServerStatus {
     return {
-      service: 'User Service',
+      service: 'Loan Service',
       status: 'OK',
     };
   }
