@@ -36,7 +36,7 @@ export class UserData {
 
 export class CreateUserDTO {
   @ApiProperty({ example: 'success', description: 'Success message' })
-  success: string | undefined;
+  status: string | undefined;
 
   @ApiProperty({ type: UserData, description: 'User data' })
   data: UserData | undefined;
