@@ -17,7 +17,8 @@
       "PaymentCreateRequest",
       "PaymentCreatePayload",
       "PaymentFetchRequest",
-      "PaymentFetchPayload"
+      "PaymentFetchPayload",
+      "LoanCreatePayload"
     ],
     "message-topics": [
       "RESPONSE_TO_API_GATEWAY",
@@ -88,6 +89,7 @@
       "UserPayload",
       "FinancialData",
       "RequestUserDTO"
+      
     ],
     "message-topics": [
       "HEALTH_REQUEST",
@@ -160,7 +162,8 @@
       "PaymentCreatePayload",
       "PaymentCreateRequest",
       "PaymentFetchRequest",
-      "PaymentFetchPayload"
+      "PaymentFetchPayload",
+      "LoanCreatePayload"
     ],
     "message-topics": [
       "HEALTH_REQUEST",

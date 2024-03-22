@@ -20,10 +20,13 @@ import {
   PAYMENT_CREATE_REQUEST,
   PAYMENT_FETCH_REQUEST,
   PAYMENT_FETCH_RESPONSE,
+  LoanCreatePayload,
 } from '../shared-definitions/types-dto-constants';
 import { LoanService } from './loan.service';
 import { ProducerService } from 'src/kafka/producer.service';
 import { LoanDTO } from './dtos/loan-dto';
+import { CreateLoanResponse } from './shared-definitions/types-dto-constants';
+import { parse } from 'path';
 
 @Injectable()
 export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
@@ -64,17 +67,42 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
 
         switch (topic) {
           case LOAN_CREATE_REQUEST:
+            try{
             const loanId = await this.loanService.create(parsedMessage.payload);
-
-            await this.producerService.constructResponse(
-              parsedMessage.headers.correlationId,
-              parsedMessage.headers.userRecord,
-              'CreateLoanResponse',
-              LOAN_CREATE_RESPONSE,
-              loanId,
-            );
+            const successMessage: GenericMessage<LoanCreatePayload> = {
+              headers: {
+                type: 'CreateLoanResponse',
+                topic: LOAN_CREATE_RESPONSE,
+                correlationId: parsedMessage.headers.correlationId,
+                userRecord: parsedMessage.headers.userRecord
+              },
+              payload: {
+                status: 'success',
+                data: {
+                  loan_id: loanId
+                }
+              }
+            }
+            await this.producerService.sendMessage(successMessage);
+          }catch(error){
+            const errorMessage: GenericMessage<LoanCreatePayload> = {
+              headers: {
+                type: 'CreateLoanResponse',
+                topic: LOAN_CREATE_RESPONSE,
+                correlationId: parsedMessage.headers.correlationId,
+                userRecord: parsedMessage.headers.userRecord 
+              }, payload: {
+                status: 'Error',
+                data: {
+                  error: error.message
+                }
+              }
+            }
+            await this.producerService.sendMessage(errorMessage);
+          }
             break;
           case LOAN_FETCH_REQUEST:
+            try{
             const loans: LoanDTO[] = await this.loanService.getLoansByUser(
               parsedMessage.payload.userId,
             );
@@ -93,6 +121,23 @@ export class LoanConsumer implements OnModuleInit, OnApplicationShutdown {
               },
             };
             await this.producerService.sendMessage(fetchMessage);
+          }catch(error){
+            const errorMessage: GenericMessage<LoanFetchPayload> = {
+              headers: {
+                type: 'FetchUserIdLoan',
+                topic: LOAN_FETCH_RESPONSE,
+                correlationId: parsedMessage.headers.correlationId,
+                userRecord: parsedMessage.headers.userRecord,
+              },
+              payload: {
+                status: 'Error',
+                data:{
+                  error: error.message
+                }
+              }
+            }
+            await this.producerService.sendMessage(errorMessage);
+          }
             break;
           case LOAN_UPDATE_REQUEST:
             try {
