@@ -76,6 +76,14 @@ export type LoanUpdateResponse = {
   state?: string,
   error?: string
 }
+export type LoanCreatePayload = {
+  status: string,
+  data: {
+    loan_id?: string,
+    error?: string
+  }
+
+}
 
 export type LoanUpdatePayload = {
   status: string,
@@ -84,7 +92,8 @@ export type LoanUpdatePayload = {
 export type LoanFetchPayload = {
   status: string
   data: {
-    loans: any[]
+    loans?: any[],
+    error?: string
   }
 };
 export type PaymentCreatePayload = {

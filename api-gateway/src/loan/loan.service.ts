@@ -32,27 +32,10 @@ export class LoanService {
     private readonly loanConsumer: LoanConsumer,
   ) {}
 
-  async createLoan(loan: CreateLoanDTO, { user }: RequestUserDTO) {
+  async createLoan(loan: CreateLoanDTO, { user }: RequestUserDTO): Promise<LoanCreatePayload> {
     loan.user_id = user.id;
-    const correlationId = GenerateUniqueId();
-
-    const message: GenericMessage<CreateLoanDTO> = {
-      headers: {
-        type: 'CreateLoanRequest',
-        topic: LOAN_CREATE_REQUEST,
-        correlationId: correlationId,
-        userRecord: user,
-      },
-      payload: loan,
-    };
-
-    await this.producerService.sendMessage(message);
-    const waitResponse =
-      await this.loanConsumer.genericWaitResponse<LoanCreatePayload>(
-        correlationId,
-      );
-
-    console.log(waitResponse);
+   const waitResponse = await this.genericSendMessageAndWaitForResponse<CreateLoanDTO, LoanCreatePayload>(
+    'CreateLoanRequest', LOAN_CREATE_REQUEST, user, loan);
 
     return waitResponse;
   }

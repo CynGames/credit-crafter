@@ -7,11 +7,14 @@ import {
   Body,
   Param,
   Put,
+  HttpStatus,
+  Res
 } from '@nestjs/common';
 import { LoanService } from './loan.service';
 import { CreateLoanDTO } from 'src/loan/dto/creaate-loan-dto';
 import { FirebaseAuthGuard } from '../decorators/guards/auth.guard';
 import { RequestUserDTO } from '../shared-definitions/types-dto-constants';
+import { Response } from 'express';
 import { RolesGuard } from '../decorators/guards/role.guard';
 import { Roles } from '../decorators/roles.decorator';
 
@@ -21,32 +24,45 @@ export class LoanController {
 
   @Post('/create')
   @UseGuards(FirebaseAuthGuard)
-  async create(@Req() user: RequestUserDTO, @Body() loan: CreateLoanDTO) {
+  async create(@Req() user: RequestUserDTO, @Body() loan: CreateLoanDTO, @Res() res: Response) {
     try {
-      const response = await this.loanService.createLoan(loan, user);
-
-      return response;
+      const result = await this.loanService.createLoan(loan, user);
+      if (result.data.error) {
+        throw new Error(result.data.error.toString());
+      }
+      res.status(HttpStatus.CREATED).send(result)
     } catch (error) {
-      return {
-        message: 'Error creating loan',
-      };
+      if (error.message.includes('Error creating loan: invalid')){
+      res.status(HttpStatus.BAD_REQUEST).send({
+        status: 'Error',
+        message: error.message,
+      })
+    }else{
+      res.status(HttpStatus.I_AM_A_TEAPOT).send({
+        status: 'Error',
+        message: error.message,
+      })
+    }
     }
   }
 
   @Get('user/:userId')
   @UseGuards(FirebaseAuthGuard)
-  async getLoanByUserId(@Req() user: RequestUserDTO, @Param() userId: string) {
+  async getLoanByUserId(@Req() user: RequestUserDTO, @Param() userId: string, @Res() res: Response) {
     try {
-      const response: any = await this.loanService.getLoanByUserId(
+      const result: any = await this.loanService.getLoanByUserId(
         userId,
         user,
       );
-
-      return response;
+      if (result.data.error) {
+        throw new Error(result.data.error.toString());
+      }
+      res.status(HttpStatus.FOUND).send(result)
     } catch (error) {
-      return {
-        message: 'Error getting user',
-      };
+      res.status(HttpStatus.NOT_FOUND).send({
+        status: 'Error',
+        message: error.message,
+      });
     }
   }
 
@@ -56,25 +72,26 @@ export class LoanController {
   async updateState(
     @Req() user: RequestUserDTO,
     @Body() body: { loan_id: string; state: string },
+    @Res() res: Response
   ) {
     try {
-      const response = await this.loanService.updateLoanState(
+      const result = await this.loanService.updateLoanState(
         body.loan_id,
         body.state,
         user,
       );
-      if (response.status != 'success') {
-        if (response.data.error) {
-          throw new Error(response.data.error);
+      if (result.status != 'success') {
+        if (result.data.error) {
+          throw new Error(result.data.error);
         } else {
           throw new Error('unsuccessful update');
         }
       }
-      return response;
+      res.status(HttpStatus.OK).send(result)
     } catch (error) {
-      return {
+      res.status(HttpStatus.BAD_REQUEST).send({
         message: `Error Updating: ${error.message}`,
-      };
+      })
     }
   }
 
@@ -83,21 +100,22 @@ export class LoanController {
   async createPayment(
     @Req() user: RequestUserDTO,
     @Body() body: { loan_id: string; amount_paid: number },
+    @Res() res: Response
   ) {
     try {
-      const response = await this.loanService.createPayment(
+      const result = await this.loanService.createPayment(
         body.loan_id,
         body.amount_paid,
         user,
       );
-      if (response.data.error) {
-        throw new Error(response.data.error);
+      if (result.data.error) {
+        throw new Error(result.data.error);
       }
-      return response;
+      res.status(HttpStatus.CREATED).send(result);
     } catch (error) {
-      return {
+      res.status(HttpStatus.BAD_REQUEST).send({
         message: error.message,
-      };
+      })
     }
   }
   @Get('/payment/:loan_id')
@@ -105,6 +123,7 @@ export class LoanController {
   async getPaymentByLoanId(
     @Req() user: RequestUserDTO,
     @Param() loan_id: string,
+    @Res() res: Response
   ) {
     try {
       const payments = await this.loanService.getPaymentsByLoanId(
@@ -114,11 +133,11 @@ export class LoanController {
       if (payments.data.error) {
         throw new Error(payments.data.error);
       }
-      return payments;
+      res.status(HttpStatus.FOUND).send(payments);
     } catch (error) {
-      return {
+      res.status(HttpStatus.NOT_FOUND).send({
         message: error.message,
-      };
+      })
     }
   }
 }
