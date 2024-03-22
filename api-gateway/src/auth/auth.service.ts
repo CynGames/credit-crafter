@@ -39,27 +39,31 @@ export class AuthService {
   }
 
   async register(registerDTO: RegisterUserDTO): Promise<CreateUserDTO> {
-    const userRecord = await admin.auth().createUser({
-      email: registerDTO.email,
-      password: registerDTO.password,
-    });
+    try {
+      const userRecord = await admin.auth().createUser({
+        email: registerDTO.email,
+        password: registerDTO.password,
+      });
 
-    await admin.auth().setCustomUserClaims(userRecord.uid, { admin: true });
+      await admin.auth().setCustomUserClaims(userRecord.uid, { admin: true });
 
-    const newUser: UserDTO = {
-      id: userRecord.uid,
-      firstName: registerDTO.firstName,
-      lastName: registerDTO.lastName,
-      email: registerDTO.email,
-      roles: registerDTO.roles,
-    };
+      const newUser: UserDTO = {
+        id: userRecord.uid,
+        firstName: registerDTO.firstName,
+        lastName: registerDTO.lastName,
+        email: registerDTO.email,
+        roles: registerDTO.roles,
+      };
 
-    const result = await this.userService.createUser(newUser);
+      const result = await this.userService.createUser(newUser);
 
-    if (result.status == 'error') {
-      await admin.auth().deleteUser(userRecord.uid);
+      if (result.status == 'error') {
+        await admin.auth().deleteUser(userRecord.uid);
+      }
+
+      return result;
+    } catch (e) {
+      return { status: 'email already exists', data: null };
     }
-
-    return result;
   }
 }
