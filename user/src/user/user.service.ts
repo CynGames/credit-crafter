@@ -38,7 +38,19 @@ export class UserService {
 
       return await this.producerService.sendMessage(message);
     } catch (error) {
-      throw new Error(error.message);
+      const { correlationId } = requestMessage.headers;
+
+      const message: GenericMessage<{ status: string; data: any }> = {
+        headers: {
+          type: 'FetchUsers',
+          topic: USER_FETCH_RESPONSE,
+          correlationId: correlationId,
+          userRecord: null,
+        },
+        payload: { status: 'error', data: error.message },
+      };
+
+      return await this.producerService.sendMessage(message);
     }
   }
 
@@ -55,7 +67,6 @@ export class UserService {
         roles: roles ? roles : ['user'],
       };
 
-      // delete user.email;
       await this.repo.create(user);
 
       const message: GenericMessage<{ data: CreateUserDTO }> = {
@@ -72,14 +83,14 @@ export class UserService {
     } catch (error) {
       const { correlationId } = requestMessage.headers;
 
-      const message: GenericMessage<{ data: any }> = {
+      const message: GenericMessage<{ status: string; data: any }> = {
         headers: {
           type: 'CreateUserResponse',
           topic: USER_CREATE_RESPONSE,
           correlationId: correlationId,
           userRecord: null,
         },
-        payload: { data: error },
+        payload: { status: 'error', data: error.message },
       };
 
       return await this.producerService.sendMessage(message);
@@ -107,7 +118,19 @@ export class UserService {
 
       return await this.producerService.sendMessage(message);
     } catch (error) {
-      throw new Error(error.message);
+      const { correlationId } = requestMessage.headers;
+
+      const message: GenericMessage<{ status: string; data: any }> = {
+        headers: {
+          type: 'FetchIdUser',
+          topic: USER_FETCH_RESPONSE,
+          correlationId: correlationId,
+          userRecord: null,
+        },
+        payload: { status: 'error', data: error.message },
+      };
+
+      return await this.producerService.sendMessage(message);
     }
   }
 
@@ -132,7 +155,19 @@ export class UserService {
 
       return await this.producerService.sendMessage(message);
     } catch (error) {
-      throw new Error(error.message);
+      const { correlationId } = requestMessage.headers;
+
+      const message: GenericMessage<{ status: string; data: any }> = {
+        headers: {
+          type: 'FetchEmailUser',
+          topic: USER_FETCH_RESPONSE,
+          correlationId: correlationId,
+          userRecord: null,
+        },
+        payload: { status: 'error', data: error.message },
+      };
+
+      return await this.producerService.sendMessage(message);
     }
   }
 
@@ -149,9 +184,6 @@ export class UserService {
         expenses: requestMessage.payload.expenses,
       };
 
-      console.log('financialData');
-      console.log(financialData);
-
       await this.repo.createFinancialData(financialData);
 
       const message: GenericMessage<any> = {
@@ -166,7 +198,19 @@ export class UserService {
 
       return await this.producerService.sendMessage(message);
     } catch (error) {
-      throw new Error(`Error creating financial data: ${error.message}`);
+      const { correlationId } = requestMessage.headers;
+
+      const message: GenericMessage<{ status: string; data: any }> = {
+        headers: {
+          type: 'CreateFinancialDataResponse',
+          topic: USER_CREATE_RESPONSE,
+          correlationId: correlationId,
+          userRecord: null,
+        },
+        payload: { status: 'error', data: error.message },
+      };
+
+      return await this.producerService.sendMessage(message);
     }
   }
 
@@ -191,7 +235,19 @@ export class UserService {
 
       return await this.producerService.sendMessage(message);
     } catch (error) {
-      throw new Error(`Error fetching financial data: ${error.message}`);
+      const { correlationId } = requestMessage.headers;
+
+      const message: GenericMessage<{ status: string; data: any }> = {
+        headers: {
+          type: 'FetchFinancialDataResponse',
+          topic: USER_FETCH_RESPONSE,
+          correlationId: correlationId,
+          userRecord: null,
+        },
+        payload: { status: 'error', data: error.message },
+      };
+
+      return await this.producerService.sendMessage(message);
     }
   }
 }

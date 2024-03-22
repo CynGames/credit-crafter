@@ -43,8 +43,6 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
     await this.consumer.subscribe({ topics });
 
     await this.consumer.run({
-      // autoCommitInterval: 1000,
-      // autoCommitThreshold: 1,
       eachMessage: async ({ topic, partition, message }) => {
         console.log('[USER SERVICE] Received response');
         let parsedMessage = null;
@@ -54,38 +52,21 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
             parsedMessage = JSON.parse(
               message.value.toString(),
             ) as GenericMessage<void>;
-            // const typedMessage = PayloadTypeExtractor(parsedMessage);
 
             console.log(USER_CREATE_REQUEST);
             console.log(parsedMessage, null);
 
             await this.userService.createUser(parsedMessage);
-
-            // await this.consumer.commitOffsets([
-            //   {
-            //     topic: USER_CREATE_REQUEST,
-            //     partition,
-            //     offset: String(Number(offset) + 1),
-            //   },
-            // ]);
-
-            // const { userRecord, correlationId } = parsedMessage.headers;
-            //
-            // await this.producerService.constructResponse(
-            //   correlationId,
-            //   userRecord,
-            // );
-
             break;
           case USER_FETCH_REQUEST:
             parsedMessage = JSON.parse(
               message.value.toString(),
             ) as GenericMessage<any>;
 
-            const type = parsedMessage.headers.type;
-
             console.log(USER_FETCH_REQUEST);
             console.log(parsedMessage, null);
+
+            const type = parsedMessage.headers.type;
 
             switch (type) {
               case 'FetchUsers':
@@ -101,13 +82,11 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
                 console.warn('Received message from unknown type: ' + type);
                 break;
             }
-
             break;
           case FINANCIAL_DATA_CREATE_REQUEST:
             parsedMessage = JSON.parse(
               message.value.toString(),
             ) as GenericMessage<any>;
-            // const typedMessage = PayloadTypeExtractor(parsedMessage);
 
             console.log(FINANCIAL_DATA_CREATE_REQUEST);
             console.log(parsedMessage, null);
@@ -118,8 +97,6 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
             parsedMessage = JSON.parse(
               message.value.toString(),
             ) as GenericMessage<any>;
-
-            // const type = parsedMessage.headers.type;
 
             console.log(FINANCIAL_DATA_FETCH_REQUEST);
             console.log(parsedMessage, null);
@@ -138,22 +115,3 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
     await this.consumer.disconnect();
   }
 }
-
-// async genericConstructAndSendResponse<P>(
-//   parsedMessage: GenericMessage<any>,
-//   payload: P,
-// ): Promise<void> {
-//   const { userRecord, correlationId, type, topic } = parsedMessage.headers;
-//
-//   const responseMessage: GenericMessage<P> = {
-//     headers: {
-//       type: type,
-//       topic: topic,
-//       correlationId: correlationId,
-//       userRecord: userRecord,
-//     },
-//     payload: payload,
-//   };
-//
-//   await this.producerService.sendMessage(responseMessage);
-// }

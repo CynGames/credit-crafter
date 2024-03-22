@@ -54,6 +54,12 @@ export class AuthService {
       roles: registerDTO.roles,
     };
 
-    return await this.userService.createUser(newUser);
+    const result = await this.userService.createUser(newUser);
+
+    if (result.status == 'error') {
+      await admin.auth().deleteUser(userRecord.uid);
+    }
+
+    return result;
   }
 }

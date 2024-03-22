@@ -90,7 +90,10 @@ export class UserConsumer implements OnModuleInit, OnApplicationShutdown {
 
       this.responseHandlers.set(correlationId, (payload) => {
         console.log(`[API GATEWAY] Processing Response...`);
-        resolve({ status: 'success', data: payload.data } as T);
+        resolve({
+          status: payload.status ?? 'success',
+          data: payload.data,
+        } as T);
         this.responseHandlers.delete(correlationId);
         clearTimeout(id);
         console.log('[API GATEWAY] Promised Resolved!');

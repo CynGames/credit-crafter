@@ -25,12 +25,12 @@ jest.mock('../kafka/producer.service', () => ({
   })),
 }));
 
-import { ConsumerService } from '../health/consumer.service';
+import { HealthConsumer } from '../health/health.consumer';
 import { HealthService } from '../health/health.service';
 import { ProducerService } from '../kafka/producer.service';
 
 describe('ConsumerService', () => {
-  let consumerService: ConsumerService;
+  let consumerService: HealthConsumer;
   let appService: jest.Mocked<HealthService>;
   let producerService: jest.Mocked<ProducerService>;
 
@@ -40,7 +40,7 @@ describe('ConsumerService', () => {
     appService = new HealthService(
       producerService,
     ) as jest.Mocked<HealthService>;
-    consumerService = new ConsumerService(appService);
+    consumerService = new HealthConsumer(appService);
   });
 
   it('should process HEALTH_REQUEST messages and call handleHealthCheckResponse', async () => {
