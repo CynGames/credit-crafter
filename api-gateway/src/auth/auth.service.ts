@@ -24,13 +24,7 @@ export class AuthService {
         returnSecureToken: true,
       };
 
-      const headers = {
-        headers: { Accept: '*/*', 'Content-Type': 'application/json' },
-      };
-
-      const { data } = await this.httpService.axiosRef.post(URL, body, headers);
-
-      console.log(data);
+      const { data } = await this.httpService.axiosRef.post(URL, body);
 
       return { token: data.idToken };
     } catch (e) {
@@ -45,7 +39,9 @@ export class AuthService {
         password: registerDTO.password,
       });
 
-      await admin.auth().setCustomUserClaims(userRecord.uid, { admin: true });
+      await admin.auth().setCustomUserClaims(userRecord.uid, {
+        roles: registerDTO.roles ?? ['user'],
+      });
 
       const newUser: UserDTO = {
         id: userRecord.uid,

@@ -86,9 +86,9 @@ export class LoanController {
   }
 
   @AppApiOkResponse({ type: LoanUpdatePayload })
+  @Put('/changeState')
   @UseGuards(FirebaseAuthGuard, RolesGuard)
   @Roles('admin')
-  @Put('/changeState')
   async updateState(
     @Req() user: RequestUserDTO,
     @Body() body: { loan_id: string; state: string },

@@ -5,10 +5,10 @@ import * as admin from 'firebase-admin';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
- 
-
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+    credential: admin.credential.cert(
+      process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    ),
     databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
   });
 
@@ -28,9 +28,8 @@ async function bootstrap() {
   const logoWithColor = yellowColor + logo + resetColor;
   console.log(logoWithColor);
 }
-const yellowColor = '\x1b[33m'; 
-const resetColor = '\x1b[0m'; 
-
+const yellowColor = '\x1b[33m';
+const resetColor = '\x1b[0m';
 
 const logo = `
   ______   _______   ________  _______   ______ ________

@@ -34,6 +34,7 @@ export class AuthController {
     return await this.authService.register(registerDTO);
   }
 
+  // add guard
   @AppApiOkResponse({ type: UserRecord })
   @Get('/listUsers')
   async getAccounts(): Promise<UserRecord[]> {
