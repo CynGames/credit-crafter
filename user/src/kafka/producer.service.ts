@@ -4,11 +4,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
-import {
-  GenericMessage,
-  USER_CREATE_RESPONSE,
-  UserDTO,
-} from '../shared-definitions/types-dto-constants';
+import { GenericMessage } from '../shared-definitions/types-dto-constants';
 
 @Injectable()
 export class ProducerService implements OnModuleInit, OnApplicationShutdown {
