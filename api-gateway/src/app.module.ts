@@ -16,6 +16,7 @@ import { LoanConsumer } from './loan/loan.consumer';
 import { HealthConsumer } from './health/health.consumer';
 import { UserConsumer } from './user/user.consumer';
 
+// create more modules
 @Module({
   imports: [HttpModule],
   controllers: [

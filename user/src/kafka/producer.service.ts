@@ -19,22 +19,6 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
 
   private readonly producer = this.kafka.producer();
 
-  // async constructResponse(correlationId: string, userRecord: UserDTO) {
-  //   const message: GenericMessage<any> = {
-  //     headers: {
-  //       type: 'CreateUserResponse',
-  //       topic: USER_CREATE_RESPONSE,
-  //       correlationId: correlationId,
-  //       userRecord: userRecord,
-  //     },
-  //     payload: {
-  //       data: { status: 'success' },
-  //     },
-  //   };
-  //
-  //   return await this.sendMessage(message);
-  // }
-
   async sendMessage<T = any>(genericMessage: GenericMessage<T>) {
     const topic = genericMessage.headers.topic;
     const messages: { value: string }[] = [
